@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { sendReviewRequest } from '@/lib/send-review-email';
+// import { sendReviewRequest } from '@/lib/send-review-email'; // Disabled - no automatic review emails
 
 export async function POST(request: Request) {
   try {

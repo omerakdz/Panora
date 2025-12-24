@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# project documentation
+PANORA – WEBSITE BRIEFING DOCUMENT.md
+
+# OAuth setup script (contains secrets)
+get-refresh-token.js

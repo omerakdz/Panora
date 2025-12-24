@@ -1,0 +1,21 @@
+[
+  {
+    "id": "BK-1766506847390-me3wdk9ck",
+    "customerName": "TEST1",
+    "customerEmail": "test@gmail.com",
+    "customerPhone": "+32 486 75 42 15",
+    "customerAddress": "straat400, 2500 Lier",
+    "date": "2025-12-30",
+    "time": "09:00 - 11:00",
+    "propertyType": "appartement",
+    "totalWindows": 10,
+    "exteriorWindows": 5,
+    "interiorExteriorWindows": 5,
+    "hardToReach": false,
+    "firstTimeInLong": false,
+    "cleanFrames": false,
+    "calculatedPrice": 35,
+    "customerNotes": "test mail",
+    "createdAt": "2025-12-23T16:20:47.390Z"
+  }
+]

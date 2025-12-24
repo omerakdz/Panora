@@ -2,10 +2,15 @@ import { Resend } from 'resend';
 import type { BookingData } from '@/types';
 import ReviewRequestEmail from '@/emails/ReviewRequest';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function sendReviewRequest(booking: BookingData) {
+  // Review emails zijn uitgeschakeld - admin wil geen automatische emails
+  console.log('Review email functionality disabled - skipping email for:', booking.customerEmail);
+  return { success: true, disabled: true };
+  
+  // Onderstaande code is uitgecommentarieerd maar kan later weer geactiveerd worden
+  /*
   const googleReviewUrl = process.env.GOOGLE_REVIEW_URL || 'https://g.page/r/YOUR_BUSINESS_REVIEW_LINK';
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const { data, error } = await resend.emails.send({
@@ -29,4 +34,5 @@ export async function sendReviewRequest(booking: BookingData) {
     console.error('Failed to send review email:', error);
     return { success: false, error };
   }
+  */
 }

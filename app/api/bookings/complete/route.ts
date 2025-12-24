@@ -19,23 +19,16 @@ export async function POST(request: Request) {
     //   data: { status: 'completed' }
     // });
 
-    // Verstuur review verzoek direct (of gebruik een scheduler voor later)
-    const emailResult = await sendReviewRequest({
-      bookingId,
-      customerEmail,
-      customerName
-    });
-
-    if (!emailResult.success) {
-      return NextResponse.json(
-        { error: 'Failed to send review email' },
-        { status: 500 }
-      );
-    }
+    // Review emails zijn uitgeschakeld - admin wil geen automatische emails
+    // const emailResult = await sendReviewRequest({
+    //   bookingId,
+    //   customerEmail,
+    //   customerName
+    // });
 
     return NextResponse.json({ 
       success: true,
-      message: 'Booking marked as complete and review email sent'
+      message: 'Booking marked as complete'
     });
 
   } catch (error) {

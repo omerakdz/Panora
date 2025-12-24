@@ -17,5 +17,24 @@
     "calculatedPrice": 35,
     "customerNotes": "test mail",
     "createdAt": "2025-12-23T16:20:47.390Z"
+  },
+  {
+    "id": "BK-1766606544848-ybwue0ci2",
+    "customerName": "TESTESTEST",
+    "customerEmail": "test@gmail.com",
+    "customerPhone": "0486505074",
+    "customerAddress": "straat400, 2500 Lier",
+    "date": "2026-01-01",
+    "time": "15:00 - 17:00",
+    "propertyType": "appartement",
+    "totalWindows": 12,
+    "exteriorWindows": 8,
+    "interiorExteriorWindows": 4,
+    "hardToReach": false,
+    "firstTimeInLong": false,
+    "cleanFrames": false,
+    "calculatedPrice": 38,
+    "customerNotes": "u",
+    "createdAt": "2025-12-24T20:02:24.848Z"
   }
 ]

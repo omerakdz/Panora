@@ -9,7 +9,8 @@ import { CheckCircle2, Calendar, Clock, Home, Euro, Mail, Phone, MapPin } from "
 import { getPropertyTypeLabel } from "@/lib/constants";
 import { BookingDetails } from "@/types";
 
-
+// Force dynamic rendering - deze page gebruikt sessionStorage
+export const dynamic = 'force-dynamic';
 
 export default function ConfirmationPage() {
     const searchParams = useSearchParams();

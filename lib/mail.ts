@@ -1,7 +1,6 @@
 import type { CalculatorData, EmailData } from "@/types";
 import { CONTACT, getPropertyTypeLabel } from "@/lib/constants";
 
-
 export function generateCustomerEmailHTML(data: EmailData): string {
   const date = new Date(data.selectedDate);
   const formattedDate = date.toLocaleDateString("nl-BE", {
@@ -13,10 +12,10 @@ export function generateCustomerEmailHTML(data: EmailData): string {
 
   const serviceType =
     data.interiorExteriorWindows > 0 && data.exteriorWindows > 0
-      ? "Binnen & Buiten Premium (gemengd)"
+      ? "Complete Glasreiniging (gemengd)"
       : data.interiorExteriorWindows > 0
-      ? "Binnen & Buiten Premium"
-      : "Buiten Ramenwassen";
+        ? "Complete Glasreiniging"
+        : "Buiten Glasreiniging";
 
   return `
 <!DOCTYPE html>
@@ -42,8 +41,8 @@ export function generateCustomerEmailHTML(data: EmailData): string {
           <!-- Success Message -->
           <tr>
             <td style="padding: 40px 30px 20px; text-align: center;">
-              <div style="width: 80px; height: 80px; background-color: #d4edda; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                <span style="color: #28a745; font-size: 50px;">✓</span>
+              <div style="width: 80px; height: 80px; background-color: #d4edda; border-radius: 50%; margin: 0 auto 20px; display: inline-flex; align-items: center; justify-content: center;">
+                <span style="color: #28a745; font-size: 50px; line-height: 1; display: block; text-align: center;">✓</span>
               </div>
               <h2 style="margin: 0 0 10px; color: #044D8E; font-size: 28px;">Bevestigd!</h2>
               <p style="margin: 0; color: #0F61AC; font-size: 16px;">Beste ${data.customerName},</p>
@@ -171,10 +170,10 @@ export function generateInternalEmailHTML(data: EmailData): string {
 
   const serviceType =
     data.interiorExteriorWindows > 0 && data.exteriorWindows > 0
-      ? "Binnen & Buiten Premium (gemengd)"
+      ? "Complete Glasreiniging (gemengd)"
       : data.interiorExteriorWindows > 0
-      ? "Binnen & Buiten Premium"
-      : "Buiten Ramenwassen";
+        ? "Complete Glasreiniging"
+        : "Buiten Glasreiniging";
 
   return `
 <!DOCTYPE html>
@@ -281,7 +280,9 @@ export function generateInternalEmailHTML(data: EmailData): string {
                     </ul>
                   </td>
                 </tr>
-                ${data.hardToReach || data.firstTimeInLong || data.cleanFrames ? `
+                ${
+                  data.hardToReach || data.firstTimeInLong || data.cleanFrames
+                    ? `
                 <tr>
                   <td style="padding: 10px;">
                     <strong style="color: #044D8E; display: block; margin-bottom: 10px;">Extra's:</strong>
@@ -292,15 +293,21 @@ export function generateInternalEmailHTML(data: EmailData): string {
                     </ul>
                   </td>
                 </tr>
-                ` : ""}
-                ${data.customerNotes ? `
+                `
+                    : ""
+                }
+                ${
+                  data.customerNotes
+                    ? `
                 <tr>
                   <td style="padding: 10px;">
                     <strong style="color: #044D8E; display: block; margin-bottom: 10px;">Opmerkingen:</strong>
                     <p style="margin: 0; color: #0F61AC; font-style: italic;">${data.customerNotes}</p>
                   </td>
                 </tr>
-                ` : ""}
+                `
+                    : ""
+                }
               </table>
               
               <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #044D8E 0%, #1792D0 100%); border-radius: 8px; text-align: center;">

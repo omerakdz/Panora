@@ -141,18 +141,6 @@ export default function AboutPage() {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle className="text-[#044D8E]">Bereik tot 9 meter</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-700">
-                                    Met professioneel materiaal bereiken we ramen tot <strong>9 meter hoogte</strong>.
-                                    Geen ladder nodig, veilig en efficiënt.
-                                </p>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
                                 <CardTitle className="text-[#044D8E]">Foto's na afloop</CardTitle>
                             </CardHeader>
                             <CardContent>

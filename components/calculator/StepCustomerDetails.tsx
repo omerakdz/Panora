@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { isPostalCodeAllowed, getPostalCodeErrorMessage } from "@/lib/constants";
 
 interface StepCustomerDetailsProps {
     data: CalculatorData;
@@ -20,10 +21,18 @@ export default function StepCustomerDetails({
     nextStep,
 }: StepCustomerDetailsProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [postalCodeError, setPostalCodeError] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Valideer postcode voordat we submitten
+        if (!isPostalCodeAllowed(data.customerPostalCode)) {
+            setPostalCodeError(getPostalCodeErrorMessage());
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -53,6 +62,8 @@ export default function StepCustomerDetails({
                     customerEmail: data.customerEmail,
                     customerPhone: data.customerPhone,
                     customerAddress: data.customerAddress,
+                    customerCity: data.customerCity,
+                    customerPostalCode: data.customerPostalCode,
                     selectedDate: selectedDateString,
                     selectedTime: data.selectedTime,
                     calculatedPrice: data.calculatedPrice,
@@ -83,16 +94,19 @@ export default function StepCustomerDetails({
         data.customerName &&
         data.customerPhone &&
         data.customerEmail &&
-        data.customerAddress;
+        data.customerAddress &&
+        data.customerCity &&
+        data.customerPostalCode &&
+        !postalCodeError;
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
-            <p className="text-center text-[#0F61AC] mb-6">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 max-w-md mx-auto">
+            <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
                 Vul je gegevens in om de afspraak te bevestigen
             </p>
 
             <div>
-                <Label htmlFor="customerName" className="text-[#044D8E] font-semibold">
+                <Label htmlFor="customerName" className="text-[#044D8E] font-semibold text-sm md:text-base">
                     Volledige naam *
                 </Label>
                 <Input
@@ -100,14 +114,14 @@ export default function StepCustomerDetails({
                     type="text"
                     value={data.customerName}
                     onChange={(e) => updateData({ customerName: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E]"
+                    className="border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11"
                     placeholder="Jan Janssens"
                     required
                 />
             </div>
 
             <div>
-                <Label htmlFor="customerPhone" className="text-[#044D8E] font-semibold">
+                <Label htmlFor="customerPhone" className="text-[#044D8E] font-semibold text-sm md:text-base">
                     Telefoonnummer *
                 </Label>
                 <Input
@@ -115,14 +129,14 @@ export default function StepCustomerDetails({
                     type="tel"
                     value={data.customerPhone}
                     onChange={(e) => updateData({ customerPhone: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E]"
+                    className="border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11"
                     placeholder="+32 123 45 67 89"
                     required
                 />
             </div>
 
             <div>
-                <Label htmlFor="customerEmail" className="text-[#044D8E] font-semibold">
+                <Label htmlFor="customerEmail" className="text-[#044D8E] font-semibold text-sm md:text-base">
                     E-mailadres *
                 </Label>
                 <Input
@@ -130,7 +144,7 @@ export default function StepCustomerDetails({
                     type="email"
                     value={data.customerEmail}
                     onChange={(e) => updateData({ customerEmail: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E]"
+                    className="border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11"
                     placeholder="jan@voorbeeld.be"
                     required
                 />
@@ -138,7 +152,7 @@ export default function StepCustomerDetails({
 
             <div>
                 <Label htmlFor="customerAddress" className="text-[#044D8E] font-semibold">
-                    Adres *
+                    Straat en huisnummer *
                 </Label>
                 <Input
                     id="customerAddress"
@@ -146,9 +160,46 @@ export default function StepCustomerDetails({
                     value={data.customerAddress}
                     onChange={(e) => updateData({ customerAddress: e.target.value })}
                     className="border-[#9FCAE3] focus:border-[#044D8E]"
-                    placeholder="Straatnaam 123, 9000 Gent"
+                    placeholder="Korenmarkt 1"
                     required
                 />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <Label htmlFor="customerPostalCode" className="text-[#044D8E] font-semibold">
+                        Postcode *
+                    </Label>
+                    <Input
+                        id="customerPostalCode"
+                        type="text"
+                        value={data.customerPostalCode}
+                        onChange={(e) => {
+                            updateData({ customerPostalCode: e.target.value });
+                            setPostalCodeError(""); // Clear error when user types
+                        }}
+                        className={`border-[#9FCAE3] focus:border-[#044D8E] ${postalCodeError ? 'border-red-500' : ''}`}
+                        placeholder="9000"
+                        required
+                    />
+                    {postalCodeError && (
+                        <p className="text-red-600 text-sm mt-1">{postalCodeError}</p>
+                    )}
+                </div>
+                <div>
+                    <Label htmlFor="customerCity" className="text-[#044D8E] font-semibold">
+                        Stad *
+                    </Label>
+                    <Input
+                        id="customerCity"
+                        type="text"
+                        value={data.customerCity}
+                        onChange={(e) => updateData({ customerCity: e.target.value })}
+                        className="border-[#9FCAE3] focus:border-[#044D8E]"
+                        placeholder="Gent"
+                        required
+                    />
+                </div>
             </div>
 
             <div>

@@ -35,12 +35,66 @@ export function isDateAvailable(date: Date): boolean {
 
 export function getAvailableTimeSlots(date: Date, bookedSlots: string[] = []): string[] {
   if (!isDateAvailable(date)) return [];
-  return TIME_SLOTS.filter(slot => !bookedSlots.includes(slot));
+  
+  const now = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+  
+  const isToday = selectedDate.getTime() === today.getTime();
+  
+  return TIME_SLOTS.filter(slot => {
+    // Check if slot is already booked
+    if (bookedSlots.includes(slot)) return false;
+    
+    // If the selected date is today, check if the timeslot has passed
+    if (isToday) {
+      const { start } = parseTimeSlot(slot);
+      const [hours, minutes] = start.split(':').map(Number);
+      
+      const slotTime = new Date();
+      slotTime.setHours(hours, minutes, 0, 0);
+      
+      // Block slot if it's in the past
+      if (slotTime <= now) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
 }
 
 export function isTimeSlotAvailable(date: Date, timeSlot: string, bookedSlots: string[]): boolean {
   if (!isDateAvailable(date)) return false;
-  return !bookedSlots.includes(timeSlot);
+  if (bookedSlots.includes(timeSlot)) return false;
+  
+  // Check if timeslot is in the past (for today)
+  const now = new Date();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+  
+  const isToday = selectedDate.getTime() === today.getTime();
+  
+  if (isToday) {
+    const { start } = parseTimeSlot(timeSlot);
+    const [hours, minutes] = start.split(':').map(Number);
+    
+    const slotTime = new Date();
+    slotTime.setHours(hours, minutes, 0, 0);
+    
+    // Block if slot is in the past
+    if (slotTime <= now) {
+      return false;
+    }
+  }
+  
+  return true;
 }
 
 // Parse time slot to get start and end times

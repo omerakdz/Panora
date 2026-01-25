@@ -19,12 +19,12 @@ export default function StepWindows({ data, updateData }: StepWindowsProps) {
     const totalCount = data.exteriorWindows + data.interiorExteriorWindows;
 
     return (
-        <div className="space-y-6">
-            <p className="text-center text-[#0F61AC] mb-6">
+        <div className="space-y-4 md:space-y-6">
+            <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
                 Vul het aantal ramen in dat gereinigd moet worden
             </p>
 
-            <div className="space-y-4 max-w-md mx-auto">
+            <div className="space-y-3 md:space-y-4 max-w-md mx-auto">
                 {/* Total Windows */}
                 <div>
                     <Label htmlFor="totalWindows" className="text-[#044D8E] font-semibold mb-2 block">
@@ -124,6 +124,6 @@ export default function StepWindows({ data, updateData }: StepWindowsProps) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react";
 import { CONTACT, COMPANY } from "@/lib/constants";
 
 const Footer = () => {
@@ -16,7 +16,7 @@ const Footer = () => {
                         </p>
                         <div className="flex gap-3">
                             <a
-                                href="https://facebook.com"
+                                href="https://www.facebook.com/profile.php?id=61584108477064&locale=nl_BE"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
@@ -25,7 +25,7 @@ const Footer = () => {
                                 <Facebook size={20} />
                             </a>
                             <a
-                                href="https://instagram.com"
+                                href="https://www.instagram.com/panora.ramenwas/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
@@ -34,13 +34,15 @@ const Footer = () => {
                                 <Instagram size={20} />
                             </a>
                             <a
-                                href="https://linkedin.com"
+                                href="https://www.tiktok.com/@panora.ramenwas"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
-                                aria-label="LinkedIn"
+                                aria-label="TikTok"
                             >
-                                <Linkedin size={20} />
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -51,12 +53,12 @@ const Footer = () => {
                         <ul className="space-y-2">
                             <li>
                                 <Link href="/services/exterior" className="text-white/80 hover:text-white transition-colors">
-                                    Buiten Ramenwassen
+                                    Buiten Glasreiniging
                                 </Link>
                             </li>
                             <li>
                                 <Link href="/services/premium" className="text-white/80 hover:text-white transition-colors">
-                                    Binnen & Buiten Premium
+                                    Complete Glasreiniging
                                 </Link>
                             </li>
                             <li>

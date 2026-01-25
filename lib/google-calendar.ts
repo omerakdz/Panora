@@ -128,7 +128,7 @@ Bron: Website
   }
 }
 
-// UPDATED: Haal alle events op voor een datum en match met TIME_SLOTS
+// Haal alle events op voor een datum en match met TIME_SLOTS
 export async function getGoogleCalendarBookingsForDate(date: string): Promise<string[]> {
   try {
     const auth = getGoogleCalendarAuth();
@@ -161,21 +161,44 @@ export async function getGoogleCalendarBookingsForDate(date: string): Promise<st
         return;
       }
 
-      const start = new Date(event.start.dateTime);
-      const end = new Date(event.end.dateTime);
+      const eventStart = new Date(event.start.dateTime);
+      const eventEnd = new Date(event.end.dateTime);
       
-      const startTime = `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}`;
-      const endTime = `${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`;
+      const startTime = `${eventStart.getHours().toString().padStart(2, '0')}:${eventStart.getMinutes().toString().padStart(2, '0')}`;
+      const endTime = `${eventEnd.getHours().toString().padStart(2, '0')}:${eventEnd.getMinutes().toString().padStart(2, '0')}`;
       const eventTimeSlot = `${startTime} - ${endTime}`;
 
-      // Check of het event matcht met een van onze TIME_SLOTS
-      const matchedSlot = TIME_SLOTS.find(slot => slot === eventTimeSlot);
+      // Check of het event EXACT matcht met een van onze TIME_SLOTS (= klantafspraak)
+      const exactMatch = TIME_SLOTS.find(slot => slot === eventTimeSlot);
 
-      if (matchedSlot) {
-        console.log(`  ✓ Event "${event.summary}" (${eventTimeSlot}) matched!`);
-        bookedSlots.push(matchedSlot);
+      if (exactMatch) {
+        console.log(`  ✓ Event "${event.summary}" (${eventTimeSlot}) is een klantafspraak`);
+        if (!bookedSlots.includes(exactMatch)) {
+          bookedSlots.push(exactMatch);
+        }
       } else {
-        console.log(`  ⚠️ Event "${event.summary}" (${eventTimeSlot}) doesn't match our time slots`);
+        // Als het NIET exact matcht, check of het overlapt met TIME_SLOTS (= werkuren/busy time)
+        console.log(`  👤 Event "${event.summary}" (${eventTimeSlot}) is geen exacte match, check overlaps...`);
+        
+        TIME_SLOTS.forEach(slot => {
+          const { start, end } = parseTimeSlot(slot);
+          const [startHours, startMinutes] = start.split(':').map(Number);
+          const [endHours, endMinutes] = end.split(':').map(Number);
+          
+          const slotStart = new Date(date);
+          slotStart.setHours(startHours, startMinutes, 0, 0);
+          
+          const slotEnd = new Date(date);
+          slotEnd.setHours(endHours, endMinutes, 0, 0);
+
+          // Check of het event overlapt met deze timeslot
+          const overlaps = eventStart < slotEnd && eventEnd > slotStart;
+          
+          if (overlaps && !bookedSlots.includes(slot)) {
+            console.log(`    🔒 Blocking slot ${slot} (overlapt met "${event.summary}")`);
+            bookedSlots.push(slot);
+          }
+        });
       }
     });
 

@@ -217,22 +217,15 @@ export default function ContactPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Operating Hours */}
+                        {/* Bereikbaarheid */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Openingsuren</CardTitle>
+                                <CardTitle>Bereikbaarheid</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between">
-                                        <span className="font-semibold">Maandag - Vrijdag</span>
-                                        <span className="text-gray-600">09:00 - 17:00</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="font-semibold">Weekend</span>
-                                        <span className="text-gray-600">Gesloten</span>
-                                    </div>
-                                </div>
+                                <p className="text-gray-600">
+                                    We zijn <strong>24/7 bereikbaar</strong> voor al jouw vragen. Neem gerust contact met ons op via telefoon, WhatsApp of e-mail.
+                                </p>
                             </CardContent>
                         </Card>
                     </div>

@@ -46,11 +46,11 @@ export default function ConfirmationContent() {
 
     const getServiceType = () => {
         if (bookingDetails.interiorExteriorWindows > 0 && bookingDetails.exteriorWindows > 0) {
-            return "Binnen & Buiten Premium (gemengd)";
+            return "Complete Glasreiniging (gemengd)";
         } else if (bookingDetails.interiorExteriorWindows > 0) {
-            return "Binnen & Buiten Premium";
+            return "Complete Glasreiniging";
         } else {
-            return "Buiten Ramenwassen";
+            return "Buiten Glasreiniging";
         }
     };
 

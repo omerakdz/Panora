@@ -1,12 +1,12 @@
 [
   {
-    "id": "BK-1766506847390-me3wdk9ck",
-    "customerName": "TEST1",
+    "id": "BK-1769090022637-a09a8smnn",
+    "customerName": "testnaam",
     "customerEmail": "test@gmail.com",
-    "customerPhone": "+32 486 75 42 15",
-    "customerAddress": "straat400, 2500 Lier",
-    "date": "2025-12-30",
-    "time": "09:00 - 11:00",
+    "customerPhone": "0486505074",
+    "customerAddress": "straat400",
+    "date": "2026-01-29",
+    "time": "16:30 - 17:30",
     "propertyType": "appartement",
     "totalWindows": 10,
     "exteriorWindows": 5,
@@ -15,26 +15,26 @@
     "firstTimeInLong": false,
     "cleanFrames": false,
     "calculatedPrice": 35,
-    "customerNotes": "test mail",
-    "createdAt": "2025-12-23T16:20:47.390Z"
+    "customerNotes": "Test agenda ",
+    "createdAt": "2026-01-22T13:53:42.637Z"
   },
   {
-    "id": "BK-1766606544848-ybwue0ci2",
-    "customerName": "TESTESTEST",
+    "id": "BK-1769090083387-9z9rpeilc",
+    "customerName": "testnaam2",
     "customerEmail": "test@gmail.com",
     "customerPhone": "0486505074",
-    "customerAddress": "straat400, 2500 Lier",
-    "date": "2026-01-01",
-    "time": "15:00 - 17:00",
+    "customerAddress": "straat401",
+    "date": "2026-01-29",
+    "time": "15:00 - 16:00",
     "propertyType": "appartement",
-    "totalWindows": 12,
-    "exteriorWindows": 8,
-    "interiorExteriorWindows": 4,
+    "totalWindows": 10,
+    "exteriorWindows": 5,
+    "interiorExteriorWindows": 5,
     "hardToReach": false,
     "firstTimeInLong": false,
     "cleanFrames": false,
-    "calculatedPrice": 38,
-    "customerNotes": "u",
-    "createdAt": "2025-12-24T20:02:24.848Z"
+    "calculatedPrice": 35,
+    "customerNotes": "Test agenda 2 ",
+    "createdAt": "2026-01-22T13:54:43.387Z"
   }
 ]

@@ -12,7 +12,7 @@ export default function PremiumServicePage() {
                     <div className="max-w-3xl mx-auto text-center">
                         <Crown className="w-16 h-16 mx-auto mb-4" />
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Binnen & Buiten Premium
+                            Complete Glasreiniging
                         </h1>
                         <p className="text-xl text-white/90 mb-6">
                             Volledige behandeling binnen & buiten

@@ -21,6 +21,8 @@ export interface CalculatorData {
     customerPhone: string;
     customerEmail: string;
     customerAddress: string;
+    customerCity: string;
+    customerPostalCode: string;
     customerNotes: string;
 }
 
@@ -31,6 +33,8 @@ export interface BookingDetails {
     customerEmail: string;
     customerPhone: string;
     customerAddress: string;
+    customerCity: string;
+    customerPostalCode: string;
     selectedDate: string;
     selectedTime: string;
     calculatedPrice: number;

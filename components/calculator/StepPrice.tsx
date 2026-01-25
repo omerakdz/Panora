@@ -48,53 +48,53 @@ export default function StepPrice({ data, updateData }: StepPriceProps) {
     ]);
 
     return (
-        <div className="space-y-6 text-center">
-            <div className="bg-gradient-to-br from-[#044D8E] to-[#1792D0] text-white rounded-2xl p-8 max-w-md mx-auto">
-                <p className="text-sm uppercase tracking-wide mb-2 opacity-90">Jouw richtprijs</p>
-                <div className="text-5xl font-bold mb-2 flex items-center justify-center gap-3">
+        <div className="space-y-3 md:space-y-6 text-center">
+            <div className="bg-gradient-to-br from-[#044D8E] to-[#1792D0] text-white rounded-xl md:rounded-2xl p-4 md:p-8 max-w-md mx-auto">
+                <p className="text-xs uppercase tracking-wide mb-1 md:mb-2 opacity-90">Jouw richtprijs</p>
+                <div className="text-3xl md:text-5xl font-bold mb-1 md:mb-2 flex items-center justify-center gap-2 md:gap-3">
                     {isCalculating ? (
-                        <Loader2 className="w-12 h-12 animate-spin" />
+                        <Loader2 className="w-10 h-10 md:w-12 md:h-12 animate-spin" />
                     ) : (
                         <>€{data.calculatedPrice.toFixed(2)}</>
                     )}
                 </div>
-                <p className="text-sm opacity-90">incl. BTW</p>
+                <p className="text-xs md:text-sm opacity-90">incl. BTW</p>
             </div>
 
-            <div className="bg-[#9FCAE3]/10 rounded-lg p-6 max-w-md mx-auto">
-                <h4 className="font-semibold text-[#044D8E] mb-4">Samenvatting</h4>
-                <div className="space-y-3 text-left">
+            <div className="bg-[#9FCAE3]/10 rounded-lg p-3 md:p-6 max-w-md mx-auto">
+                <h4 className="font-semibold text-[#044D8E] mb-2 md:mb-4 text-xs md:text-base">Samenvatting</h4>
+                <div className="space-y-1.5 md:space-y-3 text-left">
                     {data.exteriorWindows > 0 && (
-                        <div className="flex items-center gap-2 text-[#0F61AC]">
-                            <Check className="w-5 h-5 text-[#1792D0]" />
+                        <div className="flex items-center gap-2 text-[#0F61AC] text-sm md:text-base">
+                            <Check className="w-4 h-4 md:w-5 md:h-5 text-[#1792D0] flex-shrink-0" />
                             <span>
                                 {data.exteriorWindows} buitenramen ({SERVICE_TYPES.exterior.priceDisplay}/raam)
                             </span>
                         </div>
                     )}
                     {data.interiorExteriorWindows > 0 && (
-                        <div className="flex items-center gap-2 text-[#0F61AC]">
-                            <Check className="w-5 h-5 text-[#1792D0]" />
+                        <div className="flex items-center gap-2 text-[#0F61AC] text-sm md:text-base">
+                            <Check className="w-4 h-4 md:w-5 md:h-5 text-[#1792D0] flex-shrink-0" />
                             <span>
                                 {data.interiorExteriorWindows} binnen + buiten ramen ({SERVICE_TYPES.premium.priceDisplay}/raam)
                             </span>
                         </div>
                     )}
                     {data.hardToReach && (
-                        <div className="flex items-center gap-2 text-[#0F61AC]">
-                            <Check className="w-5 h-5 text-[#1792D0]" />
+                        <div className="flex items-center gap-2 text-[#0F61AC] text-sm md:text-base">
+                            <Check className="w-4 h-4 md:w-5 md:h-5 text-[#1792D0] flex-shrink-0" />
                             <span>Moeilijk bereikbaar (+15%)</span>
                         </div>
                     )}
                     {data.firstTimeInLong && (
-                        <div className="flex items-center gap-2 text-[#0F61AC]">
-                            <Check className="w-5 h-5 text-[#1792D0]" />
+                        <div className="flex items-center gap-2 text-[#0F61AC] text-sm md:text-base">
+                            <Check className="w-4 h-4 md:w-5 md:h-5 text-[#1792D0] flex-shrink-0" />
                             <span>Eerste keer in lange tijd (+€20)</span>
                         </div>
                     )}
                     {data.cleanFrames && (
-                        <div className="flex items-center gap-2 text-[#0F61AC]">
-                            <Check className="w-5 h-5 text-[#1792D0]" />
+                        <div className="flex items-center gap-2 text-[#0F61AC] text-sm md:text-base">
+                            <Check className="w-4 h-4 md:w-5 md:h-5 text-[#1792D0] flex-shrink-0" />
                             <span>Kozijnen reinigen (+€25)</span>
                         </div>
                     )}

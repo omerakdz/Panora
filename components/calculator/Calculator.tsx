@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import StepPropertyType from "./StepPropertyType";
 import StepWindows from "./StepWindows";
-import StepExtras from "./StepExtras";
 import StepPrice from "./StepPrice";
 import StepSchedule from "./StepSchedule";
 import StepCustomerDetails from "./StepCustomerDetails";
@@ -14,7 +13,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CalculatorData } from "@/types";
 
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 5;
 
 export default function Calculator() {
     const [currentStep, setCurrentStep] = useState(1);
@@ -33,6 +32,8 @@ export default function Calculator() {
         customerPhone: "",
         customerEmail: "",
         customerAddress: "",
+        customerCity: "",
+        customerPostalCode: "",
         customerNotes: "",
     });
 
@@ -62,17 +63,17 @@ export default function Calculator() {
                     data.exteriorWindows + data.interiorExteriorWindows === data.totalWindows
                 );
             case 3:
-                return true; // Extras are optional
-            case 4:
                 return true; // Price is shown, always can proceed
-            case 5:
+            case 4:
                 return data.selectedDate !== null && data.selectedTime !== "";
-            case 6:
+            case 5:
                 return (
                     data.customerName !== "" &&
                     data.customerPhone !== "" &&
                     data.customerEmail !== "" &&
-                    data.customerAddress !== ""
+                    data.customerAddress !== "" &&
+                    data.customerCity !== "" &&
+                    data.customerPostalCode !== ""
                 );
             default:
                 return false;
@@ -86,12 +87,10 @@ export default function Calculator() {
             case 2:
                 return "Aantal ramen";
             case 3:
-                return "Extra opties";
-            case 4:
                 return "Jouw prijs";
-            case 5:
+            case 4:
                 return "Kies datum & tijd";
-            case 6:
+            case 5:
                 return "Jouw gegevens";
             default:
                 return "";
@@ -105,12 +104,10 @@ export default function Calculator() {
             case 2:
                 return <StepWindows data={data} updateData={updateData} />;
             case 3:
-                return <StepExtras data={data} updateData={updateData} />;
-            case 4:
                 return <StepPrice data={data} updateData={updateData} />;
-            case 5:
+            case 4:
                 return <StepSchedule data={data} updateData={updateData} />;
-            case 6:
+            case 5:
                 return <StepCustomerDetails data={data} updateData={updateData} nextStep={nextStep} />;
             default:
                 return null;
@@ -122,50 +119,50 @@ export default function Calculator() {
     return (
         <div id="calculator" className="w-full">
             <Card className="border-[#9FCAE3] shadow-lg">
-                <CardContent className="p-6 md:p-8">
+                <CardContent className="p-3 md:p-6">
                     {/* Progress Bar */}
-                    <div className="mb-6">
-                        <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-[#0F61AC] font-medium">
+                    <div className="mb-3 md:mb-4">
+                        <div className="flex justify-between items-center mb-1.5">
+                            <span className="text-xs md:text-sm text-[#0F61AC] font-medium">
                                 Stap {currentStep} van {TOTAL_STEPS}
                             </span>
-                            <span className="text-sm text-[#0F61AC] font-medium">
+                            <span className="text-xs md:text-sm text-[#0F61AC] font-medium">
                                 {Math.round(progress)}%
                             </span>
                         </div>
-                        <Progress value={progress} className="h-2" />
+                        <Progress value={progress} className="h-1.5 md:h-2" />
                     </div>
 
                     {/* Step Title */}
-                    <h3 className="text-2xl font-bold text-[#044D8E] mb-6 text-center">
+                    <h3 className="text-lg md:text-2xl font-bold text-[#044D8E] mb-3 md:mb-4 text-center">
                         {getStepTitle()}
                     </h3>
 
                     {/* Step Content */}
-                    <div className="min-h-[300px]">{renderStep()}</div>
+                    <div className="min-h-[150px] md:min-h-[200px]">{renderStep()}</div>
 
                     {/* Navigation Buttons */}
-                    {currentStep < 6 && (
-                        <div className="flex justify-between mt-8 pt-6 border-t border-[#9FCAE3]">
-                            <Button
-                                onClick={prevStep}
-                                disabled={currentStep === 1}
-                                variant="outline"
-                                className="border-[#044D8E] text-[#044D8E] disabled:opacity-50"
-                            >
-                                <ChevronLeft className="w-4 h-4 mr-2" />
-                                Vorige
-                            </Button>
+                    <div className="flex justify-between mt-4 md:mt-5 pt-3 md:pt-4 border-t border-[#9FCAE3]">
+                        <Button
+                            onClick={prevStep}
+                            disabled={currentStep === 1}
+                            variant="outline"
+                            className="border-[#044D8E] text-[#044D8E] disabled:opacity-50 text-sm md:text-base h-9 md:h-10"
+                        >
+                            <ChevronLeft className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                            Vorige
+                        </Button>
+                        {currentStep < 5 && (
                             <Button
                                 onClick={nextStep}
-                                disabled={!canProceed() || currentStep === 6}
-                                className="bg-[#044D8E] hover:bg-[#0F61AC] disabled:opacity-50"
+                                disabled={!canProceed()}
+                                className="bg-[#044D8E] hover:bg-[#0F61AC] disabled:opacity-50 text-sm md:text-base h-9 md:h-10"
                             >
-                                {currentStep === 6 ? "Bevestig afspraak" : "Volgende"}
-                                {currentStep !== 6 && <ChevronRight className="w-4 h-4 ml-2" />}
+                                Volgende
+                                <ChevronRight className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
                             </Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </CardContent>
             </Card>
         </div>

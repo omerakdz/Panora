@@ -11,7 +11,7 @@ export default function ExteriorServicePage() {
                 <div className="container mx-auto px-4">
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Buiten Ramenwassen
+                            Buiten Glasreiniging
                         </h1>
                         <p className="text-xl text-white/90 mb-6">
                             Strakke ramen zonder strepen

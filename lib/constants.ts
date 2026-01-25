@@ -10,6 +10,30 @@ export const COMPANY = {
   region: "Gent + randgemeenten",
 };
 
+// Toegestane postcodes (Gent en max 20km radius)
+export const ALLOWED_POSTAL_CODES = [
+  '9000', // Gent centrum
+  '9030', // Mariakerke
+  '9031', // Drongen
+  '9032', // Wondelgem
+  '9040', // Sint-Amandsberg
+  '9041', // Oostakker
+  '9042', // Desteldonk
+  '9050', // Gentbrugge
+  '9051', // Sint-Denijs-Westrem
+  '9052', // Zwijnaarde
+  '9070', // Destelbergen (~5km)
+  '9080', // Lochristi (~10km)
+  '9090', // Melle (~7km)
+  '9230', // Wetteren (~15km)
+  '9270', // Laarne (~12km)
+  '9820', // Merelbeke (~5km)
+  '9830', // Sint-Martens-Latem (~8km)
+  '9831', // Deurle (~15km)
+  '9840', // De Pinte (~8km)
+  '9940', // Evergem (~8km)
+];
+
 // Contact Information
 export const CONTACT = {
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
@@ -49,14 +73,14 @@ export function getPropertyTypeLabel(value: string): string {
 // Service Types
 export const SERVICE_TYPES = {
   exterior: {
-    name: "Buiten Ramenwassen",
+    name: "Buiten Glasreiniging",
     slug: "exterior",
     priceFrom: 2.5,
     priceDisplay: "€2,50",
     description: "Strakke ramen zonder strepen",
   },
   premium: {
-    name: "Binnen & Buiten Premium",
+    name: "Complete Glasreiniging",
     slug: "premium",
     priceFrom: 4.5,
     priceDisplay: "€4,50",
@@ -186,12 +210,14 @@ export const EMAIL_CONFIG = {
   internalEmail: process.env.INTERNAL_EMAIL,
 };
 
-// Available Time Slots
+// Available Time Slots (1 uur per dienst + 30 min reistijd = 1,5 uur per slot)
 export const TIME_SLOTS = [
-  '09:00 - 11:00',
-  '11:00 - 13:00',
-  '13:00 - 15:00',
-  '15:00 - 17:00',
+  '09:00 - 10:00',
+  '10:30 - 11:30',
+  '12:00 - 13:00',
+  '13:30 - 14:30',
+  '15:00 - 16:00',
+  '16:30 - 17:30',
 ];
 
 // ?Days to exclude?
@@ -209,9 +235,9 @@ export const CALENDAR_CONFIG = {
     end: parseInt(process.env.WORKING_HOURS_END || '17'), // 17:00
   },
   workingDays: [1, 2, 3, 4, 5], // Monday to Friday 
-  slotDuration: 120, // 2 hours per appointment
+  slotDuration: 90, // 1 uur dienst + 30 min reistijd = 90 minuten per slot
   maxBookingDays: 90, // Max days in advance for booking
-  slotsPerDay: parseInt(process.env.MAX_SLOTS_PER_DAY || '4'), // Max 4 appointments per day
+  slotsPerDay: parseInt(process.env.MAX_SLOTS_PER_DAY || '6'), // Max 6 appointments per day (was 4)
 };
 
 // Pricing Constants
@@ -225,5 +251,14 @@ export const PRICING = {
 
 // File path for storing bookings data
 export const BOOKINGS_FILE = path.join(process.cwd(), 'data', 'bookings.json');
+
+// Helper function to validate postal code
+export function isPostalCodeAllowed(postalCode: string): boolean {
+  return ALLOWED_POSTAL_CODES.includes(postalCode.trim());
+}
+
+export function getPostalCodeErrorMessage(): string {
+  return 'Helaas bedienen we momenteel alleen Gent en directe omstreken. Neem contact op voor vragen.';
+}
 
 

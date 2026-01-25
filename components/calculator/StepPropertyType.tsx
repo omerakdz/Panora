@@ -18,18 +18,18 @@ export default function StepPropertyType({ data, updateData }: StepPropertyTypeP
     ] as const;
 
     return (
-        <div className="space-y-4">
-            <p className="text-center text-[#0F61AC] mb-6">
+        <div className="space-y-2 md:space-y-3">
+            <p className="text-center text-[#0F61AC] text-xs md:text-base mb-2 md:mb-4">
                 Selecteer het type woning of gebouw
             </p>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-2 md:gap-3 grid-cols-1 md:grid-cols-2">
                 {propertyTypes.map(({ value, label, icon: Icon }) => (
                     <button
                         key={value}
                         onClick={() => updateData({ propertyType: value })}
                         className={`
-              p-6 rounded-lg border-2 transition-all
-              flex flex-col items-center justify-center gap-3
+              p-2 md:p-4 rounded-lg border-2 transition-all
+              flex flex-col items-center justify-center gap-1 md:gap-2
               hover:shadow-md
               ${data.propertyType === value
                                 ? "border-[#044D8E] bg-[#9FCAE3]/10 shadow-md"
@@ -38,11 +38,11 @@ export default function StepPropertyType({ data, updateData }: StepPropertyTypeP
             `}
                     >
                         <Icon
-                            className={`w-12 h-12 ${data.propertyType === value ? "text-[#044D8E]" : "text-[#0F61AC]"
+                            className={`w-5 h-5 md:w-8 md:h-8 ${data.propertyType === value ? "text-[#044D8E]" : "text-[#0F61AC]"
                                 }`}
                         />
                         <span
-                            className={`font-semibold ${data.propertyType === value ? "text-[#044D8E]" : "text-[#0F61AC]"
+                            className={`font-semibold text-xs md:text-sm ${data.propertyType === value ? "text-[#044D8E]" : "text-[#0F61AC]"
                                 }`}
                         >
                             {label}

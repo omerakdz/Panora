@@ -20,7 +20,7 @@ const Services = () => {
                             <h3 className="text-2xl font-semibold mb-3 text-[#044D8E]">{SERVICE_TYPES.exterior.name}</h3>
                             <p className="text-3xl font-bold text-[#1792D0] mb-4">Vanaf {SERVICE_TYPES.exterior.priceDisplay}<span className="text-sm font-normal text-[#0F61AC]">/raam</span></p>
                             <p className="text-[#0F61AC] mb-6">
-                                Strakke ramen zonder strepen. Osmose-techniek, bereik tot 9m, professioneel resultaat.
+                                Strakke ramen zonder strepen. Osmose-techniek, professioneel resultaat.
                             </p>
                             <Button asChild className="w-full bg-[#044D8E] hover:bg-[#0F61AC]">
                                 <Link href="/services/exterior">Zie direct jouw prijs voor buitenramen</Link>
@@ -46,8 +46,11 @@ const Services = () => {
                         <CardContent className="p-8">
                             <h3 className="text-2xl font-semibold mb-3 text-[#044D8E]">{SERVICE_TYPES.subscription.name}</h3>
                             <p className="text-3xl font-bold text-[#1792D0] mb-4">Vanaf €—<span className="text-sm font-normal text-[#0F61AC]">/maand</span></p>
+                            <div className="bg-[#9FCAE3]/20 border border-[#1792D0] rounded-lg px-4 py-2 mb-4">
+                                <p className="text-[#044D8E] font-semibold text-sm">🎉 10% korting op je vaste prijs</p>
+                            </div>
                             <p className="text-[#0F61AC] mb-6">
-                                1x/maand, 1x/2 maanden of 1x/kwartaal. Korting voor vaste klanten.
+                                1x/maand, 1x/2 maanden of 1x/kwartaal. Geniet als vaste klant van 10% korting.
                             </p>
                             <Button asChild variant="outline" className="w-full border-[#044D8E] text-[#044D8E] hover:bg-[#9FCAE3]/20">
                                 <Link href="/services/subscription">Vind jouw ideale vaste formule</Link>

@@ -34,7 +34,7 @@ export async function GET(request: Request) {
           available: false,
           slots: [],
           bookedSlots: [],
-          totalSlots: 4,
+          totalSlots: 6,
         },
         { status: 200 }
       );
@@ -44,12 +44,15 @@ export async function GET(request: Request) {
     const bookedSlotsFromFile = getBookedSlotsForDate(dateParam);
     console.log("🔒 Booked slots from file:", bookedSlotsFromFile);
 
-    // 2. Haal bookings uit Google Calendar (handmatige bookings)
+    // 2. Haal ALLE events uit Google Calendar
+    // Dit blokkeert automatisch:
+    // - Klantafspraken (events die exact matchen met TIME_SLOTS)
+    // - Werkuren/busy times (events die overlappen met TIME_SLOTS)
     let bookedSlotsFromCalendar: string[] = [];
     if (isGoogleCalendarConfigured()) {
       try {
         bookedSlotsFromCalendar = await getGoogleCalendarBookingsForDate(dateParam);
-        console.log("📅 Booked slots from Google Calendar:", bookedSlotsFromCalendar);
+        console.log("📅 Blocked slots from Google Calendar:", bookedSlotsFromCalendar);
       } catch (error) {
         console.warn("⚠️ Could not fetch Google Calendar events:", error);
       }
@@ -59,7 +62,7 @@ export async function GET(request: Request) {
     const allBookedSlots = Array.from(
       new Set([...bookedSlotsFromFile, ...bookedSlotsFromCalendar])
     );
-    console.log("🔒 Total booked slots (combined):", allBookedSlots);
+    console.log("🔒 Total blocked slots (combined):", allBookedSlots);
 
     // 4. Bereken beschikbare slots
     const availableSlots = getAvailableTimeSlots(date, allBookedSlots);
@@ -73,7 +76,7 @@ export async function GET(request: Request) {
         bookedSlots: allBookedSlots,
         bookedFromFile: bookedSlotsFromFile.length,
         bookedFromCalendar: bookedSlotsFromCalendar.length,
-        totalSlots: 4,
+        totalSlots: 6,
       },
       {
         status: 200,

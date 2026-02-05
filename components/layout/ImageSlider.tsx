@@ -36,8 +36,9 @@ const ImageSlider = ({ images }: ImageSliderProps) => {
                         src={images[currentIndex].src}
                         alt={images[currentIndex].alt}
                         fill
-                        className="object-cover"
+                        className="object-cover object-center"
                         priority
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                     />
                 </div>
             </div>

@@ -13,12 +13,22 @@ export default function HomePage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-[#9FCAE3]/30 to-white py-20 md:py-24 overflow-hidden">
-        {/* Wazige achtergrond foto */}
+        {/* Wazige achtergrond foto - Mobile */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 bg-cover bg-center opacity-10 md:hidden"
           style={{
             backgroundImage: 'url(/images/testImage1.png)',
             filter: 'blur(0.5px)',
+            transform: 'scale(1.1)'
+          }}
+        />
+
+        {/* Wazige achtergrond foto - Desktop */}
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10 hidden md:block"
+          style={{
+            backgroundImage: 'url(/images/BG-IMAGE.jpeg)',
+            filter: 'blur(0.2px)',
             transform: 'scale(1.1)'
           }}
         />
@@ -56,7 +66,12 @@ export default function HomePage() {
             <div className="text-center mb-12">
               <div className="mb-4 flex justify-center">
                 <span className="text-4xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-                  PANORA
+                  <img
+                    src="/images/LOGO_PANORA_TEXT.png"
+                    alt="PANORA"
+                    className="h-25 w-auto"
+                    style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+                  />
                 </span>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#044D8E]">
@@ -82,7 +97,12 @@ export default function HomePage() {
         <div className="container mx-auto px-4 text-center">
           <div className="mb-4 flex justify-center">
             <span className="text-4xl font-bold text-white">
-              PANORA
+              <img
+                src="/images/PANORA_LOGO_WHITE.png"
+                alt="PANORA"
+                className="h-25 w-auto"
+                style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+              />
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -102,8 +122,14 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="mb-4 flex justify-center">
             <span className="text-4xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-              PANORA
+              <img
+                src="/images/LOGO_PANORA_TEXT.png"
+                alt="PANORA"
+                className="h-25 w-auto"
+                style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+              />
             </span>
+
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#044D8E]">
             Voor & Na
@@ -143,7 +169,12 @@ export default function HomePage() {
         <div className="container mx-auto px-4 text-center">
           <div className="mb-4 flex justify-center">
             <span className="text-4xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-              PANORA
+              <img
+                src="/images/LOGO_PANORA_TEXT.png"
+                alt="PANORA"
+                className="h-25 w-auto"
+                style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+              />
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#044D8E]">

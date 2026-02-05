@@ -16,9 +16,14 @@ const Navbar = () => {
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-                            PANORA
-                        </span>
+                        <div className="flex items-center">
+                            <img
+                                src="/images/LOGO_PANORA_TEXT.png"
+                                alt="PANORA"
+                                className="h-15 w-auto"
+                                style={{ transform: "scale(2.9)", transformOrigin: "15px 28px" }}
+                            />
+                        </div>
                     </Link>
 
                     {/* Desktop Navigation */}

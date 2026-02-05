@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { getAvailableTimeSlots, isDateAvailable } from "@/lib/calendar";
 import { getBookedSlotsForDate } from "@/lib/bookings";
-import { getGoogleCalendarBookingsForDate, isGoogleCalendarConfigured } from "@/lib/google-calendar";
+import {
+  getGoogleCalendarBookingsForDate,
+  isGoogleCalendarConfigured,
+} from "@/lib/google-calendar";
 
 export async function GET(request: Request) {
   try {
@@ -13,7 +16,7 @@ export async function GET(request: Request) {
     if (!dateParam) {
       return NextResponse.json(
         { error: "Date parameter is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,7 +25,7 @@ export async function GET(request: Request) {
     if (isNaN(date.getTime())) {
       return NextResponse.json(
         { error: "Invalid date format" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,13 +39,13 @@ export async function GET(request: Request) {
           bookedSlots: [],
           totalSlots: 6,
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
-    // 1. Haal bookings uit JSON file (website bookings)
-    const bookedSlotsFromFile = getBookedSlotsForDate(dateParam);
-    console.log("🔒 Booked slots from file:", bookedSlotsFromFile);
+    // 1. Haal bookings uit Supabase (website bookings)
+    const bookedSlotsFromDB = await getBookedSlotsForDate(dateParam);
+    console.log("🔒 Booked slots from database:", bookedSlotsFromDB);
 
     // 2. Haal ALLE events uit Google Calendar
     // Dit blokkeert automatisch:
@@ -51,8 +54,12 @@ export async function GET(request: Request) {
     let bookedSlotsFromCalendar: string[] = [];
     if (isGoogleCalendarConfigured()) {
       try {
-        bookedSlotsFromCalendar = await getGoogleCalendarBookingsForDate(dateParam);
-        console.log("📅 Blocked slots from Google Calendar:", bookedSlotsFromCalendar);
+        bookedSlotsFromCalendar =
+          await getGoogleCalendarBookingsForDate(dateParam);
+        console.log(
+          "📅 Blocked slots from Google Calendar:",
+          bookedSlotsFromCalendar,
+        );
       } catch (error) {
         console.warn("⚠️ Could not fetch Google Calendar events:", error);
       }
@@ -60,7 +67,7 @@ export async function GET(request: Request) {
 
     // 3. Combineer beide bronnen (verwijder duplicaten)
     const allBookedSlots = Array.from(
-      new Set([...bookedSlotsFromFile, ...bookedSlotsFromCalendar])
+      new Set([...bookedSlotsFromDB, ...bookedSlotsFromCalendar]),
     );
     console.log("🔒 Total blocked slots (combined):", allBookedSlots);
 
@@ -74,22 +81,22 @@ export async function GET(request: Request) {
         available: availableSlots.length > 0,
         slots: availableSlots,
         bookedSlots: allBookedSlots,
-        bookedFromFile: bookedSlotsFromFile.length,
+        bookedFromDB: bookedSlotsFromDB.length,
         bookedFromCalendar: bookedSlotsFromCalendar.length,
         totalSlots: 6,
       },
       {
         status: 200,
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-        }
-      }
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+        },
+      },
     );
   } catch (error) {
     console.error("❌ Error checking availability:", error);
     return NextResponse.json(
       { error: "Failed to check availability" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -102,7 +109,7 @@ export async function POST(request: Request) {
     if (!startDate || !endDate) {
       return NextResponse.json(
         { error: "Start date and end date are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -112,21 +119,24 @@ export async function POST(request: Request) {
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
       return NextResponse.json(
         { error: "Invalid date format" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const availability: Record<string, { available: boolean; slotsCount: number }> = {};
-    
+    const availability: Record<
+      string,
+      { available: boolean; slotsCount: number }
+    > = {};
+
     const currentDate = new Date(start);
     while (currentDate <= end) {
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = currentDate.toISOString().split("T")[0];
       const dateAvailable = isDateAvailable(currentDate);
-      
+
       if (dateAvailable) {
-        const bookedSlots = getBookedSlotsForDate(dateStr);
+        const bookedSlots = await getBookedSlotsForDate(dateStr);
         const availableSlots = getAvailableTimeSlots(currentDate, bookedSlots);
-        
+
         availability[dateStr] = {
           available: availableSlots.length > 0,
           slotsCount: availableSlots.length,
@@ -137,7 +147,7 @@ export async function POST(request: Request) {
           slotsCount: 0,
         };
       }
-      
+
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
@@ -147,13 +157,13 @@ export async function POST(request: Request) {
         endDate,
         availability,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error getting availability range:", error);
     return NextResponse.json(
       { error: "Failed to get availability" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

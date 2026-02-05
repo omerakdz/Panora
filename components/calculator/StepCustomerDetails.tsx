@@ -22,6 +22,7 @@ export default function StepCustomerDetails({
 }: StepCustomerDetailsProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [postalCodeError, setPostalCodeError] = useState("");
+    const [showContactLink, setShowContactLink] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +30,9 @@ export default function StepCustomerDetails({
 
         // Valideer postcode voordat we submitten
         if (!isPostalCodeAllowed(data.customerPostalCode)) {
-            setPostalCodeError(getPostalCodeErrorMessage());
+            const errorInfo = getPostalCodeErrorMessage(data.calculatedPrice);
+            setPostalCodeError(errorInfo.message);
+            setShowContactLink(errorInfo.showContactLink);
             return;
         }
 
@@ -177,13 +180,24 @@ export default function StepCustomerDetails({
                         onChange={(e) => {
                             updateData({ customerPostalCode: e.target.value });
                             setPostalCodeError(""); // Clear error when user types
+                            setShowContactLink(false);
                         }}
                         className={`border-[#9FCAE3] focus:border-[#044D8E] ${postalCodeError ? 'border-red-500' : ''}`}
                         placeholder="9000"
                         required
                     />
                     {postalCodeError && (
-                        <p className="text-red-600 text-sm mt-1">{postalCodeError}</p>
+                        <div className="text-red-600 text-sm mt-1">
+                            <p>{postalCodeError}</p>
+                            {showContactLink && (
+                                <a
+                                    href="/contact"
+                                    className="text-[#044D8E] underline hover:text-[#0F61AC] font-semibold mt-1 inline-block"
+                                >
+                                    Neem contact met ons op →
+                                </a>
+                            )}
+                        </div>
                     )}
                 </div>
                 <div>

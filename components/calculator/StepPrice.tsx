@@ -58,7 +58,9 @@ export default function StepPrice({ data, updateData }: StepPriceProps) {
                         <>€{data.calculatedPrice.toFixed(2)}</>
                     )}
                 </div>
-                <p className="text-xs md:text-sm opacity-90">incl. BTW</p>
+                <p className="text-xs md:text-sm opacity-90">
+                    {data.propertyType === "kantoor" ? "excl. BTW" : "incl. BTW"}
+                </p>
             </div>
 
             <div className="bg-[#9FCAE3]/10 rounded-lg p-3 md:p-6 max-w-md mx-auto">

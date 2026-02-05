@@ -20,7 +20,12 @@ export function calculatePrice(data: CalculatorData): number {
     basePrice += PRICING.cleanFramesExtra;
   }
 
-  return Math.round(basePrice * 100) / 100; 
+  // For kantoor/handelszaak,  excluding BTW (divide by 1.21)
+  if (data.propertyType === "kantoor") {
+    basePrice = basePrice / 1.21;
+  }
+
+  return Math.round(basePrice * 100) / 100;
 }
 
 export { PRICING };

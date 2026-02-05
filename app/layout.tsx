@@ -28,9 +28,9 @@ export const metadata = {
   title: `${COMPANY.name} - ${COMPANY.tagline}`,
   description: UI_TEXT.hero.subtitle,
   icons: {
-    icon: '/images/panora-logo.png',
-    shortcut: '/images/panora-logo.png',
-    apple: '/images/panora-logo.png',
+    icon: '/images/PANORA_LOGO_1_1400x1400.png',
+    shortcut: '/images/PANORA_LOGO_1_1400x1400.png',
+    apple: '/images/PANORA_LOGO_1_1400x1400.png',
   },
 };
 

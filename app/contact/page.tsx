@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Phone, MessageCircle, MapPin } from "lucide-react";
-import { CONTACT } from "@/lib/constants";
+import { Mail, Phone, MessageCircle, MapPin, Building2 } from "lucide-react";
+import { CONTACT, COMPANY } from "@/lib/constants";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -214,6 +214,16 @@ export default function ContactPage() {
                                         <p className="text-gray-600">Gent + randgemeenten</p>
                                     </div>
                                 </div>
+
+                                {COMPANY.vatNumber && (
+                                    <div className="flex items-start gap-3">
+                                        <Building2 className="w-5 h-5 text-[#044D8E] mt-1" />
+                                        <div>
+                                            <p className="font-semibold">BTW-nummer</p>
+                                            <p className="text-gray-600">{COMPANY.vatNumber}</p>
+                                        </div>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
 

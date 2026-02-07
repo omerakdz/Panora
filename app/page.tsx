@@ -70,7 +70,7 @@ export default function HomePage() {
                     src="/images/LOGO_PANORA_TEXT.png"
                     alt="PANORA"
                     className="h-25 w-auto"
-                    style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+                    style={{ transform: "scale(2.8)", transformOrigin: "center" }}
                   />
                 </span>
               </div>

@@ -126,9 +126,12 @@ const Footer = () => {
 
                 {/* Bottom Bar */}
                 <div className="border-t border-white/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-white/60 text-sm">
-                        © {new Date().getFullYear()} PANORA. Alle rechten voorbehouden.
-                    </p>
+                    <div className="text-white/60 text-sm text-center md:text-left">
+                        <p>© {new Date().getFullYear()} PANORA. Alle rechten voorbehouden.</p>
+                        {COMPANY.vatNumber && (
+                            <p className="mt-1">BTW: {COMPANY.vatNumber}</p>
+                        )}
+                    </div>
                     <div className="flex gap-6 text-sm">
                         <Link href="/privacy" className="text-white/60 hover:text-white transition-colors">
                             Privacy Policy

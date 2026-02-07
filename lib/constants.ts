@@ -7,6 +7,7 @@ export const COMPANY = {
   description:
     "Professionele ramenwas in Gent. Transparant, snel en betrouwbaar.",
   region: "Gent + randgemeenten",
+  vatNumber: process.env.NEXT_PUBLIC_VAT_NUMBER,
 };
 
 // Toegestane postcodes (Gent en max 20km radius)

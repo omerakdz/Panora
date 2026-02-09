@@ -6,8 +6,11 @@ import {
   generateInternalEmailText,
 } from "@/lib/mail";
 import nodemailer from "nodemailer";
-
-
+import {
+  rateLimit,
+  getClientIp,
+  createRateLimitResponse,
+} from "@/lib/rate-limit";
 
 const EMAIL_CONFIG = {
   from: process.env.EMAIL_FROM || "PANORA <matija@panora.be>",
@@ -15,19 +18,23 @@ const EMAIL_CONFIG = {
 };
 
 export async function POST(request: Request) {
+  // Rate limiting: 10 emails per hour per IP
+  const ip = getClientIp(request);
+  const rateLimitResult = rateLimit(ip, {
+    id: "api:email",
+    limit: 10,
+    window: 60 * 60 * 1000, // 1 hour
+  });
+
+  if (!rateLimitResult) {
+    console.warn("⚠️ Rate limit exceeded for email from IP:", ip);
+    return createRateLimitResponse(Date.now() + 60 * 60 * 1000);
+  }
+
   try {
     const data = await request.json();
 
     console.log("📧 Email API called for:", data.customerName);
-
-     console.log("🔧 SMTP Config:", {
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE,
-      user: process.env.SMTP_USER,
-      passwordLength: process.env.SMTP_PASSWORD?.length,
-      passwordFirstChars: process.env.SMTP_PASSWORD?.substring(0, 4) + '...',
-    });
 
     // Validate required fields
     if (
@@ -40,7 +47,7 @@ export async function POST(request: Request) {
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +66,7 @@ export async function POST(request: Request) {
     // Create Nodemailer transporter
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '465'),
+      port: parseInt(process.env.SMTP_PORT || "465"),
       secure: true, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER,
@@ -71,7 +78,7 @@ export async function POST(request: Request) {
     await transporter.sendMail({
       from: EMAIL_CONFIG.from,
       to: data.customerEmail,
-      subject: `Bevestiging Afspraak - PANORA - ${new Date(data.selectedDate).toLocaleDateString('nl-BE')}`,
+      subject: `Bevestiging Afspraak - PANORA - ${new Date(data.selectedDate).toLocaleDateString("nl-BE")}`,
       text: customerEmailText,
       html: customerEmailHTML,
     });
@@ -80,12 +87,10 @@ export async function POST(request: Request) {
     await transporter.sendMail({
       from: EMAIL_CONFIG.from,
       to: EMAIL_CONFIG.internalEmail,
-      subject: `🔔 Nieuwe Boeking - ${data.customerName} - ${new Date(data.selectedDate).toLocaleDateString('nl-BE')}`,
+      subject: `🔔 Nieuwe Boeking - ${data.customerName} - ${new Date(data.selectedDate).toLocaleDateString("nl-BE")}`,
       text: internalEmailText,
       html: internalEmailHTML,
     });
-
-    
 
     console.log("✅ Emails sent successfully");
     console.log("Customer email sent to:", data.customerEmail);
@@ -96,13 +101,13 @@ export async function POST(request: Request) {
         success: true,
         message: "Emails sent successfully",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error sending emails:", error);
     return NextResponse.json(
       { error: "Failed to send emails" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,4 +1,5 @@
 import { Inter, Montserrat, Poppins } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -38,6 +39,20 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
   return (
     <html lang="nl" className={`${inter.variable} ${montserrat.variable} ${poppins.variable}`}>
       <body className={inter.className}>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17651153841"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17651153841');
+          `}
+        </Script>
+
         <Navbar />
         {children}
         <Footer />

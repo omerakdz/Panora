@@ -5,12 +5,38 @@ import {
   addToGoogleCalendar,
   isGoogleCalendarConfigured,
 } from "@/lib/google-calendar";
+import {
+  rateLimit,
+  getClientIp,
+  createRateLimitResponse,
+} from "@/lib/rate-limit";
+import {
+  sanitizeBookingData,
+  isValidEmail,
+  isValidPhone,
+} from "@/lib/sanitize";
 
 export async function POST(request: Request) {
+  // Rate limiting: 5 bookings per hour per IP
+  const ip = getClientIp(request);
+  const rateLimitResult = rateLimit(ip, {
+    id: "api:booking",
+    limit: 5,
+    window: 60 * 60 * 1000, // 1 hour
+  });
+
+  if (!rateLimitResult) {
+    console.warn("⚠️ Rate limit exceeded for booking from IP:", ip);
+    return createRateLimitResponse(Date.now() + 60 * 60 * 1000);
+  }
+
   console.log("🔵 Book appointment API called");
 
   try {
-    const data = await request.json();
+    const rawData = await request.json();
+
+    // Sanitize all user input
+    const data = sanitizeBookingData(rawData);
 
     console.log("📝 Booking data received:", {
       customerName: data.customerName,
@@ -38,6 +64,24 @@ export async function POST(request: Request) {
       });
       return NextResponse.json(
         { error: "Missing required fields" },
+        { status: 400 },
+      );
+    }
+
+    // Email validation
+    if (!isValidEmail(data.customerEmail)) {
+      console.error("❌ Invalid email format:", data.customerEmail);
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 },
+      );
+    }
+
+    // Phone validation
+    if (!isValidPhone(data.customerPhone)) {
+      console.error("❌ Invalid phone format:", data.customerPhone);
+      return NextResponse.json(
+        { error: "Invalid phone number" },
         { status: 400 },
       );
     }

@@ -1,23 +1,72 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import {
+  rateLimit,
+  getClientIp,
+  createRateLimitResponse,
+} from "@/lib/rate-limit";
+import {
+  sanitizeText,
+  sanitizeEmail,
+  sanitizePhone,
+  isValidEmail,
+  isValidPhone,
+  escapeHtml,
+} from "@/lib/sanitize";
 
 export async function POST(request: Request) {
+  // Rate limiting: 3 requests per 10 minutes per IP
+  const ip = getClientIp(request);
+  const rateLimitResult = rateLimit(ip, {
+    id: "api:contact",
+    limit: 3,
+    window: 10 * 60 * 1000, // 10 minutes
+  });
+
+  if (!rateLimitResult) {
+    console.warn("⚠️ Rate limit exceeded for IP:", ip);
+    return createRateLimitResponse(Date.now() + 10 * 60 * 1000);
+  }
+
   try {
-    const { name, email, phone, message } = await request.json();
+    const rawData = await request.json();
+
+    // Sanitize inputs
+    const name = sanitizeText(rawData.name || "");
+    const email = sanitizeEmail(rawData.email || "");
+    const phone = sanitizePhone(rawData.phone || "");
+    const message = sanitizeText(rawData.message || "");
 
     console.log("📧 Contact form submission:", { name, email, phone });
 
+    // Validation
     if (!name || !email || !phone || !message) {
       return NextResponse.json(
         { error: "Alle velden zijn verplicht" },
-        { status: 400 }
+        { status: 400 },
+      );
+    }
+
+    // Email validation
+    if (!isValidEmail(email)) {
+      return NextResponse.json(
+        { error: "Ongeldig e-mailadres" },
+        { status: 400 },
+      );
+    }
+
+    // Phone validation
+    if (!isValidPhone(phone)) {
+      return NextResponse.json(
+        { error: "Ongeldig telefoonnummer" },
+        { status: 400 },
       );
     }
 
     //  transporter
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '465'),
+      port: parseInt(process.env.SMTP_PORT || "465"),
       secure: true,
       auth: {
         user: process.env.SMTP_USER,
@@ -28,7 +77,7 @@ export async function POST(request: Request) {
     await transporter.sendMail({
       from: `PANORA Website <${process.env.SMTP_USER}>`,
       to: process.env.INTERNAL_EMAIL,
-      subject: `📬 Nieuw Contactformulier - ${name}`,
+      subject: `📬 Nieuw Contactformulier - ${escapeHtml(name)}`,
       html: `
         <!DOCTYPE html>
         <html lang="nl">
@@ -68,26 +117,26 @@ export async function POST(request: Request) {
                         <tr>
                           <td style="padding: 15px 0; border-bottom: 1px solid #e9ecef;">
                             <strong style="color: #044D8E; display: block; margin-bottom: 5px;">👤 Naam</strong>
-                            <span style="color: #0F61AC; font-size: 16px;">${name}</span>
+                            <span style="color: #0F61AC; font-size: 16px;">${escapeHtml(name)}</span>
                           </td>
                         </tr>
                         <tr>
                           <td style="padding: 15px 0; border-bottom: 1px solid #e9ecef;">
                             <strong style="color: #044D8E; display: block; margin-bottom: 5px;">📧 Email</strong>
-                            <a href="mailto:${email}" style="color: #1792D0; font-size: 16px; text-decoration: none;">${email}</a>
+                            <a href="mailto:${escapeHtml(email)}" style="color: #1792D0; font-size: 16px; text-decoration: none;">${escapeHtml(email)}</a>
                           </td>
                         </tr>
                         <tr>
                           <td style="padding: 15px 0; border-bottom: 1px solid #e9ecef;">
                             <strong style="color: #044D8E; display: block; margin-bottom: 5px;">📱 Telefoon</strong>
-                            <a href="tel:${phone}" style="color: #1792D0; font-size: 16px; text-decoration: none;">${phone}</a>
+                            <a href="tel:${escapeHtml(phone)}" style="color: #1792D0; font-size: 16px; text-decoration: none;">${escapeHtml(phone)}</a>
                           </td>
                         </tr>
                         <tr>
                           <td style="padding: 15px 0;">
                             <strong style="color: #044D8E; display: block; margin-bottom: 10px;">💬 Bericht</strong>
                             <div style="background-color: #ffffff; padding: 15px; border-radius: 5px; border-left: 4px solid #1792D0;">
-                              <p style="margin: 0; color: #0F61AC; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+                              <p style="margin: 0; color: #0F61AC; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(message)}</p>
                             </div>
                           </td>
                         </tr>
@@ -146,9 +195,6 @@ Dit bericht is verzonden via het contactformulier op panora.be
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("❌ Error sending contact email:", error);
-    return NextResponse.json(
-      { error: "Fout bij verzenden" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Fout bij verzenden" }, { status: 500 });
   }
 }

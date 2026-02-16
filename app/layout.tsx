@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import StickyCTA from "@/components/layout/stickyCTA";
+import CookieConsent from "@/components/layout/CookieConsent";
 import { COMPANY, UI_TEXT } from "@/lib/constants";
 
 const inter = Inter({
@@ -57,6 +58,7 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         {children}
         <Footer />
         <StickyCTA />
+        <CookieConsent />
       </body>
     </html>
   );

@@ -132,9 +132,12 @@ const Footer = () => {
                             <p className="mt-1">BTW: {COMPANY.vatNumber}</p>
                         )}
                     </div>
-                    <div className="flex gap-6 text-sm">
+                    <div className="flex flex-wrap gap-4 md:gap-6 text-sm justify-center md:justify-end">
                         <Link href="/privacy" className="text-white/60 hover:text-white transition-colors">
                             Privacy Policy
+                        </Link>
+                        <Link href="/cookies" className="text-white/60 hover:text-white transition-colors">
+                            Cookiebeleid
                         </Link>
                         <Link href="/terms" className="text-white/60 hover:text-white transition-colors">
                             Algemene Voorwaarden

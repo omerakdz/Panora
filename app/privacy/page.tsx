@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CONTACT } from "@/lib/constants";
 
 export const metadata = {
     title: "Privacybeleid - PANORA",
@@ -52,7 +53,7 @@ export default function PrivacyPage() {
                         <div className="bg-gray-50 p-6 rounded-lg">
                             <p className="text-gray-700 mb-2"><strong>Bedrijfsnaam:</strong> PANORA</p>
                             <p className="text-gray-700 mb-2"><strong>E-mail:</strong> info@panora.be</p>
-                            <p className="text-gray-700 mb-2"><strong>Telefoon:</strong> +32 465 91 51 26</p>
+                            <p className="text-gray-700 mb-2"><strong>Telefoon:</strong> {CONTACT.phoneDisplay}</p>
                             <p className="text-gray-700"><strong>Locatie:</strong> Gent en randgemeenten</p>
                         </div>
                     </section>

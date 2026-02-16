@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CONTACT } from "@/lib/constants";
 
 export const metadata = {
     title: "Algemene Voorwaarden - PANORA",
@@ -292,7 +293,7 @@ export default function TermsPage() {
                         <div className="bg-gradient-to-r from-[#044D8E] to-[#0F61AC] text-white p-6 rounded-lg">
                             <p className="mb-2"><strong>PANORA</strong></p>
                             <p className="mb-2"><strong>E-mail:</strong> info@panora.be</p>
-                            <p className="mb-2"><strong>Telefoon:</strong> +32 465 91 51 26</p>
+                            <p className="mb-2"><strong>Telefoon:</strong> {CONTACT.phoneDisplay}</p>
                             <p><strong>Website:</strong> www.panora.be</p>
                         </div>
                     </section>

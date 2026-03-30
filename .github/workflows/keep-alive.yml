@@ -1,0 +1,18 @@
+name: Keep Supabase Active
+
+on:
+  schedule:
+    # Elke woensdag om 12:00 UTC
+    - cron: "0 12 * * 3"
+  workflow_dispatch: # Handmatig kunnen uitvoeren
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keep-alive endpoint
+        run: |
+          curl -f https://jouw-website.vercel.app/api/keep-alive || exit 1
+
+      - name: Log success
+        run: echo "Database keep-alive ping successful!"

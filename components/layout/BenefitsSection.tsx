@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Clock, Droplets, FileCheck, Sparkles } from "lucide-react";
+import { CheckCircle2, Clock, Droplets, FileCheck, Sparkles, Shield } from "lucide-react";
 import { motion } from "motion/react";
 
 const BenefitsSection = () => {
@@ -8,52 +8,76 @@ const BenefitsSection = () => {
         {
             icon: CheckCircle2,
             title: "Transparante prijs",
-            desc: "Direct duidelijkheid"
+            desc: "Weet vooraf precies wat je betaalt",
+            color: "bg-emerald-50 text-emerald-600"
         },
         {
             icon: Clock,
-            title: "Snelle beschikbaarheid",
-            desc: "Snel ingepland"
+            title: "Snel ingepland",
+            desc: "Binnen 48 uur beschikbaar",
+            color: "bg-blue-50 text-blue-600"
         },
         {
             icon: Droplets,
             title: "Osmose-techniek",
-            desc: "Streeploos resultaat"
+            desc: "Gedemineraliseerd water voor perfecte resultaten",
+            color: "bg-cyan-50 text-cyan-600"
         },
         {
-            icon: FileCheck,
-            title: "Digitale bevestiging",
-            desc: "Alles digitaal"
+            icon: Shield,
+            title: "Volledig verzekerd",
+            desc: "Beschermd tegen eventuele schade",
+            color: "bg-violet-50 text-violet-600"
         },
         {
             icon: Sparkles,
             title: "Streeploos resultaat",
-            desc: "Perfecte afwerking",
-            span: "col-span-2 md:col-span-1"
+            desc: "Gegarandeerde perfecte afwerking",
+            color: "bg-amber-50 text-amber-600"
         }
     ];
 
     return (
-        <section className="py-16 bg-white">
+        <section className="py-20 bg-white border-y border-slate-100">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8">
+                <motion.div
+                    className="text-center mb-12"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <img src="/images/panora-logo.png" alt="PANORA Logo" className="mx-auto  h-20" />
+                    <h2 className="text-2xl md:text-3xl font-bold text-[#044D8E] mb-3">
+                        Waarom kiezen voor PANORA?
+                    </h2>
+                    <p className="text-slate-600">Professionele service waar u op kunt rekenen</p>
+                </motion.div>
+
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
                     {benefits.map((benefit, index) => {
                         const Icon = benefit.icon;
+                        const borderColors = [
+                            'border-2 border-emerald-200',
+                            'border-2 border-blue-200',
+                            'border-2 border-cyan-200',
+                            'border-2 border-violet-200',
+                            'border-2 border-amber-200'
+                        ];
                         return (
                             <motion.div
                                 key={benefit.title}
-                                className={`flex flex-col items-center text-center ${benefit.span || ""}`}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
+                                className={`group relative bg-white ${borderColors[index]} rounded-2xl p-6 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300 hover:-translate-y-1`}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                                whileHover={{ scale: 1.05 }}
                             >
-                                <div className="w-16 h-16 bg-[#9FCAE3]/20 rounded-full flex items-center justify-center mb-4">
-                                    <Icon className="w-8 h-8 text-[#044D8E]" />
+                                <div className={`w-12 h-12 ${benefit.color} rounded-xl flex items-center justify-center mb-4`}>
+                                    <Icon className="w-6 h-6" />
                                 </div>
-                                <h3 className="font-semibold text-[#044D8E] mb-2">{benefit.title}</h3>
-                                <p className="text-sm text-[#0F61AC]">{benefit.desc}</p>
+                                <h3 className="font-semibold text-[#044D8E] mb-1">{benefit.title}</h3>
+                                <p className="text-sm text-slate-500 leading-relaxed">{benefit.desc}</p>
                             </motion.div>
                         );
                     })}

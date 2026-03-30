@@ -7,8 +7,18 @@ export default function AboutPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-[#9FCAE3]/20">
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white py-20">
-                <div className="container mx-auto px-4">
+            <section className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white py-20 relative overflow-hidden">
+                <div
+                    className="absolute inset-0 opacity-5"
+                    style={{
+                        backgroundImage: 'url(/images/panora-logo.png)',
+                        backgroundRepeat: 'repeat',
+                        backgroundSize: '60px 60px',
+                        backgroundPosition: 'center'
+                    }}
+                />
+
+                <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-3xl mx-auto text-center">
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
                             Over PANORA
@@ -155,8 +165,18 @@ export default function AboutPage() {
             </section>
 
             {/* Team Section */}
-            <section className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white py-16">
-                <div className="container mx-auto px-4">
+            <section className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white py-16 relative overflow-hidden">
+                <div
+                    className="absolute inset-0 opacity-5"
+                    style={{
+                        backgroundImage: 'url(/images/panora-logo.png)',
+                        backgroundRepeat: 'repeat',
+                        backgroundSize: '60px 60px',
+                        backgroundPosition: 'center'
+                    }}
+                />
+
+                <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-3xl mx-auto text-center">
                         <Users className="w-16 h-16 mx-auto mb-6" />
                         <h2 className="text-3xl font-bold mb-4">

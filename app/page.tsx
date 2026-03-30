@@ -10,6 +10,7 @@ import Services from "@/components/layout/Services";
 import BenefitsSection from "@/components/layout/BenefitsSection";
 import HowItWorks from "@/components/layout/HowItWorks";
 import { motion } from "motion/react";
+import { Clock, Shield, Star } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -32,7 +33,7 @@ export default function HomePage() {
           style={{
             backgroundImage: 'url(/images/BG-IMAGE.jpeg)',
             filter: 'blur(0.2px)',
-            transform: 'scale(1.1)'
+            transform: 'scale(1)'
           }}
         />
 
@@ -74,6 +75,26 @@ export default function HomePage() {
                   <Link href="#calculator">{UI_TEXT.cta.primary}</Link>
                 </Button>
               </motion.div>
+            </motion.div>
+            {/* Trust indicators */}
+            <motion.div
+              className="mt-12 pt-8 border-t border-slate-200/50 flex flex-wrap justify-center gap-8 text-sm text-slate-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-[#1792D0]" />
+                <span>Verzekerd & Gecertificeerd</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-[#1792D0]" />
+                <span>direct ingepland</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-[#1792D0]" />
+                <span>100% Tevredenheidsgarantie</span>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -129,9 +150,20 @@ export default function HomePage() {
       <Services />
 
       {/* CTA Halfway */}
-      <section className="py-16 bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white">
+      <section className="py-16 bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white relative overflow-hidden">
+        {/* Herhalend logo patroon */}
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: 'url(/images/panora-logo.png)',
+            backgroundRepeat: 'repeat',
+            backgroundSize: '60px 60px',
+            backgroundPosition: 'center'
+          }}
+        />
+
         <motion.div
-          className="container mx-auto px-4 text-center"
+          className="container mx-auto px-4 text-center relative z-10"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -178,7 +210,7 @@ export default function HomePage() {
                 <img
                   src="/images/LOGO_PANORA_TEXT.png"
                   alt="PANORA"
-                  className="h-25 w-auto"
+                  className="h-25 mx-auto"
                   style={{ transform: "scale(2.8)", transformOrigin: " center" }}
                 />
               </span>

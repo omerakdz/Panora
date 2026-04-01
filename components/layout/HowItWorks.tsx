@@ -32,25 +32,27 @@ const HowItWorks = () => {
     ];
 
     return (
-        <section className="py-24 bg-gradient-to-b from-white to-slate-50">
-            <div className="container mx-auto px-4">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
-                >
-                    <span className="inline-block bg-[#044D8E]/10 text-[#044D8E] text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-                        Eenvoudig proces
-                    </span>
-                    <h2 className="text-3xl md:text-4xl font-bold text-[#044D8E] mb-4">
-                        Hoe het werkt
-                    </h2>
-                    <p className="text-slate-600 max-w-xl mx-auto">
-                        In vier eenvoudige stappen tot stralend schone ramen
-                    </p>
-                </motion.div>
+        <section className="relative py-24 bg-gradient-to-b from-white via-slate-50 to-white overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#1792D0]/5 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#044D8E]/5 rounded-full blur-3xl"></div>
+
+            <div className="container mx-auto px-4 relative z-10">\n                <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-16"
+            >
+                <span className="inline-block bg-[#044D8E]/10 text-[#044D8E] text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+                    ✨ Eenvoudig proces
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-[#044D8E] mb-4">
+                    Hoe het werkt
+                </h2>
+                <p className="text-slate-600 max-w-xl mx-auto">
+                    In vier eenvoudige stappen tot stralend schone ramen
+                </p>
+            </motion.div>
 
                 <div className="grid md:grid-cols-4 gap-6 relative">
                     {/* Connection line - desktop only */}
@@ -72,19 +74,22 @@ const HowItWorks = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.15 }}
+                                whileHover={{ scale: 1.05, y: -8 }}
                             >
-                                <div className={`bg-white ${borderColors[index]} rounded-2xl p-6 text-center hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1 h-full`}>
+                                <div className={`group bg-white/80 backdrop-blur-sm ${borderColors[index]} rounded-2xl p-6 text-center hover:shadow-2xl hover:shadow-blue-200/30 transition-all duration-300 h-full relative overflow-hidden`}>
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#1792D0]/5 to-transparent rounded-full blur-2xl group-hover:from-[#1792D0]/10 transition-colors duration-300"></div>
+
                                     {/* Step number badge */}
                                     <div className="relative mx-auto mb-6">
-                                        <div className="w-16 h-16 bg-gradient-to-br from-[#044D8E] to-[#1792D0] text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-[#044D8E]/20">
-                                            <Icon className="w-7 h-7" />
+                                        <div className="w-16 h-16 bg-gradient-to-br from-[#044D8E] to-[#1792D0] text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-[#044D8E]/30 group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300">
+                                            <Icon className="w-7 h-7 group-hover:scale-110 transition-transform duration-300" />
                                         </div>
-                                        <div className="absolute -top-2 -right-2 w-7 h-7 bg-white border-2 border-[#1792D0] rounded-full flex items-center justify-center text-sm font-bold text-[#044D8E]">
+                                        <div className="absolute -top-2 -right-2 w-7 h-7 bg-white border-2 border-[#1792D0] rounded-full flex items-center justify-center text-sm font-bold text-[#044D8E] shadow-md">
                                             {step.num}
                                         </div>
                                     </div>
-                                    <h3 className="text-lg font-semibold mb-2 text-[#044D8E]">{step.title}</h3>
-                                    <p className="text-slate-500 text-sm leading-relaxed">
+                                    <h3 className="text-lg font-bold mb-2 text-[#044D8E]">{step.title}</h3>
+                                    <p className="text-slate-600 text-sm leading-relaxed">
                                         {step.desc}
                                     </p>
                                 </div>

@@ -31,106 +31,122 @@ const Services = () => {
                 <div className="grid gap-6 md:grid-cols-3 max-w-6xl mx-auto">
                     {/* Exterior Service */}
                     <motion.div
-                        className="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1"
+                        className="group bg-white/80 backdrop-blur-sm border-2 border-slate-200 rounded-2xl p-8 hover:shadow-2xl hover:shadow-blue-200/30 transition-all duration-300 hover:-translate-y-2 hover:border-blue-300 relative overflow-hidden"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0 }}
                     >
-                        <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
-                            <Droplets className="w-6 h-6 text-blue-600" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl group-hover:bg-blue-200/50 transition-colors duration-300"></div>
+                        <div className="relative z-10">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                                <Droplets className="w-7 h-7 text-white" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2 text-[#044D8E]">{SERVICE_TYPES.exterior.name}</h3>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-3xl font-bold text-[#044D8E]">{SERVICE_TYPES.exterior.priceDisplay}</span>
+                                <span className="text-slate-500">/raam</span>
+                            </div>
+                            <p className="text-slate-600 mb-6 text-sm leading-relaxed">
+                                Strakke ramen zonder strepen. Professionele osmose-techniek voor een kristalhelder resultaat.
+                            </p>
+                            <ul className="space-y-3 mb-6">
+                                {["Osmose-waterzuivering", "Streeploos resultaat", "Inclusief kozijnen"].map((item) => (
+                                    <li key={item} className="flex items-center gap-3 text-sm text-slate-600">
+                                        <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                            <Check className="w-3 h-3 text-emerald-600" />
+                                        </div>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button asChild className="w-full bg-gradient-to-r from-[#044D8E] to-[#0F61AC] hover:from-[#0F61AC] hover:to-[#1792D0] shadow-lg hover:shadow-xl transition-all duration-300">
+                                <Link href="/services/exterior">Bekijk buitenreiniging</Link>
+                            </Button>
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-[#044D8E]">{SERVICE_TYPES.exterior.name}</h3>
-                        <div className="flex items-baseline gap-1 mb-4">
-                            <span className="text-3xl font-bold text-[#044D8E]">Vanaf {SERVICE_TYPES.exterior.priceDisplay}</span>
-                            <span className="text-slate-500">/raam</span>
-                        </div>
-                        <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                            Strakke ramen zonder strepen. Professionele osmose-techniek voor een kristalhelder resultaat.
-                        </p>
-                        <ul className="space-y-2 mb-6">
-                            {["Osmose-waterzuivering", "Streeploos resultaat", "Inclusief kozijnen"].map((item) => (
-                                <li key={item} className="flex items-center gap-2 text-sm text-slate-600">
-                                    <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                        <Button asChild className="w-full bg-[#044D8E] hover:bg-[#0F61AC]">
-                            <Link href="/services/exterior">Bekijk buitenreiniging</Link>
-                        </Button>
                     </motion.div>
 
                     {/* Premium Service - Featured */}
                     <motion.div
-                        className="bg-gradient-to-b from-[#044D8E] to-[#0F61AC] rounded-2xl p-8 text-white relative shadow-xl shadow-[#044D8E]/20"
+                        className="group bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] rounded-2xl p-8 text-white relative shadow-2xl shadow-[#044D8E]/30 hover:shadow-3xl hover:shadow-[#044D8E]/40 hover:-translate-y-2 transition-all duration-300 overflow-visible pt-12"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.1 }}
                     >
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 px-4 py-1 rounded-full text-xs font-bold shadow-lg">
-                            MEEST GEKOZEN
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-slate-900 px-5 py-1.5 rounded-full text-xs font-bold shadow-xl animate-pulse-subtle z-20">
+                            ⭐ MEEST GEKOZEN
                         </div>
-                        <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-6">
-                            <Sparkles className="w-6 h-6 text-white" />
+                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+                        <div className="relative z-10">
+                            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <Sparkles className="w-7 h-7 text-white" />
+                            </div>
+                            <h3 className="text-xl font-bold mb-2">{SERVICE_TYPES.premium.name}</h3>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-3xl font-bold">{SERVICE_TYPES.premium.priceDisplay}</span>
+                                <span className="text-white/70">/raam</span>
+                            </div>
+                            <p className="text-white/90 mb-6 text-sm leading-relaxed">
+                                Complete behandeling binnen én buiten voor het ultieme resultaat en maximaal lichtinval.
+                            </p>
+                            <ul className="space-y-3 mb-6">
+                                {["Binnen & buiten reiniging", "Vensterbanken schoonmaken", "Raamlijsten afgewerkt", "Perfecte afwerking"].map((item) => (
+                                    <li key={item} className="flex items-center gap-3 text-sm text-white/95">
+                                        <div className="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+                                            <Check className="w-3 h-3 text-slate-900" />
+                                        </div>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button asChild className="w-full bg-white text-[#044D8E] hover:bg-white/95 hover:scale-[1.02] font-semibold shadow-xl transition-all duration-300">
+                                <Link href="/services/premium">Bekijk premium pakket</Link>
+                            </Button>
                         </div>
-                        <h3 className="text-xl font-bold mb-2">{SERVICE_TYPES.premium.name}</h3>
-                        <div className="flex items-baseline gap-1 mb-4">
-                            <span className="text-3xl font-bold">Vanaf {SERVICE_TYPES.premium.priceDisplay}</span>
-                            <span className="text-white/70">/raam</span>
-                        </div>
-                        <p className="text-white/80 mb-6 text-sm leading-relaxed">
-                            Complete behandeling binnen én buiten voor het ultieme resultaat en maximaal lichtinval.
-                        </p>
-                        <ul className="space-y-2 mb-6">
-                            {["Binnen & buiten reiniging", "Vensterbanken schoonmaken", "Raamlijsten afgewerkt", "Perfecte afwerking"].map((item) => (
-                                <li key={item} className="flex items-center gap-2 text-sm text-white/90">
-                                    <Check className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                        <Button asChild className="w-full bg-white text-[#044D8E] hover:bg-slate-100 font-semibold">
-                            <Link href="/services/premium">Bekijk premium pakket</Link>
-                        </Button>
                     </motion.div>
 
                     {/* Subscription Service */}
                     <motion.div
-                        className="bg-white border border-slate-200 rounded-2xl p-8 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 hover:-translate-y-1"
+                        className="group bg-white/80 backdrop-blur-sm border-2 border-slate-200 rounded-2xl p-8 hover:shadow-2xl hover:shadow-emerald-200/30 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-300 relative overflow-hidden"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                        <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-6">
-                            <CalendarClock className="w-6 h-6 text-emerald-600" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full blur-3xl group-hover:bg-emerald-200/50 transition-colors duration-300"></div>
+                        <div className="relative z-10">
+                            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                                <CalendarClock className="w-7 h-7 text-white" />
+                            </div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <h3 className="text-xl font-bold text-[#044D8E]">{SERVICE_TYPES.subscription.name}</h3>
+                            </div>
+                            <div className="flex items-baseline gap-1 mb-2">
+                                <span className="text-3xl font-bold text-[#044D8E]">€—</span>
+                                <span className="text-slate-500">/maand</span>
+                            </div>
+                            <div className="inline-block bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-full mb-4 border border-emerald-200">
+                                💚 10% vaste korting
+                            </div>
+                            <p className="text-slate-600 mb-6 text-sm leading-relaxed">
+                                Maandelijks, tweemaandelijks of per kwartaal. Altijd schone ramen zonder zorgen.
+                            </p>
+                            <ul className="space-y-3 mb-6">
+                                {["Flexibele frequentie", "10% korting altijd", "Vaste afspraak"].map((item) => (
+                                    <li key={item} className="flex items-center gap-3 text-sm text-slate-600">
+                                        <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                            <Check className="w-3 h-3 text-emerald-600" />
+                                        </div>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Button asChild variant="outline" className="w-full border-2 border-[#044D8E] text-[#044D8E] hover:bg-[#044D8E] hover:text-white shadow-md hover:shadow-lg transition-all duration-300">
+                                <Link href="/services/subscription">Bekijk abonnementen</Link>
+                            </Button>
                         </div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <h3 className="text-xl font-bold text-[#044D8E]">{SERVICE_TYPES.subscription.name}</h3>
-                        </div>
-                        <div className="flex items-baseline gap-1 mb-2">
-                            <span className="text-3xl font-bold text-[#044D8E]">Vanaf €—</span>
-                            <span className="text-slate-500">/maand</span>
-                        </div>
-                        <div className="inline-block bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
-                            10% vaste korting
-                        </div>
-                        <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                            Maandelijks, tweemaandelijks of per kwartaal. Altijd schone ramen zonder zorgen.
-                        </p>
-                        <ul className="space-y-2 mb-6">
-                            {["Flexibele frequentie", "10% korting altijd", "Vaste afspraak"].map((item) => (
-                                <li key={item} className="flex items-center gap-2 text-sm text-slate-600">
-                                    <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                        <Button asChild variant="outline" className="w-full border-[#044D8E] text-[#044D8E] hover:bg-slate-50">
-                            <Link href="/services/subscription">Bekijk abonnementen</Link>
-                        </Button>
                     </motion.div>
                 </div>
             </div>

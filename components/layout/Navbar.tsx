@@ -11,7 +11,7 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 shadow-sm transition-all duration-300">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -30,9 +30,12 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center gap-8">
                         <Link
                             href="/#calculator"
-                            className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium"
+                            className="text-gray-700 hover:text-[#044D8E] transition-all duration-200 font-medium relative group"
                         >
-                            Bereken Prijs
+                            <span className="relative">
+                                Bereken Prijs
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#044D8E] group-hover:w-full transition-all duration-300"></span>
+                            </span>
                         </Link>
 
                         <div className="relative group">
@@ -66,20 +69,26 @@ const Navbar = () => {
 
                         <Link
                             href="/about"
-                            className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium"
+                            className="text-gray-700 hover:text-[#044D8E] transition-all duration-200 font-medium relative group"
                         >
-                            Over Ons
+                            <span className="relative">
+                                Over Ons
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#044D8E] group-hover:w-full transition-all duration-300"></span>
+                            </span>
                         </Link>
                         <Link
                             href="/contact"
-                            className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium"
+                            className="text-gray-700 hover:text-[#044D8E] transition-all duration-200 font-medium relative group"
                         >
-                            Contact
+                            <span className="relative">
+                                Contact
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#044D8E] group-hover:w-full transition-all duration-300"></span>
+                            </span>
                         </Link>
 
                         <Button
                             asChild
-                            className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:opacity-90"
+                            className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:opacity-90 hover:shadow-lg hover:scale-105 transition-all duration-300"
                         >
                             <Link href="/#calculator">Plan Direct In</Link>
                         </Button>

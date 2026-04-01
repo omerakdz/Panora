@@ -64,20 +64,23 @@ const BenefitsSection = () => {
                             'border-2 border-violet-200',
                             'border-2 border-amber-200'
                         ];
+                        const isLastItem = index === benefits.length - 1;
                         return (
                             <motion.div
                                 key={benefit.title}
-                                className={`group relative bg-white ${borderColors[index]} rounded-2xl p-6 hover:shadow-lg hover:shadow-slate-100 transition-all duration-300 hover:-translate-y-1`}
+                                className={`group relative bg-gradient-to-br from-white to-slate-50/50 ${borderColors[index]} rounded-2xl p-6 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
+                                whileHover={{ scale: 1.02 }}
                             >
-                                <div className={`w-12 h-12 ${benefit.color} rounded-xl flex items-center justify-center mb-4`}>
-                                    <Icon className="w-6 h-6" />
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div className={`relative z-10 w-14 h-14 ${benefit.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                                    <Icon className="w-7 h-7" />
                                 </div>
-                                <h3 className="font-semibold text-[#044D8E] mb-1">{benefit.title}</h3>
-                                <p className="text-sm text-slate-500 leading-relaxed">{benefit.desc}</p>
+                                <h3 className="font-bold text-[#044D8E] mb-2 text-base">{benefit.title}</h3>
+                                <p className="text-sm text-slate-600 leading-relaxed">{benefit.desc}</p>
                             </motion.div>
                         );
                     })}

@@ -16,7 +16,11 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#9FCAE3]/30 to-white py-20 md:py-24 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-[#9FCAE3]/30 via-white/50 to-white py-20 md:py-24 overflow-hidden">
+        {/* Decorative gradient orbs */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#1792D0]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#044D8E]/10 rounded-full blur-3xl"></div>
+
         {/* Wazige achtergrond foto - Mobile */}
         <div
           className="absolute inset-0 bg-cover bg-center opacity-10 md:hidden"
@@ -68,10 +72,11 @@ export default function HomePage() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <motion.div
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(4, 77, 142, 0.3)" }}
                 whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <Button asChild size="lg" className="bg-[#044D8E] hover:bg-[#0F61AC] text-white px-8">
+                <Button asChild size="lg" className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] text-white px-8 shadow-lg">
                   <Link href="#calculator">{UI_TEXT.cta.primary}</Link>
                 </Button>
               </motion.div>
@@ -150,7 +155,11 @@ export default function HomePage() {
       <Services />
 
       {/* CTA Halfway */}
-      <section className="py-16 bg-gradient-to-r from-[#044D8E] to-[#1792D0] text-white relative overflow-hidden">
+      <section className="relative py-16 bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] text-white overflow-hidden">
+        {/* Decorative gradients */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#044D8E]/30 rounded-full blur-3xl"></div>
+
         {/* Herhalend logo patroon */}
         <div
           className="absolute inset-0 opacity-5"
@@ -185,14 +194,17 @@ export default function HomePage() {
           <p className="text-lg mb-8 text-white/90 max-w-2xl mx-auto">
             Geen gedoe, geen telefoontjes. Gewoon snel en transparant.
           </p>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button size="lg" className="bg-white text-[#044D8E] hover:bg-[#9FCAE3]">
-              <Link href="#calculator">Start nu met de calculator</Link>
-            </Button>
-          </motion.div>
+          <div className="inline-block">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button size="lg" className="bg-white text-[#044D8E] hover:bg-[#9FCAE3] hover:text-white shadow-xl hover:shadow-2xl">
+                <Link href="#calculator">Start nu met de calculator</Link>
+              </Button>
+            </motion.div>
+          </div>
         </motion.div>
       </section>
 
@@ -258,9 +270,12 @@ export default function HomePage() {
       <Review />
 
       {/* Final CTA Section */}
-      <section className="bg-[#9FCAE3]/20 py-20">
+      <section className="relative bg-gradient-to-b from-[#9FCAE3]/20 via-white to-white py-20 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#1792D0]/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#044D8E]/10 rounded-full blur-3xl"></div>
+
         <motion.div
-          className="container mx-auto px-4 text-center"
+          className="container mx-auto px-4 text-center relative z-10"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -282,14 +297,17 @@ export default function HomePage() {
           <p className="text-[#0F61AC] text-lg mb-8 max-w-2xl mx-auto">
             Bereken je prijs en plan je afspraak in minder dan 1 minuut.
           </p>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button size="lg" className="bg-[#044D8E] hover:bg-[#0F61AC]">
-              <Link href="#calculator">Start de calculator</Link>
-            </Button>
-          </motion.div>
+          <div className="inline-block">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button size="lg" className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] shadow-lg hover:shadow-xl">
+                <Link href="#calculator">Start de calculator</Link>
+              </Button>
+            </motion.div>
+          </div>
         </motion.div>
       </section>
     </main>

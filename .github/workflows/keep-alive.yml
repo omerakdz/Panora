@@ -1,18 +1,57 @@
-name: Keep Supabase Active
+name: Keep Supabase Database Active
 
 on:
   schedule:
-    # Elke woensdag om 12:00 UTC
+    # Elke woensdag om 12:00 UTC (13:00 CET / 14:00 CEST)
     - cron: "0 12 * * 3"
-  workflow_dispatch: # Handmatig kunnen uitvoeren
+  workflow_dispatch: # Handmatig uitvoeren via Actions tab
 
 jobs:
   keep-alive:
+    name: Database Health Check
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - name: Ping keep-alive endpoint
+        id: ping
         run: |
-          curl -f https://jouw-website.vercel.app/api/keep-alive || exit 1
+          echo "🔍 Checking database health..."
+
+          # Gebruik API key als die is ingesteld in GitHub Secrets
+          if [ -n "${{ secrets.KEEP_ALIVE_API_KEY }}" ]; then
+            RESPONSE=$(curl -s -w "\n%{http_code}" \
+              -H "x-api-key: ${{ secrets.KEEP_ALIVE_API_KEY }}" \
+              https://jouw-website.vercel.app/api/keep-alive)
+          else
+            RESPONSE=$(curl -s -w "\n%{http_code}" \
+              https://jouw-website.vercel.app/api/keep-alive)
+          fi
+
+          # Splits response body en status code
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "📊 Response: $BODY"
+          echo "🔢 Status code: $HTTP_CODE"
+
+          # Controleer status code
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Database is healthy!"
+          else
+            echo "❌ Database health check failed!"
+            exit 1
+          fi
 
       - name: Log success
-        run: echo "Database keep-alive ping successful!"
+        if: success()
+        run: |
+          echo "✅ Keep-alive ping successful!"
+          echo "⏰ Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+
+      - name: Log failure
+        if: failure()
+        run: |
+          echo "❌ Keep-alive ping failed!"
+          echo "⏰ Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo "ℹ️ Check your Supabase database status"

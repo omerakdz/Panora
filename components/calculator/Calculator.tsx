@@ -118,7 +118,7 @@ export default function Calculator() {
 
     return (
         <div id="calculator" className="w-full">
-            <Card className="border-[#9FCAE3] shadow-lg">
+            <Card className="border-[#9FCAE3] shadow-2xl hover:shadow-3xl transition-shadow duration-300 bg-white/80 backdrop-blur-sm">
                 <CardContent className="p-3 md:p-6">
                     {/* Progress Bar */}
                     <div className="mb-3 md:mb-4">

@@ -36,7 +36,7 @@ const HowItWorks = () => {
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#1792D0]/5 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#044D8E]/5 rounded-full blur-3xl"></div>
 
-            <div className="container mx-auto px-4 relative z-10">\n                <motion.div
+            <div className="container mx-auto px-4 relative z-10">                <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

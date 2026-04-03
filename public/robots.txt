@@ -1,0 +1,10 @@
+# robots.txt voor PANORA - Professionele ruitenwasser in Gent
+
+User-agent: *
+Allow: /
+
+# Disallow admin en API routes
+Disallow: /api/
+
+# Sitemap locatie
+Sitemap: https://www.panora.be/sitemap.xml

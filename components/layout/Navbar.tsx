@@ -12,7 +12,10 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <nav className="bg-white sticky top-0 z-50 shadow-lg transition-all duration-300 border-b border-gray-200">
+        <nav
+            className="bg-white sticky top-0 z-50 shadow-lg border-b border-gray-200"
+            style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+        >
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -97,9 +100,10 @@ const Navbar = () => {
 
                     {/* Mobile Menu Button */}
                     <button
-                        className="md:hidden p-2 text-gray-700 hover:text-[#044D8E]"
+                        className="md:hidden p-2 text-gray-700 hover:text-[#044D8E] transition-colors duration-150"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Toggle menu"
+                        style={{ transform: 'translateZ(0)' }}
                     >
                         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
@@ -109,22 +113,20 @@ const Navbar = () => {
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
                             transition={{
-                                duration: 0.3,
-                                ease: [0.4, 0.0, 0.2, 1] // Smooth easing
+                                duration: 0.2,
+                                ease: "easeOut"
                             }}
-                            className="md:hidden border-t border-gray-200 overflow-hidden"
+                            className="md:hidden border-t border-gray-200"
+                            style={{
+                                willChange: 'opacity, transform',
+                                transform: 'translateZ(0)' // Hardware acceleration
+                            }}
                         >
-                            <motion.div
-                                initial={{ y: -20 }}
-                                animate={{ y: 0 }}
-                                exit={{ y: -20 }}
-                                transition={{ duration: 0.3, ease: "easeOut" }}
-                                className="flex flex-col gap-4 py-4"
-                            >
+                            <div className="flex flex-col gap-4 py-4">
                                 <Link
                                     href="/#calculator"
                                     className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
@@ -184,7 +186,7 @@ const Navbar = () => {
                                         <Link href="/#calculator">Plan Direct In</Link>
                                     </Button>
                                 </div>
-                            </motion.div>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>

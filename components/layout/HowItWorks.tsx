@@ -1,9 +1,11 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Calculator, CalendarCheck, Truck, Camera } from "lucide-react";
 
 const HowItWorks = () => {
+    const shouldReduceMotion = useReducedMotion();
+
     const steps = [
         {
             num: 1,
@@ -67,14 +69,14 @@ const HowItWorks = () => {
                             'border-2 border-[#1792D0]/50'
                         ];
                         return (
-                            <motion.div
+                            <div
                                 key={step.num}
-                                className="relative"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.15 }}
-                                whileHover={{ scale: 1.05, y: -8 }}
+                                className="relative transition-transform duration-200 ease-out hover:md:-translate-y-2 hover:md:scale-105"
+                                style={{
+                                    opacity: 0,
+                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.1}s forwards`,
+                                    transform: 'translateZ(0)'
+                                }}
                             >
                                 <div className={`group bg-white/80 backdrop-blur-sm ${borderColors[index]} rounded-2xl p-6 text-center hover:shadow-2xl hover:shadow-blue-200/30 transition-all duration-300 h-full relative overflow-hidden`}>
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#1792D0]/5 to-transparent rounded-full blur-2xl group-hover:from-[#1792D0]/10 transition-colors duration-300"></div>
@@ -93,7 +95,7 @@ const HowItWorks = () => {
                                         {step.desc}
                                     </p>
                                 </div>
-                            </motion.div>
+                            </div>
                         );
                     })}
                 </div>

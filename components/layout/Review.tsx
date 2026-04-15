@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 interface Review {
     id: string;
@@ -19,6 +19,7 @@ const Review = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
+    const shouldReduceMotion = useReducedMotion();
 
     useEffect(() => {
         // Check if window is mobile size
@@ -170,23 +171,16 @@ const Review = () => {
                 <div className="max-w-6xl mx-auto relative">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {currentReviews.map((review, index) => (
-                            <motion.div
-                                key={review.id}
-                                className="h-full"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                whileHover={{
-                                    y: -12,
-                                    transition: {
-                                        type: "spring",
-                                        stiffness: 300,
-                                        damping: 20
-                                    }
+                            <div
+                                key={`${review.id}-${currentPage}`}
+                                className="h-full transition-transform duration-300 ease-out hover:md:-translate-y-3"
+                                style={{
+                                    opacity: 0,
+                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.05}s forwards`,
+                                    transform: 'translateZ(0)'
                                 }}
                             >
-                                <Card className="touch-feedback press-scale border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] shadow-depth-2 hover:shadow-blue transition-all duration-500 relative overflow-hidden group">
+                                <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] transition-all duration-200 relative overflow-hidden group" style={{ transform: 'translateZ(0)' }}>
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-[#1792D0]/5 rounded-full blur-2xl group-hover:bg-[#1792D0]/10 transition-all duration-700 ease-out"></div>
                                     <CardContent className="p-6 relative z-10">
                                         {/* Quote icon */}
@@ -196,20 +190,15 @@ const Review = () => {
 
                                         <div className="flex mb-4 gap-1">
                                             {[...Array(5)].map((_, i) => (
-                                                <motion.span
+                                                <span
                                                     key={i}
-                                                    className={`text-2xl transition-all duration-300 ${i < review.rating
+                                                    className={`text-2xl transition-transform duration-150 hover:scale-110 ${i < review.rating
                                                             ? 'text-amber-400 drop-shadow-sm'
                                                             : 'text-slate-200'
                                                         }`}
-                                                    whileHover={{
-                                                        scale: 1.2,
-                                                        rotate: [0, -10, 10, -10, 0],
-                                                        transition: { duration: 0.5 }
-                                                    }}
                                                 >
                                                     ★
-                                                </motion.span>
+                                                </span>
                                             ))}
                                         </div>
                                         <p className="text-slate-700 mb-6 line-clamp-4 leading-relaxed italic relative z-10 mobile-text-spacing">
@@ -225,23 +214,22 @@ const Review = () => {
                                         </div>
                                     </CardContent>
                                 </Card>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
 
                     {/* Navigation Controls - onder de review cards */}
                     {totalPages > 1 && (
                         <div className="flex items-center justify-center gap-4 mt-8">
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="touch-feedback thumb-friendly bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] shadow-depth-2 hover:shadow-blue transition-all duration-300 w-12 h-12"
-                                    onClick={goToPrevious}
-                                >
-                                    <ChevronLeft className="h-6 w-6" />
-                                </Button>
-                            </motion.div>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-150 w-12 h-12"
+                                onClick={goToPrevious}
+                                style={{ transform: 'translateZ(0)' }}
+                            >
+                                <ChevronLeft className="h-6 w-6" />
+                            </Button>
 
                             {/* Page Indicator */}
                             <div className="flex gap-2">
@@ -250,24 +238,23 @@ const Review = () => {
                                         key={index}
                                         onClick={() => setCurrentPage(index)}
                                         className={`h-3 rounded-full transition-all duration-300 touch-feedback ${index === currentPage
-                                                ? "bg-[#044D8E] w-8"
-                                                : "bg-[#9FCAE3] w-3"
+                                            ? "bg-[#044D8E] w-8"
+                                            : "bg-[#9FCAE3] w-3"
                                             }`}
                                         aria-label={`Go to page ${index + 1}`}
                                     />
                                 ))}
                             </div>
 
-                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="touch-feedback thumb-friendly bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] shadow-depth-2 hover:shadow-blue transition-all duration-300 w-12 h-12"
-                                    onClick={goToNext}
-                                >
-                                    <ChevronRight className="h-6 w-6" />
-                                </Button>
-                            </motion.div>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-150 w-12 h-12"
+                                onClick={goToNext}
+                                style={{ transform: 'translateZ(0)' }}
+                            >
+                                <ChevronRight className="h-6 w-6" />
+                            </Button>
                         </div>
                     )}
                 </div>

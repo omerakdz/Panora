@@ -1,9 +1,11 @@
 "use client";
 
 import { CheckCircle2, Clock, Droplets, FileCheck, Sparkles, Shield } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 const BenefitsSection = () => {
+    const shouldReduceMotion = useReducedMotion();
+
     const benefits = [
         {
             icon: CheckCircle2,
@@ -66,51 +68,31 @@ const BenefitsSection = () => {
                         ];
                         const isLastItem = index === benefits.length - 1;
                         return (
-                            <motion.div
+                            <div
                                 key={benefit.title}
-                                className={`group glass-card ${borderColors[index]} rounded-2xl p-6 overflow-hidden ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: index * 0.1 }}
-                                whileHover={{
-                                    y: -12,
-                                    scale: 1.01,
-                                    transition: {
-                                        type: "spring",
-                                        stiffness: 300,
-                                        damping: 20
-                                    }
-                                }}
+                                className={`group glass-card ${borderColors[index]} rounded-2xl p-6 overflow-hidden transition-all duration-200 hover:md:-translate-y-3 hover:md:scale-[1.01] ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
                                 style={{
+                                    opacity: 0,
+                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.08}s forwards`,
                                     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                    transform: 'translateZ(0)',
                                     backfaceVisibility: "hidden",
-                                    WebkitFontSmoothing: "subpixel-antialiased",
-                                    willChange: "transform"
+                                    WebkitFontSmoothing: "subpixel-antialiased"
                                 }}
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out parallax-element"></div>
-                                <motion.div
-                                    className={`relative z-10 w-14 h-14 ${benefit.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
-                                    whileHover={{
-                                        scale: 1.1,
-                                        rotate: 5,
-                                        transition: {
-                                            type: "spring",
-                                            stiffness: 400,
-                                            damping: 15
-                                        }
-                                    }}
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>
+                                <div
+                                    className={`relative z-10 w-14 h-14 ${benefit.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg transition-transform duration-150 hover:scale-110 hover:rotate-3`}
                                 >
                                     <Icon className="w-7 h-7" />
-                                </motion.div>
+                                </div>
                                 <div>
                                     <h3 className="font-bold text-[#044D8E] mb-2 text-base">{benefit.title}</h3>
                                     <p className="text-sm text-slate-600 leading-relaxed">{benefit.desc}</p>
                                 </div>
                                 {/* 3D glow effect */}
-                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl bg-gradient-to-br from-blue-100/50 to-transparent -z-10"></div>
-                            </motion.div>
+                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl bg-gradient-to-br from-blue-100/50 to-transparent -z-10"></div>
+                            </div>
                         );
                     })}
                 </div>

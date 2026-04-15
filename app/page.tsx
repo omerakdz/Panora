@@ -9,12 +9,22 @@ import Review from "@/components/layout/Review";
 import Services from "@/components/layout/Services";
 import BenefitsSection from "@/components/layout/BenefitsSection";
 import HowItWorks from "@/components/layout/HowItWorks";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Clock, Shield, Star } from "lucide-react";
 
 export default function HomePage() {
+  const shouldReduceMotion = useReducedMotion();
+
+  // Simplified animation config for mobile/reduced motion
+  const getAnimationConfig = (defaultConfig: any) => {
+    if (shouldReduceMotion) {
+      return { duration: 0.01 };
+    }
+    return defaultConfig;
+  };
+
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen" style={{ transform: 'translateZ(0)' }}>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-[#9FCAE3]/30 via-white/50 to-white py-20 md:py-24 overflow-hidden mobile-section-padding">
         {/* Decorative gradient orbs with gradient mesh */}
@@ -48,8 +58,8 @@ export default function HomePage() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              style={{ letterSpacing: '-0.02em' }}
+              transition={getAnimationConfig({ duration: 0.5 })}
+              style={{ letterSpacing: '-0.02em', willChange: 'opacity, transform' }}
             >
               <span className="block bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
                 Professionele ramenwas - Gent

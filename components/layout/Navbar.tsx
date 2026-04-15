@@ -11,7 +11,7 @@ const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
-        <nav className="bg-white/95 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50 shadow-sm transition-all duration-300">
+        <nav className="bg-white sticky top-0 z-50 shadow-lg transition-all duration-300 border-b border-gray-200">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -42,24 +42,24 @@ const Navbar = () => {
                             <button className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium">
                                 Diensten
                             </button>
-                            <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div className="absolute top-full left-0 mt-2 w-56 bg-white border-2 border-gray-200 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 scale-95 group-hover:scale-100 overflow-hidden">
                                 <Link
                                     href="/services/exterior"
-                                    className="block px-4 py-3 hover:bg-[#9FCAE3]/20 transition-colors"
+                                    className="block px-4 py-3 hover:bg-[#9FCAE3]/20 transition-all duration-200"
                                 >
                                     <div className="font-semibold text-[#044D8E]">{SERVICE_TYPES.exterior.name}</div>
                                     <div className="text-sm text-gray-600">Vanaf {SERVICE_TYPES.exterior.priceDisplay} per raam</div>
                                 </Link>
                                 <Link
                                     href="/services/premium"
-                                    className="block px-4 py-3 hover:bg-[#9FCAE3]/20 transition-colors"
+                                    className="block px-4 py-3 hover:bg-[#9FCAE3]/20 transition-all duration-200"
                                 >
                                     <div className="font-semibold text-[#044D8E]">{SERVICE_TYPES.premium.name}</div>
                                     <div className="text-sm text-gray-600">Vanaf {SERVICE_TYPES.premium.priceDisplay} per raam</div>
                                 </Link>
                                 <Link
                                     href="/services/subscription"
-                                    className="block px-4 py-3 hover:bg-[#9FCAE3]/20 transition-colors border-t border-gray-100"
+                                    className="block px-4 py-3 hover:bg-[#9FCAE3]/20 transition-all duration-200 border-t border-gray-200"
                                 >
                                     <div className="font-semibold text-[#044D8E]">{SERVICE_TYPES.subscription.name}</div>
                                     <div className="text-sm text-gray-600">{SERVICE_TYPES.subscription.description}</div>

@@ -25,10 +25,10 @@ const Review = () => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
         };
-        
+
         checkMobile();
         window.addEventListener('resize', checkMobile);
-        
+
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
@@ -59,14 +59,55 @@ const Review = () => {
 
     if (loading) {
         return (
-            <section className="py-20 bg-gradient-to-b from-[#9FCAE3]/10 to-white">
-                <div className="container mx-auto px-4">
+            <section className="relative py-20 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
+                <div className="absolute top-0 left-0 w-96 h-96 bg-[#1792D0]/5 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#044D8E]/5 rounded-full blur-3xl"></div>
+
+                <div className="container mx-auto px-4 mobile-spacing relative z-10">
+                    <div className="text-center mb-4">
+                        <span className="inline-block bg-[#1792D0]/10 text-[#1792D0] text-sm font-semibold px-4 py-1.5 rounded-full">
+                            ⭐ Klantbeoordelingen
+                        </span>
+                    </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#044D8E]">
                         Wat onze klanten zeggen
                     </h2>
-                    <p className="text-center text-[#0F61AC] mb-12">
-                        Reviews worden geladen...
+                    <p className="text-center text-slate-600 mb-12">
+                        Betrouwbaar, professioneel en altijd tevreden
                     </p>
+
+                    {/* Skeleton Loaders */}
+                    <div className="max-w-6xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {[1, 2, 3].map((i) => (
+                                <Card key={i} className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm">
+                                    <CardContent className="p-6">
+                                        {/* Star rating skeleton */}
+                                        <div className="flex mb-4 gap-1">
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <div key={s} className="skeleton w-6 h-6 rounded"></div>
+                                            ))}
+                                        </div>
+                                        {/* Comment text skeleton */}
+                                        <div className="space-y-2 mb-6">
+                                            <div className="skeleton skeleton-text w-full"></div>
+                                            <div className="skeleton skeleton-text w-11/12"></div>
+                                            <div className="skeleton skeleton-text w-10/12"></div>
+                                            <div className="skeleton skeleton-text w-8/12"></div>
+                                        </div>
+                                        {/* Author info skeleton */}
+                                        <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
+                                            <div className="skeleton skeleton-circle w-10 h-10"></div>
+                                            <div className="flex-1">
+                                                <div className="skeleton skeleton-text w-24 mb-1"></div>
+                                                <div className="skeleton skeleton-text w-16"></div>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </section>
         );
@@ -136,17 +177,42 @@ const Review = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                                whileHover={{ y: -8 }}
+                                whileHover={{
+                                    y: -12,
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 300,
+                                        damping: 20
+                                    }
+                                }}
                             >
-                                <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] hover:shadow-2xl transition-all duration-300 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-[#1792D0]/5 rounded-full blur-2xl group-hover:bg-[#1792D0]/10 transition-colors duration-300"></div>
+                                <Card className="touch-feedback press-scale border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] shadow-depth-2 hover:shadow-blue transition-all duration-500 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-[#1792D0]/5 rounded-full blur-2xl group-hover:bg-[#1792D0]/10 transition-all duration-700 ease-out"></div>
                                     <CardContent className="p-6 relative z-10">
+                                        {/* Quote icon */}
+                                        <div className="absolute top-4 right-4 text-[#1792D0]/10 text-6xl font-serif leading-none">
+                                            "
+                                        </div>
+
                                         <div className="flex mb-4 gap-1">
-                                            {[...Array(review.rating)].map((_, i) => (
-                                                <span key={i} className="text-amber-400 text-2xl drop-shadow-sm">★</span>
+                                            {[...Array(5)].map((_, i) => (
+                                                <motion.span
+                                                    key={i}
+                                                    className={`text-2xl transition-all duration-300 ${i < review.rating
+                                                            ? 'text-amber-400 drop-shadow-sm'
+                                                            : 'text-slate-200'
+                                                        }`}
+                                                    whileHover={{
+                                                        scale: 1.2,
+                                                        rotate: [0, -10, 10, -10, 0],
+                                                        transition: { duration: 0.5 }
+                                                    }}
+                                                >
+                                                    ★
+                                                </motion.span>
                                             ))}
                                         </div>
-                                        <p className="text-slate-700 mb-6 line-clamp-4 leading-relaxed italic">
+                                        <p className="text-slate-700 mb-6 line-clamp-4 leading-relaxed italic relative z-10 mobile-text-spacing">
                                             "{review.comment}"
                                         </p>
                                         <div className="border-t border-slate-200 pt-4">
@@ -166,38 +232,42 @@ const Review = () => {
                     {/* Navigation Controls - onder de review cards */}
                     {totalPages > 1 && (
                         <div className="flex items-center justify-center gap-4 mt-8">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 w-12 h-12"
-                                onClick={goToPrevious}
-                            >
-                                <ChevronLeft className="h-6 w-6" />
-                            </Button>
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="touch-feedback thumb-friendly bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] shadow-depth-2 hover:shadow-blue transition-all duration-300 w-12 h-12"
+                                    onClick={goToPrevious}
+                                >
+                                    <ChevronLeft className="h-6 w-6" />
+                                </Button>
+                            </motion.div>
 
                             {/* Page Indicator */}
                             <div className="flex gap-2">
                                 {[...Array(totalPages)].map((_, index) => (
                                     <button
                                         key={index}
-                                        className={`w-3 h-3 rounded-full transition-all ${
-                                            index === currentPage
-                                                ? "bg-[#044D8E] w-8"
-                                                : "bg-[#9FCAE3]"
-                                        }`}
                                         onClick={() => setCurrentPage(index)}
+                                        className={`h-3 rounded-full transition-all duration-300 touch-feedback ${index === currentPage
+                                                ? "bg-[#044D8E] w-8"
+                                                : "bg-[#9FCAE3] w-3"
+                                            }`}
+                                        aria-label={`Go to page ${index + 1}`}
                                     />
                                 ))}
                             </div>
 
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 w-12 h-12"
-                                onClick={goToNext}
-                            >
-                                <ChevronRight className="h-6 w-6" />
-                            </Button>
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="touch-feedback thumb-friendly bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] shadow-depth-2 hover:shadow-blue transition-all duration-300 w-12 h-12"
+                                    onClick={goToNext}
+                                >
+                                    <ChevronRight className="h-6 w-6" />
+                                </Button>
+                            </motion.div>
                         </div>
                     )}
                 </div>

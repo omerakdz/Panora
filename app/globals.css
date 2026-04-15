@@ -166,6 +166,502 @@ html {
   animation: pulse-subtle 2s ease-in-out infinite;
 }
 
+/* ========================================
+   GLASSMORPHISM EFFECTS
+   ======================================== */
+
+/* Base glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.glass-card-hover {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(25px) saturate(200%);
+  -webkit-backdrop-filter: blur(25px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 12px 40px 0 rgba(31, 38, 135, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Frosted glass variants */
+.glass-frosted {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-frosted-dark {
+  background: rgba(4, 77, 142, 0.3);
+  backdrop-filter: blur(15px) saturate(150%);
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Premium glass button effect */
+.glass-button {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   PREMIUM 3D TRANSFORMS & ANIMATIONS
+   ======================================== */
+
+/* 3D card flip on hover */
+@keyframes card-tilt {
+  0% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+  }
+}
+
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.card-3d:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(2deg) translateZ(10px);
+}
+
+/* Parallax scrolling effect */
+@keyframes parallax-float {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(-30px) translateX(5px);
+  }
+}
+
+.parallax-element {
+  animation: parallax-float 20s ease-in-out infinite;
+}
+
+/* Smooth gradient animation */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-animated {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Ripple effect */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Glow pulse effect */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(23, 146, 208, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(23, 146, 208, 0.8);
+  }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Smooth page transitions */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+/* ========================================
+   SHADOW DEPTH SYSTEM (4 LEVELS)
+   ======================================== */
+
+/* Level 1: Subtle - Hover states, subtle elevation */
+.shadow-depth-1 {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Level 2: Normal - Cards, buttons */
+.shadow-depth-2 {
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Level 3: Elevated - Modals, dropdowns, popovers */
+.shadow-depth-3 {
+  box-shadow:
+    0 10px 15px rgba(0, 0, 0, 0.1),
+    0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Level 4: Floating - Sticky elements, FAB buttons */
+.shadow-depth-4 {
+  box-shadow:
+    0 20px 25px rgba(0, 0, 0, 0.15),
+    0 10px 10px rgba(0, 0, 0, 0.04);
+}
+
+/* Colored brand shadows */
+.shadow-blue {
+  box-shadow: 0 10px 30px rgba(23, 146, 208, 0.25);
+}
+
+.shadow-blue-strong {
+  box-shadow: 0 15px 40px rgba(23, 146, 208, 0.4);
+}
+
+.shadow-emerald {
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+}
+
+/* ========================================
+   MICRO-INTERACTIONS
+   ======================================== */
+
+/* Ripple effect for buttons */
+@keyframes ripple-effect {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  animation: ripple-effect 0.6s ease-out;
+}
+
+/* Smooth hover transitions */
+.smooth-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smooth-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* Input focus glow */
+.input-glow:focus {
+  box-shadow:
+    0 0 0 3px rgba(23, 146, 208, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+  border-color: #1792d0;
+  transition: all 0.2s ease-out;
+}
+
+/* Link hover underline animation */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease-out;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Icon rotate on hover */
+.icon-rotate:hover {
+  transform: rotate(90deg);
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Scale on press (mobile touch feedback) */
+.press-scale:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease-out;
+}
+
+/* ========================================
+   LOADING STATES
+   ======================================== */
+
+/* Skeleton loader */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%);
+  background-size: 1000px 100%;
+  animation: skeleton-shimmer 2s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 1em;
+  margin-bottom: 0.5em;
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+}
+
+/* Shimmer effect */
+@keyframes shimmer-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: shimmer-slide 2s infinite;
+}
+
+/* Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-left-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Pulse loading */
+@keyframes pulse-loading {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse-loading {
+  animation: pulse-loading 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ========================================
+   COLOR REFINEMENT
+   ======================================== */
+
+/* Subtle section overlays */
+.section-overlay-blue {
+  position: relative;
+}
+
+.section-overlay-blue::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(23, 146, 208, 0.02) 0%,
+    rgba(4, 77, 142, 0.03) 100%
+  );
+  pointer-events: none;
+}
+
+.section-overlay-white {
+  background: linear-gradient(180deg, #ffffff 0%, rgba(249, 250, 251, 1) 100%);
+}
+
+/* Gradient mesh backgrounds */
+.gradient-mesh {
+  background:
+    radial-gradient(at 0% 0%, rgba(23, 146, 208, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(4, 77, 142, 0.08) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      rgba(159, 202, 227, 0.12) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 100%, rgba(15, 97, 172, 0.1) 0px, transparent 50%);
+}
+
+/* Smooth color transitions */
+.color-transition {
+  transition:
+    color 0.3s ease-out,
+    background-color 0.3s ease-out,
+    border-color 0.3s ease-out;
+}
+
+/* ========================================
+   MOBILE POLISH
+   ======================================== */
+
+/* Touch feedback */
+.touch-feedback {
+  -webkit-tap-highlight-color: rgba(23, 146, 208, 0.1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touch-feedback:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease-out;
+}
+
+/* Thumb-friendly sizing (minimum 44x44px) */
+.thumb-friendly {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 24px;
+}
+
+/* Mobile optimized spacing */
+@media (max-width: 768px) {
+  .mobile-spacing {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .mobile-text-spacing {
+    line-height: 1.7;
+  }
+
+  .mobile-section-padding {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}
+
+/* Smooth momentum scrolling */
+.momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Prevent text size adjustment on orientation change */
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Improve font rendering on all screens */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 .dark {
   --background: #044d8e;
   --foreground: #ffffff;

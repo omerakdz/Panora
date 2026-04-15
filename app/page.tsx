@@ -16,8 +16,9 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-[#9FCAE3]/30 via-white/50 to-white py-20 md:py-24 overflow-hidden">
-        {/* Decorative gradient orbs */}
+      <section className="relative bg-gradient-to-b from-[#9FCAE3]/30 via-white/50 to-white py-20 md:py-24 overflow-hidden mobile-section-padding">
+        {/* Decorative gradient orbs with gradient mesh */}
+        <div className="absolute inset-0 gradient-mesh opacity-50"></div>
         <div className="absolute top-0 left-0 w-96 h-96 bg-[#1792D0]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#044D8E]/10 rounded-full blur-3xl"></div>
 
@@ -41,13 +42,14 @@ export default function HomePage() {
           }}
         />
 
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 mobile-spacing relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h1
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              style={{ letterSpacing: '-0.02em' }}
             >
               <span className="block bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
                 Professionele ramenwas - Gent
@@ -76,7 +78,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <Button asChild size="lg" className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] text-white px-8 shadow-lg">
+                <Button asChild size="lg" className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] text-white px-8 shadow-depth-3 hover:shadow-blue-strong touch-feedback thumb-friendly color-transition">
                   <Link href="#calculator">{UI_TEXT.cta.primary}</Link>
                 </Button>
               </motion.div>
@@ -109,8 +111,9 @@ export default function HomePage() {
       <HowItWorks />
 
       {/* Calculator Section */}
-      <section id="calculator" className="py-20 bg-gradient-to-b from-white to-[#9FCAE3]/10">
-        <div className="container mx-auto px-4">
+      <section id="calculator" className="relative py-20 mobile-section-padding section-overlay-blue">
+        <div className="absolute inset-0 bg-gradient-to-b from-white to-[#9FCAE3]/10"></div>
+        <div className="container mx-auto px-4 mobile-spacing relative z-10">
           <div className="max-w-3xl mx-auto">
             <motion.div
               className="text-center mb-12"
@@ -155,7 +158,7 @@ export default function HomePage() {
       <Services />
 
       {/* CTA Halfway */}
-      <section className="relative py-16 bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] text-white overflow-hidden">
+      <section className="relative py-16 mobile-section-padding bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] text-white overflow-hidden">
         {/* Decorative gradients */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#044D8E]/30 rounded-full blur-3xl"></div>

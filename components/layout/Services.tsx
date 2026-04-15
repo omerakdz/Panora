@@ -8,7 +8,7 @@ import { Droplets, Sparkles, CalendarClock, Check } from "lucide-react";
 
 const Services = () => {
     return (
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-white overflow-x-hidden">
             <div className="container mx-auto px-4">
                 <motion.div
                     className="text-center mb-16"
@@ -31,17 +31,41 @@ const Services = () => {
                 <div className="grid gap-6 md:grid-cols-3 max-w-6xl mx-auto">
                     {/* Exterior Service */}
                     <motion.div
-                        className="group bg-white/80 backdrop-blur-sm border-2 border-slate-200 rounded-2xl p-8 hover:shadow-2xl hover:shadow-blue-200/30 transition-all duration-300 hover:-translate-y-2 hover:border-blue-300 relative overflow-hidden"
+                        className="group glass-card border-2 border-slate-200/50 rounded-2xl p-8 relative overflow-hidden"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0 }}
+                        whileHover={{
+                            y: -12,
+                            scale: 1.01,
+                            transition: {
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20
+                            }
+                        }}
+                        style={{
+                            backfaceVisibility: "hidden",
+                            WebkitFontSmoothing: "subpixel-antialiased"
+                        }}
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl group-hover:bg-blue-200/50 transition-colors duration-300"></div>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100/50 rounded-full blur-3xl group-hover:bg-blue-200/70 transition-all duration-700 ease-out"></div>
                         <div className="relative z-10">
-                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <motion.div
+                                className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30"
+                                whileHover={{
+                                    scale: 1.1,
+                                    rotate: 5,
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 400,
+                                        damping: 15
+                                    }
+                                }}
+                            >
                                 <Droplets className="w-7 h-7 text-white" />
-                            </div>
+                            </motion.div>
                             <h3 className="text-xl font-bold mb-2 text-[#044D8E]">{SERVICE_TYPES.exterior.name}</h3>
                             <div className="flex items-baseline gap-1 mb-4">
                                 <span className="text-3xl font-bold text-[#044D8E]">{SERVICE_TYPES.exterior.priceDisplay}</span>
@@ -60,29 +84,68 @@ const Services = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <Button asChild className="w-full bg-gradient-to-r from-[#044D8E] to-[#0F61AC] hover:from-[#0F61AC] hover:to-[#1792D0] shadow-lg hover:shadow-xl transition-all duration-300">
-                                <Link href="/services/exterior">Bekijk buitenreiniging</Link>
-                            </Button>
+                            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                <Button asChild className="w-full bg-gradient-to-r from-[#044D8E] to-[#0F61AC] hover:from-[#0F61AC] hover:to-[#1792D0] shadow-lg hover:shadow-xl transition-all duration-300">
+                                    <Link href="/services/exterior">Bekijk buitenreiniging</Link>
+                                </Button>
+                            </motion.div>
                         </div>
+                        {/* 3D glow effect */}
+                        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out blur-xl bg-gradient-to-r from-blue-200/30 to-blue-300/30 -z-10"></div>
                     </motion.div>
 
                     {/* Premium Service - Featured */}
                     <motion.div
-                        className="group bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] rounded-2xl p-8 text-white relative shadow-2xl shadow-[#044D8E]/30 hover:shadow-3xl hover:shadow-[#044D8E]/40 hover:-translate-y-2 transition-all duration-300 overflow-visible pt-12"
+                        className="group bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] rounded-2xl p-8 text-white relative shadow-2xl shadow-[#044D8E]/30 overflow-visible pt-12"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.1 }}
+                        whileHover={{
+                            y: -12,
+                            scale: 1.01,
+                            transition: {
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20
+                            }
+                        }}
+                        style={{
+                            backfaceVisibility: "hidden",
+                            WebkitFontSmoothing: "subpixel-antialiased"
+                        }}
                     >
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-slate-900 px-5 py-1.5 rounded-full text-xs font-bold shadow-xl animate-pulse-subtle z-20">
+                        <motion.div
+                            className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-slate-900 px-5 py-1.5 rounded-full text-xs font-bold shadow-xl z-20"
+                            animate={{
+                                y: [0, -5, 0],
+                            }}
+                            transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                        >
                             ⭐ MEEST GEKOZEN
-                        </div>
+                        </motion.div>
                         <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
                         <div className="relative z-10">
-                            <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <motion.div
+                                className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-6 shadow-lg"
+                                whileHover={{
+                                    scale: 1.1,
+                                    rotate: 5,
+                                    backgroundColor: "rgba(255, 255, 255, 0.3)",
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 400,
+                                        damping: 15
+                                    }
+                                }}
+                            >
                                 <Sparkles className="w-7 h-7 text-white" />
-                            </div>
+                            </motion.div>
                             <h3 className="text-xl font-bold mb-2">{SERVICE_TYPES.premium.name}</h3>
                             <div className="flex items-baseline gap-1 mb-4">
                                 <span className="text-3xl font-bold">{SERVICE_TYPES.premium.priceDisplay}</span>
@@ -109,17 +172,41 @@ const Services = () => {
 
                     {/* Subscription Service */}
                     <motion.div
-                        className="group bg-white/80 backdrop-blur-sm border-2 border-slate-200 rounded-2xl p-8 hover:shadow-2xl hover:shadow-emerald-200/30 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-300 relative overflow-hidden"
+                        className="group glass-card border-2 border-slate-200 rounded-2xl p-8 relative overflow-hidden"
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.2 }}
+                        whileHover={{
+                            y: -12,
+                            scale: 1.01,
+                            transition: {
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20
+                            }
+                        }}
+                        style={{
+                            backfaceVisibility: "hidden",
+                            WebkitFontSmoothing: "subpixel-antialiased"
+                        }}
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full blur-3xl group-hover:bg-emerald-200/50 transition-colors duration-300"></div>
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full blur-3xl group-hover:bg-emerald-200/50 transition-all duration-700 ease-out"></div>
                         <div className="relative z-10">
-                            <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <motion.div
+                                className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/30"
+                                whileHover={{
+                                    scale: 1.1,
+                                    rotate: 5,
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 400,
+                                        damping: 15
+                                    }
+                                }}
+                            >
                                 <CalendarClock className="w-7 h-7 text-white" />
-                            </div>
+                            </motion.div>
                             <div className="flex items-center gap-2 mb-2">
                                 <h3 className="text-xl font-bold text-[#044D8E]">{SERVICE_TYPES.subscription.name}</h3>
                             </div>

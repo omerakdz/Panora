@@ -38,7 +38,7 @@ const BenefitsSection = () => {
     ];
 
     return (
-        <section className="py-20 bg-white border-y border-slate-100">
+        <section className="py-20 bg-white border-y border-slate-100 overflow-x-hidden">
             <div className="container mx-auto px-4">
                 <motion.div
                     className="text-center mb-12"
@@ -54,7 +54,7 @@ const BenefitsSection = () => {
                     <p className="text-slate-600">Professionele service waar u op kunt rekenen</p>
                 </motion.div>
 
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 overflow-visible">
                     {benefits.map((benefit, index) => {
                         const Icon = benefit.icon;
                         const borderColors = [
@@ -68,19 +68,48 @@ const BenefitsSection = () => {
                         return (
                             <motion.div
                                 key={benefit.title}
-                                className={`group relative bg-gradient-to-br from-white to-slate-50/50 ${borderColors[index]} rounded-2xl p-6 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
+                                className={`group glass-card ${borderColors[index]} rounded-2xl p-6 overflow-hidden ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                                whileHover={{ scale: 1.02 }}
+                                whileHover={{
+                                    y: -12,
+                                    scale: 1.01,
+                                    transition: {
+                                        type: "spring",
+                                        stiffness: 300,
+                                        damping: 20
+                                    }
+                                }}
+                                style={{
+                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                    backfaceVisibility: "hidden",
+                                    WebkitFontSmoothing: "subpixel-antialiased",
+                                    willChange: "transform"
+                                }}
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                <div className={`relative z-10 w-14 h-14 ${benefit.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out parallax-element"></div>
+                                <motion.div
+                                    className={`relative z-10 w-14 h-14 ${benefit.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg`}
+                                    whileHover={{
+                                        scale: 1.1,
+                                        rotate: 5,
+                                        transition: {
+                                            type: "spring",
+                                            stiffness: 400,
+                                            damping: 15
+                                        }
+                                    }}
+                                >
                                     <Icon className="w-7 h-7" />
+                                </motion.div>
+                                <div>
+                                    <h3 className="font-bold text-[#044D8E] mb-2 text-base">{benefit.title}</h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed">{benefit.desc}</p>
                                 </div>
-                                <h3 className="font-bold text-[#044D8E] mb-2 text-base">{benefit.title}</h3>
-                                <p className="text-sm text-slate-600 leading-relaxed">{benefit.desc}</p>
+                                {/* 3D glow effect */}
+                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl bg-gradient-to-br from-blue-100/50 to-transparent -z-10"></div>
                             </motion.div>
                         );
                     })}

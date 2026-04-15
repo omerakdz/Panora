@@ -9,8 +9,9 @@ import StepWindows from "./StepWindows";
 import StepPrice from "./StepPrice";
 import StepSchedule from "./StepSchedule";
 import StepCustomerDetails from "./StepCustomerDetails";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Home, Grid3x3, Euro, Calendar, User, Check } from "lucide-react";
 import type { CalculatorData } from "@/types";
+import { motion, AnimatePresence } from "motion/react";
 
 
 const TOTAL_STEPS = 5;
@@ -116,51 +117,141 @@ export default function Calculator() {
 
     const progress = (currentStep / TOTAL_STEPS) * 100;
 
+    const steps = [
+        { number: 1, title: "Type woning", icon: Home },
+        { number: 2, title: "Aantal ramen", icon: Grid3x3 },
+        { number: 3, title: "Jouw prijs", icon: Euro },
+        { number: 4, title: "Kies datum & tijd", icon: Calendar },
+        { number: 5, title: "Jouw gegevens", icon: User },
+    ];
+
     return (
         <div id="calculator" className="w-full">
-            <Card className="border-[#9FCAE3] shadow-2xl hover:shadow-3xl transition-shadow duration-300 bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-3 md:p-6">
-                    {/* Progress Bar */}
-                    <div className="mb-3 md:mb-4">
-                        <div className="flex justify-between items-center mb-1.5">
-                            <span className="text-xs md:text-sm text-[#0F61AC] font-medium">
-                                Stap {currentStep} van {TOTAL_STEPS}
-                            </span>
-                            <span className="text-xs md:text-sm text-[#0F61AC] font-medium">
-                                {Math.round(progress)}%
-                            </span>
+            <Card className="glass-card border-2 border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden relative">
+                {/* Gradient background overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#1792D0]/5 via-transparent to-[#044D8E]/5 opacity-50"></div>
+
+                <CardContent className="p-4 md:p-8 relative z-10">
+                    {/* Premium Progress Indicator */}
+                    <div className="mb-8">
+                        {/* Horizontal stepper - all screens */}
+                        <div className="flex justify-between items-start mb-6">
+                            {steps.map((step, index) => {
+                                const Icon = step.icon;
+                                const isCompleted = currentStep > step.number;
+                                const isCurrent = currentStep === step.number;
+                                const isUpcoming = currentStep < step.number;
+
+                                return (
+                                    <div key={step.number} className="flex-1 relative">
+                                        <div className="flex flex-col items-center">
+                                            {/* Icon circle */}
+                                            <motion.div
+                                                className={`relative z-10 w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-1 md:mb-2 transition-all duration-300 ${isCompleted
+                                                    ? "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/30"
+                                                    : isCurrent
+                                                        ? "bg-gradient-to-br from-[#1792D0] to-[#044D8E] shadow-lg shadow-blue-500/40 glow-pulse"
+                                                        : "bg-slate-200 border-2 border-slate-300"
+                                                    }`}
+                                                initial={false}
+                                                animate={{
+                                                    scale: isCurrent ? [1, 1.1, 1] : 1,
+                                                }}
+                                                transition={{
+                                                    duration: isCurrent ? 1.5 : 0.3,
+                                                    repeat: isCurrent ? Infinity : 0,
+                                                    ease: "easeInOut"
+                                                }}
+                                            >
+                                                {isCompleted ? (
+                                                    <Check className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                                                ) : (
+                                                    <Icon className={`w-4 h-4 md:w-6 md:h-6 ${isCurrent ? "text-white" : "text-slate-500"
+                                                        }`} />
+                                                )}
+                                            </motion.div>
+
+                                            {/* Step label */}
+                                            <div className="text-[10px] md:text-xs font-semibold text-center max-w-[60px] md:max-w-[100px]">
+                                                <div className={`${isCurrent ? "text-[#044D8E]" : "text-slate-500"
+                                                    }`}>
+                                                    {step.title}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Connecting line */}
+                                        {index < steps.length - 1 && (
+                                            <div className="absolute top-5 md:top-7 left-[calc(50%+20px)] md:left-[calc(50%+28px)] right-[calc(-50%+20px)] md:right-[calc(-50%+28px)] h-0.5 bg-slate-200">
+                                                <motion.div
+                                                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600"
+                                                    initial={{ width: "0%" }}
+                                                    animate={{ width: isCompleted ? "100%" : "0%" }}
+                                                    transition={{ duration: 0.5 }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
-                        <Progress value={progress} className="h-1.5 md:h-2" />
                     </div>
 
-                    {/* Step Title */}
-                    <h3 className="text-lg md:text-2xl font-bold text-[#044D8E] mb-3 md:mb-4 text-center">
-                        {getStepTitle()}
-                    </h3>
+                    {/* Step Title with animation */}
+                    <AnimatePresence mode="wait">
+                        <motion.h3
+                            key={currentStep}
+                            className="text-xl md:text-3xl font-bold text-[#044D8E] mb-6 text-center"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {getStepTitle()}
+                        </motion.h3>
+                    </AnimatePresence>
 
-                    {/* Step Content */}
-                    <div className="min-h-[150px] md:min-h-[200px]">{renderStep()}</div>
+                    {/* Step Content with animation */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentStep}
+                            className="min-h-[150px] md:min-h-[200px]"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {renderStep()}
+                        </motion.div>
+                    </AnimatePresence>
 
                     {/* Navigation Buttons */}
-                    <div className="flex justify-between mt-4 md:mt-5 pt-3 md:pt-4 border-t border-[#9FCAE3]">
-                        <Button
-                            onClick={prevStep}
-                            disabled={currentStep === 1}
-                            variant="outline"
-                            className="border-[#044D8E] text-[#044D8E] disabled:opacity-50 text-sm md:text-base h-9 md:h-10"
-                        >
-                            <ChevronLeft className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                            Vorige
-                        </Button>
-                        {currentStep < 5 && (
+                    <div className="flex justify-between mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/50">
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <Button
-                                onClick={nextStep}
-                                disabled={!canProceed()}
-                                className="bg-[#044D8E] hover:bg-[#0F61AC] disabled:opacity-50 text-sm md:text-base h-9 md:h-10"
+                                onClick={prevStep}
+                                disabled={currentStep === 1}
+                                variant="outline"
+                                className="glass-frosted border-2 border-[#044D8E]/30 text-[#044D8E] disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base h-10 md:h-12 px-6 font-semibold hover:bg-[#044D8E]/10 transition-all duration-300"
                             >
-                                Volgende
-                                <ChevronRight className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
+                                <ChevronLeft className="w-4 h-4 mr-2" />
+                                Vorige
                             </Button>
+                        </motion.div>
+                        {currentStep < 5 && (
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <Button
+                                    onClick={nextStep}
+                                    disabled={!canProceed()}
+                                    className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base h-10 md:h-12 px-8 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                                >
+                                    Volgende
+                                    <ChevronRight className="w-4 h-4 ml-2" />
+                                </Button>
+                            </motion.div>
                         )}
                     </div>
                 </CardContent>

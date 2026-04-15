@@ -28,7 +28,7 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  metadataBase: new URL('https://www.panora.be'), // Vervang door je echte domein
+  metadataBase: new URL('https://www.panora.be'),
   title: {
     default: `${COMPANY.name} - Ruitenwasser Gent | ${COMPANY.tagline}`,
     template: `%s | ${COMPANY.name} - Ruitenwasser Gent`
@@ -86,6 +86,9 @@ export const metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
+  },
+  alternates: {
+    canonical: 'https://www.panora.be',
   },
   icons: {
     icon: '/images/PANORA_LOGO_1_1400x1400.png',

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { SERVICE_TYPES } from "@/lib/constants";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -105,71 +106,88 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Navigation */}
-                {isMobileMenuOpen && (
-                    <div className="md:hidden border-t border-gray-200 py-4">
-                        <div className="flex flex-col gap-4">
-                            <Link
-                                href="/#calculator"
-                                className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
-                                onClick={() => setIsMobileMenuOpen(false)}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{
+                                duration: 0.3,
+                                ease: [0.4, 0.0, 0.2, 1] // Smooth easing
+                            }}
+                            className="md:hidden border-t border-gray-200 overflow-hidden"
+                        >
+                            <motion.div
+                                initial={{ y: -20 }}
+                                animate={{ y: 0 }}
+                                exit={{ y: -20 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className="flex flex-col gap-4 py-4"
                             >
-                                Bereken Prijs
-                            </Link>
-
-                            <div className="px-4">
-                                <div className="font-semibold text-gray-900 mb-2">Diensten</div>
-                                <div className="pl-4 flex flex-col gap-2">
-                                    <Link
-                                        href="/services/exterior"
-                                        className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Buiten Ramenwassen
-                                    </Link>
-                                    <Link
-                                        href="/services/premium"
-                                        className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Binnen & Buiten Premium
-                                    </Link>
-                                    <Link
-                                        href="/services/subscription"
-                                        className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                    >
-                                        Abonnementen
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <Link
-                                href="/about"
-                                className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Over Ons
-                            </Link>
-                            <Link
-                                href="/contact"
-                                className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Contact
-                            </Link>
-
-                            <div className="px-4 pt-2">
-                                <Button
-                                    asChild
-                                    className="w-full bg-gradient-to-r from-[#044D8E] to-[#1792D0]"
+                                <Link
+                                    href="/#calculator"
+                                    className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
-                                    <Link href="/#calculator">Plan Direct In</Link>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                                    Bereken Prijs
+                                </Link>
+
+                                <div className="px-4">
+                                    <div className="font-semibold text-gray-900 mb-2">Diensten</div>
+                                    <div className="pl-4 flex flex-col gap-2">
+                                        <Link
+                                            href="/services/exterior"
+                                            className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Buiten Ramenwassen
+                                        </Link>
+                                        <Link
+                                            href="/services/premium"
+                                            className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Binnen & Buiten Premium
+                                        </Link>
+                                        <Link
+                                            href="/services/subscription"
+                                            className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
+                                            Abonnementen
+                                        </Link>
+                                    </div>
+                                </div>
+
+                                <Link
+                                    href="/about"
+                                    className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Over Ons
+                                </Link>
+                                <Link
+                                    href="/contact"
+                                    className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium px-4 py-2"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Contact
+                                </Link>
+
+                                <div className="px-4 pt-2">
+                                    <Button
+                                        asChild
+                                        className="w-full bg-gradient-to-r from-[#044D8E] to-[#1792D0]"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        <Link href="/#calculator">Plan Direct In</Link>
+                                    </Button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </nav>
     );

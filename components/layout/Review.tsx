@@ -19,6 +19,7 @@ const Review = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
+    const [hasAnimated, setHasAnimated] = useState(false);
     const shouldReduceMotion = useReducedMotion();
 
     useEffect(() => {
@@ -51,6 +52,8 @@ const Review = () => {
                     setReviews([]);
                 }
                 setLoading(false);
+                // Mark as animated after initial load
+                setTimeout(() => setHasAnimated(true), 500);
             })
             .catch(err => {
                 console.error('Failed to load reviews:', err);
@@ -172,15 +175,14 @@ const Review = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {currentReviews.map((review, index) => (
                             <div
-                                key={`${review.id}-${currentPage}`}
-                                className="h-full transition-transform duration-300 ease-out hover:md:-translate-y-3"
+                                key={review.id}
+                                className="h-full transition-all duration-200 ease-out hover:md:-translate-y-3"
                                 style={{
-                                    opacity: 0,
-                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.05}s forwards`,
-                                    transform: 'translateZ(0)'
+                                    opacity: hasAnimated ? 1 : 0,
+                                    animation: (shouldReduceMotion || hasAnimated) ? 'none' : `fadeInUp 0.35s ease-out ${index * 0.05}s forwards`
                                 }}
                             >
-                                <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] transition-all duration-200 relative overflow-hidden group" style={{ transform: 'translateZ(0)' }}>
+                                <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] transition-all duration-200 relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-[#1792D0]/5 rounded-full blur-2xl group-hover:bg-[#1792D0]/10 transition-all duration-700 ease-out"></div>
                                     <CardContent className="p-6 relative z-10">
                                         {/* Quote icon */}
@@ -237,10 +239,12 @@ const Review = () => {
                                     <button
                                         key={index}
                                         onClick={() => setCurrentPage(index)}
-                                        className={`h-3 rounded-full transition-all duration-300 touch-feedback ${index === currentPage
-                                            ? "bg-[#044D8E] w-8"
-                                            : "bg-[#9FCAE3] w-3"
-                                            }`}
+                                        className={`h-3 rounded-full transition-all duration-200 ${
+                                            index === currentPage
+                                                ? "bg-[#044D8E] w-8"
+                                                : "bg-[#9FCAE3] w-3"
+                                        }`}
+                                        style={{ transform: 'translateZ(0)' }}
                                         aria-label={`Go to page ${index + 1}`}
                                     />
                                 ))}

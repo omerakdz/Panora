@@ -74,10 +74,7 @@ const BenefitsSection = () => {
                                 style={{
                                     opacity: 0,
                                     animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.08}s forwards`,
-                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                    transform: 'translateZ(0)',
-                                    backfaceVisibility: "hidden",
-                                    WebkitFontSmoothing: "subpixel-antialiased"
+                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
                                 }}
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>

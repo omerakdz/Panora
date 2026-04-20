@@ -74,8 +74,7 @@ const HowItWorks = () => {
                                 className="relative transition-transform duration-200 ease-out hover:md:-translate-y-2 hover:md:scale-105"
                                 style={{
                                     opacity: 0,
-                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.1}s forwards`,
-                                    transform: 'translateZ(0)'
+                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.1}s forwards`
                                 }}
                             >
                                 <div className={`group bg-white/80 backdrop-blur-sm ${borderColors[index]} rounded-2xl p-6 text-center hover:shadow-2xl hover:shadow-blue-200/30 transition-all duration-300 h-full relative overflow-hidden`}>

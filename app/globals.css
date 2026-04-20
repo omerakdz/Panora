@@ -43,6 +43,14 @@ body {
     transform: translateZ(0);
     backface-visibility: hidden;
   }
+  
+  /* Fix animation flickering on mobile Safari/Webkit */
+  [style*="animation"],
+  [class*="animate"] {
+    -webkit-transform: translate3d(0, 0, 0);
+    -webkit-font-smoothing: subpixel-antialiased;
+    -webkit-backface-visibility: hidden;
+  }
 }
 
 /* Hardware acceleration for animations */
@@ -70,12 +78,26 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px) translateZ(0);
+    transform: translate3d(0, 20px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0) translateZ(0);
+    transform: translate3d(0, 0, 0);
   }
+}
+
+/* Fix flickering during animations on mobile */
+[style*="animation"] {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: opacity, transform;
+  /* Force GPU composite layer to prevent flicker */
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
 /* Professional scrollbar */

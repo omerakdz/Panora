@@ -33,12 +33,29 @@ export default function CookieConsent() {
         localStorage.setItem("cookie-consent", JSON.stringify(prefs));
         setShowBanner(false);
 
-        // Update Google Analytics consent
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-            (window as any).gtag('consent', 'update', {
-                'analytics_storage': prefs.analytics ? 'granted' : 'denied',
-                'ad_storage': prefs.marketing ? 'granted' : 'denied',
+        // Update Google Tag Manager consent (Consent Mode v2)
+        if (typeof window !== 'undefined') {
+            // Use dataLayer for GTM
+            (window as any).dataLayer = (window as any).dataLayer || [];
+            (window as any).dataLayer.push({
+                'event': 'consent_update',
+                'consent': {
+                    'analytics_storage': prefs.analytics ? 'granted' : 'denied',
+                    'ad_storage': prefs.marketing ? 'granted' : 'denied',
+                    'ad_user_data': prefs.marketing ? 'granted' : 'denied',
+                    'ad_personalization': prefs.marketing ? 'granted' : 'denied',
+                }
             });
+
+            // Also update gtag for GA4 (if loaded independently)
+            if ((window as any).gtag) {
+                (window as any).gtag('consent', 'update', {
+                    'analytics_storage': prefs.analytics ? 'granted' : 'denied',
+                    'ad_storage': prefs.marketing ? 'granted' : 'denied',
+                    'ad_user_data': prefs.marketing ? 'granted' : 'denied',
+                    'ad_personalization': prefs.marketing ? 'granted' : 'denied',
+                });
+            }
         }
     };
 

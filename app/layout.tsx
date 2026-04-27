@@ -6,7 +6,10 @@ import Footer from "@/components/layout/Footer";
 import StickyCTA from "@/components/layout/stickyCTA";
 import CookieConsent from "@/components/layout/CookieConsent";
 import StructuredData from "@/components/StructuredData";
+import ConsentInit from "@/components/ConsentInit";
 import { COMPANY, UI_TEXT } from "@/lib/constants";
+import { GoogleTagManager } from '@next/third-parties/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -106,9 +109,16 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
     <html lang="nl" className={`${inter.variable} ${montserrat.variable} ${poppins.variable}`}>
       <head>
         <StructuredData />
+        <ConsentInit />
       </head>
       <body className={inter.className}>
-        {/* Google tag (gtag.js) */}
+        {/* Google Tag Manager */}
+        <GoogleTagManager gtmId="GTM-M7G6SHD8" />
+
+        {/* Google Analytics */}
+        <GoogleAnalytics gaId="G-VVGN388DC1" />
+
+        {/* Google Ads */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17651153841"
           strategy="afterInteractive"

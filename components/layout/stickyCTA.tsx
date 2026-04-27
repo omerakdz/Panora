@@ -28,9 +28,8 @@ export default function StickyCTA() {
 
     return (
         <div
-            className={`fixed bottom-0 left-0 right-0 z-50 md:hidden bg-gradient-to-r from-[#044D8E] via-[#0F61AC] to-[#1792D0] shadow-2xl border-t-2 border-white/10 transition-transform duration-300 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+            className={`fixed bottom-0 left-0 right-0 z-50 md:hidden bg-gradient-to-r from-[#044D8E] via-[#0F61AC] to-[#1792D0] shadow-2xl border-t-2 border-white/10 transition-all duration-300 ease-out ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
                 }`}
-            style={{ transform: 'translateZ(0)', willChange: 'transform' }}
         >
             <div className="container mx-auto px-4 py-3">
                 <Button

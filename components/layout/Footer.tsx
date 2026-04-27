@@ -1,5 +1,6 @@
 
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react";
 import { CONTACT, COMPANY } from "@/lib/constants";
 
@@ -14,12 +15,14 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Company Info */}
                     <div>
-                        <div className="mb-4">
-                            <img
+                        <div className="mb-4 relative h-[120px] -ml-7 -mt-20">
+                            <Image
                                 src="/images/PANORA_LOGO_WHITE.png"
                                 alt="PANORA"
-                                className="h-15 w-auto"
-                                style={{ transform: "scale(3)", transformOrigin: "13px center" }}
+                                width={200}
+                                height={120}
+                                quality={90}
+                                className="object-contain object-left"
                             />
                         </div>
                         <p className="text-white/80 mb-4">

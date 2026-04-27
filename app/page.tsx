@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import Calculator from "@/components/calculator/Calculator";
 import { UI_TEXT } from "@/lib/constants";
 import ImageSlider from "@/components/layout/ImageSlider";
@@ -54,12 +55,13 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 mobile-spacing relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={getAnimationConfig({ duration: 0.5 })}
-              style={{ letterSpacing: '-0.02em', willChange: 'opacity, transform' }}
+            <h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight fade-in-up"
+              style={{
+                letterSpacing: '-0.02em',
+                willChange: 'opacity, transform',
+                animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.5s ease-out forwards'
+              }}
             >
               <span className="block bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
                 Professionele ramenwas - Gent
@@ -67,21 +69,23 @@ export default function HomePage() {
               <span className="block text-3xl md:text-4xl lg:text-5xl mt-3 text-[#0F61AC] font-semibold">
                 snel, strak en betrouwbaar
               </span>
-            </motion.h1>
-            <motion.p
+            </h1>
+            <p
               className="text-lg md:text-xl text-[#0F61AC] mb-8 max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              style={{
+                opacity: 0,
+                animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out 0.2s forwards'
+              }}
             >
               {UI_TEXT.hero.subtitle}
-            </motion.p>
+            </p>
 
-            <motion.div
+            <div
               className="flex justify-center"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              style={{
+                opacity: 0,
+                animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.5s ease-out 0.4s forwards'
+              }}
             >
               <motion.div
                 whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(4, 77, 142, 0.3)" }}
@@ -92,13 +96,14 @@ export default function HomePage() {
                   <Link href="#calculator">{UI_TEXT.cta.primary}</Link>
                 </Button>
               </motion.div>
-            </motion.div>
+            </div>
             {/* Trust indicators */}
-            <motion.div
+            <div
               className="mt-12 pt-8 border-t border-slate-200/50 flex flex-wrap justify-center gap-8 text-sm text-slate-500"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              style={{
+                opacity: 0,
+                animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out 0.6s forwards'
+              }}
             >
               <div className="flex items-center gap-2">
                 <Shield className="w-5 h-5 text-[#1792D0]" />
@@ -112,7 +117,7 @@ export default function HomePage() {
                 <Star className="w-5 h-5 text-[#1792D0]" />
                 <span>100% Tevredenheidsgarantie</span>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -121,26 +126,28 @@ export default function HomePage() {
       <HowItWorks />
 
       {/* Calculator Section */}
-      <section id="calculator" className="relative py-20 mobile-section-padding section-overlay-blue">
+      <section id="calculator" className="relative py-1 mobile-section-padding section-overlay-blue">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-[#9FCAE3]/10"></div>
         <div className="container mx-auto px-4 mobile-spacing relative z-10">
           <div className="max-w-3xl mx-auto">
-            <motion.div
+            <div
               className="text-center mb-12"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              style={{
+                opacity: 0,
+                animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out forwards'
+              }}
             >
-              <div className="mb-4 flex justify-center">
-                <span className="text-4xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-                  <img
+              <div className="mb-20 flex justify-center">
+                <div className="relative w-[280px] h-[100px]">
+                  <Image
                     src="/images/LOGO_PANORA_TEXT.png"
                     alt="PANORA"
-                    className="h-25 w-auto"
-                    style={{ transform: "scale(2.8)", transformOrigin: "center" }}
+                    width={280}
+                    height={100}
+                    quality={90}
+                    className="object-contain"
                   />
-                </span>
+                </div>
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#044D8E]">
                 Bereken jouw prijs in 5 eenvoudige stappen
@@ -148,7 +155,7 @@ export default function HomePage() {
               <p className="text-[#0F61AC] text-lg">
                 Direct duidelijkheid over je investering — geen verborgen kosten
               </p>
-            </motion.div>
+            </div>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -168,7 +175,7 @@ export default function HomePage() {
       <Services />
 
       {/* CTA Halfway */}
-      <section className="relative py-16 mobile-section-padding bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] text-white overflow-hidden">
+      <section className="relative pt-1 pb-10 mobile-section-padding bg-gradient-to-br from-[#044D8E] via-[#0F61AC] to-[#1792D0] text-white overflow-hidden">
         {/* Decorative gradients */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#044D8E]/30 rounded-full blur-3xl"></div>
@@ -184,22 +191,24 @@ export default function HomePage() {
           }}
         />
 
-        <motion.div
+        <div
           className="container mx-auto px-4 text-center relative z-10"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          style={{
+            opacity: 0,
+            animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out forwards'
+          }}
         >
           <div className="mb-4 flex justify-center">
-            <span className="text-4xl font-bold text-white">
-              <img
+            <div className="relative w-[280px] h-[140px] mb-10 ">
+              <Image
                 src="/images/PANORA_LOGO_WHITE.png"
                 alt="PANORA"
-                className="h-25 w-auto"
-                style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+                width={280}
+                height={140}
+                quality={90}
+                className="object-contain"
               />
-            </span>
+            </div>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             In één flow geregeld: prijs → datum → bevestiging
@@ -218,28 +227,29 @@ export default function HomePage() {
               </Button>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* Before/After Gallery */}
-      <section className="py-20 bg-white">
+      <section className="py-15 bg-white">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          <div
+            style={{
+              opacity: 0,
+              animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out forwards'
+            }}
           >
-            <div className="mb-4 flex justify-center">
-              <span className="text-4xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-                <img
+            <div className="mb-2 flex justify-center">
+              <div className="relative w-[280px] h-[140px] mb-10 ">
+                <Image
                   src="/images/LOGO_PANORA_TEXT.png"
                   alt="PANORA"
-                  className="h-25 mx-auto"
-                  style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+                  width={280}
+                  height={140}
+                  quality={90}
+                  className="object-contain"
                 />
-              </span>
-
+              </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#044D8E]">
               Voor & Na
@@ -247,7 +257,7 @@ export default function HomePage() {
             <p className="text-center text-[#0F61AC] mb-12">
               Bekijk het verschil dat PANORA maakt
             </p>
-          </motion.div>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -283,26 +293,28 @@ export default function HomePage() {
       <Review />
 
       {/* Final CTA Section */}
-      <section className="relative bg-gradient-to-b from-[#9FCAE3]/20 via-white to-white py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-[#9FCAE3]/20 via-white to-white py-2 pb-8 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#1792D0]/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#044D8E]/10 rounded-full blur-3xl"></div>
 
-        <motion.div
+        <div
           className="container mx-auto px-4 text-center relative z-10"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          style={{
+            opacity: 0,
+            animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out forwards'
+          }}
         >
-          <div className="mb-4 flex justify-center">
-            <span className="text-4xl font-bold bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
-              <img
+          <div className="mb-1 flex justify-center">
+            <div className="relative w-[280px] h-[140px] mb-8 ">
+              <Image
                 src="/images/LOGO_PANORA_TEXT.png"
                 alt="PANORA"
-                className="h-25 w-auto"
-                style={{ transform: "scale(2.8)", transformOrigin: " center" }}
+                width={280}
+                height={140}
+                quality={90}
+                className="object-contain"
               />
-            </span>
+            </div>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#044D8E]">
             Klaar voor kraakheldere ramen?
@@ -321,7 +333,7 @@ export default function HomePage() {
               </Button>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </section>
     </main>
   );

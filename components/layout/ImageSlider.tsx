@@ -43,38 +43,41 @@ const ImageSlider = ({ images }: ImageSliderProps) => {
                 </div>
             </div>
 
-            {/* Navigation Buttons */}
-            <Button
-                variant="outline"
-                size="icon"
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white"
-                onClick={goToPrevious}
-                style={{ cursor: "pointer" }}
-            >
-                <ChevronLeft className="h-6 w-6 text-[#044D8E]" />
-            </Button>
-            <Button
-                variant="outline"
-                size="icon"
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white"
-                onClick={goToNext}
-                style={{ cursor: "pointer" }}
-            >
-                <ChevronRight className="h-6 w-6 text-[#044D8E]" />
-            </Button>
+            {/* Navigation Buttons Below Image */}
+            <div className="flex justify-center items-center gap-4 mt-6">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="bg-white hover:bg-[#9FCAE3]/20 shadow-lg"
+                    onClick={goToPrevious}
+                    style={{ cursor: "pointer" }}
+                >
+                    <ChevronLeft className="h-6 w-6 text-[#044D8E]" />
+                </Button>
 
-            {/* Dots Indicator */}
-            <div className="flex justify-center gap-2 mt-6">
-                {images.map((_, index) => (
-                    <button
-                        key={index}
-                        className={`w-3 h-3 rounded-full transition-all ${index === currentIndex
-                            ? "bg-[#044D8E] w-8"
-                            : "bg-[#9FCAE3]"
-                            }`}
-                        onClick={() => setCurrentIndex(index)}
-                    />
-                ))}
+                {/* Dots Indicator */}
+                <div className="flex justify-center gap-2">
+                    {images.map((_, index) => (
+                        <button
+                            key={index}
+                            className={`w-3 h-3 rounded-full transition-all ${index === currentIndex
+                                ? "bg-[#044D8E] w-8"
+                                : "bg-[#9FCAE3]"
+                                }`}
+                            onClick={() => setCurrentIndex(index)}
+                        />
+                    ))}
+                </div>
+
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="bg-white hover:bg-[#9FCAE3]/20 shadow-lg"
+                    onClick={goToNext}
+                    style={{ cursor: "pointer" }}
+                >
+                    <ChevronRight className="h-6 w-6 text-[#044D8E]" />
+                </Button>
             </div>
         </div>
     )

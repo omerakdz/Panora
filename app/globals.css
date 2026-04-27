@@ -17,8 +17,6 @@ body {
   /* Better font rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Optimize repaints */
-  transform: translateZ(0);
 }
 
 /* Performance optimizations for mobile */
@@ -30,26 +28,6 @@ body {
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* Reduce animation complexity on mobile */
-  * {
-    animation-duration: 0.2s !important;
-    transition-duration: 0.2s !important;
-  }
-
-  /* Optimize transforms for GPU */
-  [data-framer-component-type] {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
-  
-  /* Fix animation flickering on mobile Safari/Webkit */
-  [style*="animation"],
-  [class*="animate"] {
-    -webkit-transform: translate3d(0, 0, 0);
-    -webkit-font-smoothing: subpixel-antialiased;
-    -webkit-backface-visibility: hidden;
   }
 }
 
@@ -78,26 +56,20 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translate3d(0, 20px, 0);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
   }
 }
 
-/* Fix flickering during animations on mobile */
-[style*="animation"] {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-perspective: 1000px;
-  perspective: 1000px;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  will-change: opacity, transform;
-  /* Force GPU composite layer to prevent flicker */
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
+/* Smooth animations on mobile */
+@media (max-width: 768px) {
+  [style*="animation"] {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
 }
 
 /* Professional scrollbar */

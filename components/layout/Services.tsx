@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { SERVICE_TYPES } from "@/lib/constants";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Droplets, Sparkles, CalendarClock, Check } from "lucide-react";
 
 const Services = () => {
+    const shouldReduceMotion = useReducedMotion();
+
     return (
         <section className="py-24 bg-white overflow-x-hidden">
             <div className="container mx-auto px-4">
-                <motion.div
+                <div
                     className="text-center mb-16"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+                    style={{
+                        opacity: 0,
+                        animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.5s ease-out forwards'
+                    }}
                 >
                     <span className="inline-block bg-[#1792D0]/10 text-[#1792D0] text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
                         Onze Diensten
@@ -26,7 +28,7 @@ const Services = () => {
                     <p className="text-slate-600 max-w-xl mx-auto">
                         Van eenmalige reiniging tot regelmatig onderhoud - wij hebben een oplossing voor elk budget
                     </p>
-                </motion.div>
+                </div>
 
                 <div className="grid gap-6 md:grid-cols-3 max-w-6xl mx-auto">
                     {/* Exterior Service */}

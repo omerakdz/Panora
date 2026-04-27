@@ -176,10 +176,10 @@ const Review = () => {
                         {currentReviews.map((review, index) => (
                             <div
                                 key={review.id}
-                                className="h-full transition-all duration-200 ease-out hover:md:-translate-y-3"
+                                className="h-full transition-all duration-300 ease-out hover:md:-translate-y-3"
                                 style={{
                                     opacity: hasAnimated ? 1 : 0,
-                                    animation: (shouldReduceMotion || hasAnimated) ? 'none' : `fadeInUp 0.35s ease-out ${index * 0.05}s forwards`
+                                    animation: (shouldReduceMotion || hasAnimated) ? 'none' : `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`
                                 }}
                             >
                                 <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] transition-all duration-200 relative overflow-hidden group">
@@ -195,8 +195,8 @@ const Review = () => {
                                                 <span
                                                     key={i}
                                                     className={`text-2xl transition-transform duration-150 hover:scale-110 ${i < review.rating
-                                                            ? 'text-amber-400 drop-shadow-sm'
-                                                            : 'text-slate-200'
+                                                        ? 'text-amber-400 drop-shadow-sm'
+                                                        : 'text-slate-200'
                                                         }`}
                                                 >
                                                     ★
@@ -226,9 +226,8 @@ const Review = () => {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-150 w-12 h-12"
+                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-200 w-12 h-12"
                                 onClick={goToPrevious}
-                                style={{ transform: 'translateZ(0)' }}
                             >
                                 <ChevronLeft className="h-6 w-6" />
                             </Button>
@@ -239,12 +238,10 @@ const Review = () => {
                                     <button
                                         key={index}
                                         onClick={() => setCurrentPage(index)}
-                                        className={`h-3 rounded-full transition-all duration-200 ${
-                                            index === currentPage
+                                        className={`h-3 rounded-full transition-all duration-300 ${index === currentPage
                                                 ? "bg-[#044D8E] w-8"
                                                 : "bg-[#9FCAE3] w-3"
-                                        }`}
-                                        style={{ transform: 'translateZ(0)' }}
+                                            }`}
                                         aria-label={`Go to page ${index + 1}`}
                                     />
                                 ))}
@@ -253,9 +250,8 @@ const Review = () => {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-150 w-12 h-12"
+                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-200 w-12 h-12"
                                 onClick={goToNext}
-                                style={{ transform: 'translateZ(0)' }}
                             >
                                 <ChevronRight className="h-6 w-6" />
                             </Button>

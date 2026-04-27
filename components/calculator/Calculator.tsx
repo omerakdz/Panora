@@ -126,16 +126,16 @@ export default function Calculator() {
     ];
 
     return (
-        <div id="calculator" className="w-full">
+        <div id="calculator" className="w-full px-2 md:px-4 pb-6 md:pb-8">
             <Card className="glass-card border-2 border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden relative">
                 {/* Gradient background overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1792D0]/5 via-transparent to-[#044D8E]/5 opacity-50"></div>
 
-                <CardContent className="p-4 md:p-8 relative z-10">
+                <CardContent className="p-4 md:p-6 relative z-10">
                     {/* Premium Progress Indicator */}
-                    <div className="mb-8">
+                    <div className="mb-4 md:mb-6">
                         {/* Horizontal stepper - all screens */}
-                        <div className="flex justify-between items-start mb-6">
+                        <div className="flex justify-between items-start mb-3 md:mb-4">
                             {steps.map((step, index) => {
                                 const Icon = step.icon;
                                 const isCompleted = currentStep > step.number;
@@ -147,7 +147,7 @@ export default function Calculator() {
                                         <div className="flex flex-col items-center">
                                             {/* Icon circle */}
                                             <motion.div
-                                                className={`relative z-10 w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-1 md:mb-2 transition-all duration-300 ${isCompleted
+                                                className={`relative z-10 w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center mb-1 transition-all duration-300 ${isCompleted
                                                     ? "bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-lg shadow-emerald-500/30"
                                                     : isCurrent
                                                         ? "bg-gradient-to-br from-[#1792D0] to-[#044D8E] shadow-lg shadow-blue-500/40 glow-pulse"
@@ -164,15 +164,15 @@ export default function Calculator() {
                                                 }}
                                             >
                                                 {isCompleted ? (
-                                                    <Check className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                                                    <Check className="w-3 h-3 md:w-5 md:h-5 text-white" />
                                                 ) : (
-                                                    <Icon className={`w-4 h-4 md:w-6 md:h-6 ${isCurrent ? "text-white" : "text-slate-500"
+                                                    <Icon className={`w-3 h-3 md:w-5 md:h-5 ${isCurrent ? "text-white" : "text-slate-500"
                                                         }`} />
                                                 )}
                                             </motion.div>
 
                                             {/* Step label */}
-                                            <div className="text-[10px] md:text-xs font-semibold text-center max-w-[60px] md:max-w-[100px]">
+                                            <div className="text-[9px] md:text-[11px] font-semibold text-center max-w-[55px] md:max-w-[90px]">
                                                 <div className={`${isCurrent ? "text-[#044D8E]" : "text-slate-500"
                                                     }`}>
                                                     {step.title}
@@ -182,7 +182,7 @@ export default function Calculator() {
 
                                         {/* Connecting line */}
                                         {index < steps.length - 1 && (
-                                            <div className="absolute top-5 md:top-7 left-[calc(50%+20px)] md:left-[calc(50%+28px)] right-[calc(-50%+20px)] md:right-[calc(-50%+28px)] h-0.5 bg-slate-200">
+                                            <div className="absolute top-4 md:top-6 left-[calc(50%+16px)] md:left-[calc(50%+24px)] right-[calc(-50%+16px)] md:right-[calc(-50%+24px)] h-0.5 bg-slate-200">
                                                 <motion.div
                                                     className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600"
                                                     initial={{ width: "0%" }}
@@ -201,7 +201,7 @@ export default function Calculator() {
                     <AnimatePresence mode="wait">
                         <motion.h3
                             key={currentStep}
-                            className="text-xl md:text-3xl font-bold text-[#044D8E] mb-6 text-center"
+                            className="text-lg md:text-2xl font-bold text-[#044D8E] mb-3 md:mb-4 text-center"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
@@ -215,7 +215,7 @@ export default function Calculator() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentStep}
-                            className="min-h-[150px] md:min-h-[200px]"
+                            className="min-h-[120px] md:min-h-[160px]"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
@@ -226,7 +226,7 @@ export default function Calculator() {
                     </AnimatePresence>
 
                     {/* Navigation Buttons */}
-                    <div className="flex justify-between mt-6 md:mt-8 pt-4 md:pt-6 border-t border-white/50">
+                    <div className="flex justify-between mt-4 md:mt-6 pt-3 md:pt-4 border-t border-white/50">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <Button
                                 onClick={prevStep}

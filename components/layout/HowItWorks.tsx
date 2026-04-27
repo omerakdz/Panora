@@ -38,23 +38,24 @@ const HowItWorks = () => {
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#1792D0]/5 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#044D8E]/5 rounded-full blur-3xl"></div>
 
-            <div className="container mx-auto px-4 relative z-10">                <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="text-center mb-16"
-            >
-                <span className="inline-block bg-[#044D8E]/10 text-[#044D8E] text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
-                    ✨ Eenvoudig proces
-                </span>
-                <h2 className="text-3xl md:text-4xl font-bold text-[#044D8E] mb-4">
-                    Hoe het werkt
-                </h2>
-                <p className="text-slate-600 max-w-xl mx-auto">
-                    In vier eenvoudige stappen tot stralend schone ramen
-                </p>
-            </motion.div>
+            <div className="container mx-auto px-4 relative z-10">
+                <div
+                    style={{
+                        opacity: 0,
+                        animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.6s ease-out forwards'
+                    }}
+                    className="text-center mb-16"
+                >
+                    <span className="inline-block bg-[#044D8E]/10 text-[#044D8E] text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+                        ✨ Eenvoudig proces
+                    </span>
+                    <h2 className="text-3xl md:text-4xl font-bold text-[#044D8E] mb-4">
+                        Hoe het werkt
+                    </h2>
+                    <p className="text-slate-600 max-w-xl mx-auto">
+                        In vier eenvoudige stappen tot stralend schone ramen
+                    </p>
+                </div>
 
                 <div className="grid md:grid-cols-4 gap-6 relative">
                     {/* Connection line - desktop only */}
@@ -69,12 +70,17 @@ const HowItWorks = () => {
                             'border-2 border-[#1792D0]/50'
                         ];
                         return (
-                            <div
+                            <motion.div
                                 key={step.num}
-                                className="relative transition-transform duration-200 ease-out hover:md:-translate-y-2 hover:md:scale-105"
-                                style={{
-                                    opacity: 0,
-                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.1}s forwards`
+                                className="relative"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.15 }}
+                                whileHover={{
+                                    y: -8,
+                                    scale: 1.05,
+                                    transition: { type: "spring", stiffness: 300, damping: 20 }
                                 }}
                             >
                                 <div className={`group bg-white/80 backdrop-blur-sm ${borderColors[index]} rounded-2xl p-6 text-center hover:shadow-2xl hover:shadow-blue-200/30 transition-all duration-300 h-full relative overflow-hidden`}>
@@ -94,7 +100,7 @@ const HowItWorks = () => {
                                         {step.desc}
                                     </p>
                                 </div>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>

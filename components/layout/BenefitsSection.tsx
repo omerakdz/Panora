@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { CheckCircle2, Clock, Droplets, FileCheck, Sparkles, Shield } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
@@ -42,19 +43,21 @@ const BenefitsSection = () => {
     return (
         <section className="py-20 bg-white border-y border-slate-100 overflow-x-hidden">
             <div className="container mx-auto px-4">
-                <motion.div
+                <div
                     className="text-center mb-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
+                    style={{
+                        opacity: 0,
+                        animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.5s ease-out forwards'
+                    }}
                 >
-                    <img src="/images/panora-logo.png" alt="PANORA Logo" className="mx-auto  h-20" />
+                    <div className="mx-auto relative w-20 h-20">
+                        <Image src="/images/panora-logo.png" alt="PANORA Logo" width={80} height={80} quality={90} className="object-contain" />
+                    </div>
                     <h2 className="text-2xl md:text-3xl font-bold text-[#044D8E] mb-3">
                         Waarom kiezen voor PANORA?
                     </h2>
                     <p className="text-slate-600">Professionele service waar u op kunt rekenen</p>
-                </motion.div>
+                </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 overflow-visible">
                     {benefits.map((benefit, index) => {
@@ -68,12 +71,20 @@ const BenefitsSection = () => {
                         ];
                         const isLastItem = index === benefits.length - 1;
                         return (
-                            <div
+                            <motion.div
                                 key={benefit.title}
-                                className={`group glass-card ${borderColors[index]} rounded-2xl p-6 overflow-hidden transition-all duration-200 hover:md:-translate-y-3 hover:md:scale-[1.01] ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
+                                className={`group glass-card ${borderColors[index]} rounded-2xl p-6 overflow-hidden ${isLastItem ? 'col-span-2 md:col-span-1 mx-auto w-full max-w-[calc(50%-0.5rem)] md:max-w-none' : ''}`}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                whileHover={{
+                                    y: -12,
+                                    scale: 1.01,
+                                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.15)",
+                                    transition: { type: "spring", stiffness: 300, damping: 20 }
+                                }}
                                 style={{
-                                    opacity: 0,
-                                    animation: shouldReduceMotion ? 'none' : `fadeInUp 0.4s ease-out ${index * 0.08}s forwards`,
                                     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
                                 }}
                             >
@@ -89,7 +100,7 @@ const BenefitsSection = () => {
                                 </div>
                                 {/* 3D glow effect */}
                                 <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl bg-gradient-to-br from-blue-100/50 to-transparent -z-10"></div>
-                            </div>
+                            </motion.div>
                         );
                     })}
                 </div>

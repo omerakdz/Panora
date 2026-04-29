@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 interface GooglePlaceReview {
   author_name: string;
@@ -87,63 +87,113 @@ export async function GET() {
   try {
     const placeId = process.env.GOOGLE_PLACE_ID;
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-    
-    console.log('🔍 Checking credentials...');
-    console.log('Place ID:', placeId ? 'EXISTS' : 'MISSING');
-    console.log('API Key:', apiKey ? 'EXISTS' : 'MISSING');
-    
+
+    console.log("🔍 Checking credentials...");
+    console.log("Place ID:", placeId ? "EXISTS" : "MISSING");
+    console.log("API Key:", apiKey ? "EXISTS" : "MISSING");
+
     if (!placeId || !apiKey) {
-      console.error('❌ Missing Google credentials');
-      return NextResponse.json({ error: 'Missing credentials', placeId: !!placeId, apiKey: !!apiKey });
+      console.error("❌ Missing Google credentials");
+      return NextResponse.json(
+        {
+          error: "Missing credentials",
+          placeId: !!placeId,
+          apiKey: !!apiKey,
+        },
+        { status: 500 },
+      );
     }
-    
-    console.log('📡 Fetching Google reviews...');
-    
-    // Haal echte Google reviews op
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating,user_ratings_total&key=${apiKey}`;
-    console.log('URL:', url.substring(0, 100) + '...');
-    
-    const response = await fetch(url, { 
-      next: { revalidate: 3600 }
+
+    console.log("📡 Fetching Google reviews from server-side...");
+
+    // Gebruik Google Places API vanaf de server (geen referer restrictions nodig)
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,reviews,user_ratings_total&key=${apiKey}`;
+
+    const response = await fetch(url, {
+      next: { revalidate: 3600 },
+      headers: {
+        Accept: "application/json",
+      },
     });
-    
-    console.log('Response status:', response.status);
-    
-    const data: GooglePlaceDetailsResponse = await response.json();
-    
-    console.log('API Status:', data.status);
-    if (data.error_message) {
-      console.log('Error message:', data.error_message);
+
+    console.log("Response status:", response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ HTTP error:", response.status, errorText);
+      return NextResponse.json(
+        {
+          error: "HTTP error",
+          status: response.status,
+          details: errorText,
+        },
+        { status: response.status },
+      );
     }
-    console.log('Reviews count:', data.result?.reviews?.length || 0);
-    
-    if (data.status !== 'OK' || !data.result?.reviews) {
-      return NextResponse.json({ 
-        error: 'Google API error', 
-        status: data.status, 
-        message: data.error_message,
-        data: data
+
+    const data: GooglePlaceDetailsResponse = await response.json();
+
+    console.log("API Status:", data.status);
+    if (data.error_message) {
+      console.error("❌ Google API error:", data.error_message);
+
+      // Specifieke foutmelding voor referer restrictions
+      if (data.error_message.includes("referer restrictions")) {
+        console.error("⚠️  API key heeft referer restrictions. Los dit op:");
+        console.error("   1. Ga naar Google Cloud Console");
+        console.error("   2. API & Services > Credentials");
+        console.error("   3. Kies je API key");
+        console.error('   4. Verwijder "HTTP referrers" restrictie OF');
+        console.error(
+          "   5. Maak een nieuwe key zonder restrictions voor server-side gebruik",
+        );
+      }
+    }
+
+    if (data.status !== "OK") {
+      return NextResponse.json(
+        {
+          error: "Google API error",
+          status: data.status,
+          message: data.error_message || "Unknown error",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (!data.result?.reviews) {
+      console.log("⚠️  No reviews found");
+      return NextResponse.json([], {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+        },
       });
     }
-    
+
     // Transform Google reviews to our format
     const transformedReviews = data.result.reviews.map((review, index) => ({
       id: String(index + 1),
       rating: review.rating,
       comment: review.text,
       author: review.author_name,
-      location: "Google Reviews"
+      location: "Google Reviews",
     }));
-    
+
     console.log(`✅ Returning ${transformedReviews.length} Google reviews`);
-    
+
     return NextResponse.json(transformedReviews, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200'
-      }
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+      },
     });
   } catch (error) {
-    console.error('❌ Error fetching reviews:', error);
-    return NextResponse.json({ error: 'Fetch failed', details: String(error) });
+    console.error("❌ Error fetching reviews:", error);
+    return NextResponse.json(
+      {
+        error: "Fetch failed",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
   }
 }

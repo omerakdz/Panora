@@ -26,7 +26,23 @@ export default function StepPropertyType({ data, updateData }: StepPropertyTypeP
                 {propertyTypes.map(({ value, label, icon: Icon }) => (
                     <button
                         key={value}
-                        onClick={() => updateData({ propertyType: value })}
+                        onClick={() => {
+                            updateData({ propertyType: value });
+
+                            // Track property_type_select event
+                            if (typeof window !== 'undefined') {
+                                window.dataLayer = window.dataLayer || [];
+                                const eventData = {
+                                    event: "property_type_select",
+                                    funnel_name: "calculator",
+                                    property_type: value
+                                };
+                                window.dataLayer.push(eventData);
+                                if (process.env.NODE_ENV === 'development') {
+                                    console.log('📊 GTM Event pushed:', eventData);
+                                }
+                            }
+                        }}
                         className={`
               p-2 md:p-4 rounded-lg border-2 transition-all
               flex flex-col items-center justify-center gap-1 md:gap-2

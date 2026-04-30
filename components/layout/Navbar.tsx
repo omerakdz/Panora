@@ -104,28 +104,26 @@ const Navbar = () => {
                         className="md:hidden p-2 text-gray-700 hover:text-[#044D8E] transition-colors duration-200"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         aria-label="Toggle menu"
-                        whileTap={{ scale: 0.9 }}
-                        animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
-                        transition={{ duration: 0.3 }}
+                        whileTap={{ scale: 0.95 }}
                     >
                         <AnimatePresence mode="wait">
                             {isMobileMenuOpen ? (
                                 <motion.div
                                     key="close"
-                                    initial={{ opacity: 0, rotate: -90 }}
+                                    initial={{ opacity: 0, rotate: -180 }}
                                     animate={{ opacity: 1, rotate: 0 }}
-                                    exit={{ opacity: 0, rotate: 90 }}
-                                    transition={{ duration: 0.2 }}
+                                    exit={{ opacity: 0, rotate: 180 }}
+                                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                                 >
                                     <X size={24} />
                                 </motion.div>
                             ) : (
                                 <motion.div
                                     key="menu"
-                                    initial={{ opacity: 0, rotate: 90 }}
+                                    initial={{ opacity: 0, rotate: 180 }}
                                     animate={{ opacity: 1, rotate: 0 }}
-                                    exit={{ opacity: 0, rotate: -90 }}
-                                    transition={{ duration: 0.2 }}
+                                    exit={{ opacity: 0, rotate: -180 }}
+                                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                                 >
                                     <Menu size={24} />
                                 </motion.div>
@@ -138,13 +136,13 @@ const Navbar = () => {
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
-                            className="fixed inset-0 bg-black/20 z-40 md:hidden"
+                            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 md:hidden"
                             onClick={() => setIsMobileMenuOpen(false)}
                             style={{ top: '64px' }}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                         />
                     )}
                 </AnimatePresence>
@@ -153,78 +151,133 @@ const Navbar = () => {
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
-                            className="absolute left-0 right-0 bg-white shadow-xl md:hidden z-50 border-t border-gray-200"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="absolute left-0 right-0 bg-white shadow-2xl md:hidden z-50 border-t border-gray-200 overflow-hidden"
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{
+                                duration: 0.3,
+                                ease: [0.4, 0, 0.2, 1],
+                                opacity: { duration: 0.25 }
+                            }}
                         >
                             <motion.div
-                                className="flex flex-col gap-4 py-4 px-4"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2, delay: 0.1 }}
+                                className="flex flex-col gap-4 py-6 px-4 max-h-[calc(100vh-64px)] overflow-y-auto"
+                                initial="closed"
+                                animate="open"
+                                exit="closed"
+                                variants={{
+                                    open: {
+                                        transition: {
+                                            staggerChildren: 0.05,
+                                            delayChildren: 0.1
+                                        }
+                                    },
+                                    closed: {
+                                        transition: {
+                                            staggerChildren: 0.03,
+                                            staggerDirection: -1
+                                        }
+                                    }
+                                }}
                             >
-                                <Link
-                                    href="/#calculator"
-                                    className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium py-2"
-                                    onClick={() => setIsMobileMenuOpen(false)}
+                                <motion.div
+                                    variants={{
+                                        open: { opacity: 1, y: 0 },
+                                        closed: { opacity: 0, y: -10 }
+                                    }}
+                                    transition={{ duration: 0.2 }}
                                 >
-                                    Bereken Prijs
-                                </Link>
+                                    <Link
+                                        href="/#calculator"
+                                        className="block text-gray-700 hover:text-[#044D8E] hover:bg-[#9FCAE3]/10 transition-all font-medium py-3 px-3 rounded-lg"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Bereken Prijs
+                                    </Link>
+                                </motion.div>
 
-                                <div>
-                                    <div className="font-semibold text-gray-900 mb-2">Diensten</div>
-                                    <div className="pl-4 flex flex-col gap-2">
+                                <motion.div
+                                    variants={{
+                                        open: { opacity: 1, y: 0 },
+                                        closed: { opacity: 0, y: -10 }
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <div className="font-semibold text-gray-900 mb-2 px-3">Diensten</div>
+                                    <div className="pl-4 flex flex-col gap-1">
                                         <Link
                                             href="/services/exterior"
-                                            className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
+                                            className="block text-gray-700 hover:text-[#044D8E] hover:bg-[#9FCAE3]/10 transition-all py-2 px-3 rounded-lg"
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
                                             Buiten Ramenwassen
                                         </Link>
                                         <Link
                                             href="/services/premium"
-                                            className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
+                                            className="block text-gray-700 hover:text-[#044D8E] hover:bg-[#9FCAE3]/10 transition-all py-2 px-3 rounded-lg"
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
                                             Binnen & Buiten Premium
                                         </Link>
                                         <Link
                                             href="/services/subscription"
-                                            className="text-gray-700 hover:text-[#044D8E] transition-colors py-1"
+                                            className="block text-gray-700 hover:text-[#044D8E] hover:bg-[#9FCAE3]/10 transition-all py-2 px-3 rounded-lg"
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
                                             Abonnementen
                                         </Link>
                                     </div>
-                                </div>
+                                </motion.div>
 
-                                <Link
-                                    href="/about"
-                                    className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium py-2"
-                                    onClick={() => setIsMobileMenuOpen(false)}
+                                <motion.div
+                                    variants={{
+                                        open: { opacity: 1, y: 0 },
+                                        closed: { opacity: 0, y: -10 }
+                                    }}
+                                    transition={{ duration: 0.2 }}
                                 >
-                                    Over Ons
-                                </Link>
-                                <Link
-                                    href="/contact"
-                                    className="text-gray-700 hover:text-[#044D8E] transition-colors font-medium py-2"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Contact
-                                </Link>
+                                    <Link
+                                        href="/about"
+                                        className="block text-gray-700 hover:text-[#044D8E] hover:bg-[#9FCAE3]/10 transition-all font-medium py-3 px-3 rounded-lg"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Over Ons
+                                    </Link>
+                                </motion.div>
 
-                                <div className="pt-2">
+                                <motion.div
+                                    variants={{
+                                        open: { opacity: 1, y: 0 },
+                                        closed: { opacity: 0, y: -10 }
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Link
+                                        href="/contact"
+                                        className="block text-gray-700 hover:text-[#044D8E] hover:bg-[#9FCAE3]/10 transition-all font-medium py-3 px-3 rounded-lg"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Contact
+                                    </Link>
+                                </motion.div>
+
+                                <motion.div
+                                    className="pt-2"
+                                    variants={{
+                                        open: { opacity: 1, y: 0, scale: 1 },
+                                        closed: { opacity: 0, y: -10, scale: 0.95 }
+                                    }}
+                                    transition={{ duration: 0.2 }}
+                                >
                                     <Button
                                         asChild
-                                        className="w-full bg-gradient-to-r from-[#044D8E] to-[#1792D0]"
+                                        className="w-full bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:shadow-lg transition-all"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         <Link href="/#calculator">Plan Direct In</Link>
                                     </Button>
-                                </div>
+                                </motion.div>
                             </motion.div>
                         </motion.div>
                     )}

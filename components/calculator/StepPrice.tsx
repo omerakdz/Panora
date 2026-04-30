@@ -28,6 +28,27 @@ export default function StepPrice({ data, updateData }: StepPriceProps) {
                 if (response.ok) {
                     const result = await response.json();
                     updateData({ calculatedPrice: result.price });
+
+                    // Track price_view event - zonder PII
+                    if (typeof window !== 'undefined') {
+                        window.dataLayer = window.dataLayer || [];
+                        const eventData = {
+                            event: "price_view",
+                            funnel_name: "calculator",
+                            service_type: data.propertyType,
+                            total_windows: data.totalWindows,
+                            exterior_windows: data.exteriorWindows,
+                            interior_exterior_windows: data.interiorExteriorWindows,
+                            has_hard_to_reach: data.hardToReach,
+                            has_first_time_long: data.firstTimeInLong,
+                            has_clean_frames: data.cleanFrames,
+                            price_value: result.price
+                        };
+                        window.dataLayer.push(eventData);
+                        if (process.env.NODE_ENV === 'development') {
+                            console.log('📊 GTM Event pushed:', eventData);
+                        }
+                    }
                 } else {
                     console.error("Failed to calculate price");
                 }

@@ -59,6 +59,22 @@ export default function StepCustomerDetails({
             });
 
             if (response.ok) {
+                // Track booking_request event - zonder PII
+                if (typeof window !== 'undefined') {
+                    window.dataLayer = window.dataLayer || [];
+                    const eventData = {
+                        event: "booking_request",
+                        funnel_name: "calculator",
+                        service_type: data.propertyType,
+                        total_windows: data.totalWindows,
+                        price_value: data.calculatedPrice
+                    };
+                    window.dataLayer.push(eventData);
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log('📊 GTM Event pushed:', eventData);
+                    }
+                }
+
                 // Save booking details to sessionStorage
                 const bookingDetails = {
                     customerName: data.customerName,
@@ -83,10 +99,37 @@ export default function StepCustomerDetails({
                 // Redirect to confirmation page
                 router.push("/confirmation");
             } else {
+                // Track booking_error event
+                if (typeof window !== 'undefined') {
+                    window.dataLayer = window.dataLayer || [];
+                    const eventData = {
+                        event: "booking_error",
+                        funnel_name: "calculator",
+                        error_type: "api_error"
+                    };
+                    window.dataLayer.push(eventData);
+                    if (process.env.NODE_ENV === 'development') {
+                        console.log('📊 GTM Event pushed:', eventData);
+                    }
+                }
                 alert("Er is iets misgegaan. Probeer het opnieuw.");
             }
         } catch (error) {
             console.error("Error submitting booking:", error);
+
+            // Track booking_error event
+            if (typeof window !== 'undefined') {
+                window.dataLayer = window.dataLayer || [];
+                const eventData = {
+                    event: "booking_error",
+                    funnel_name: "calculator",
+                    error_type: "network_error"
+                };
+                window.dataLayer.push(eventData);
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('📊 GTM Event pushed:', eventData);
+                }
+            }
             alert("Er is een fout opgetreden. Probeer het later opnieuw.");
         } finally {
             setIsSubmitting(false);

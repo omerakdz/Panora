@@ -85,6 +85,21 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
     const handleTimeSelect = (time: string) => {
         console.log('⏰ Time selected:', time);
         updateData({ selectedTime: time });
+
+        // Track appointment_select event - zonder PII
+        if (typeof window !== 'undefined' && selectedDate) {
+            window.dataLayer = window.dataLayer || [];
+            const eventData = {
+                event: "appointment_select",
+                funnel_name: "calculator",
+                appointment_time: time,
+                appointment_day_of_week: selectedDate.toLocaleDateString('en-US', { weekday: 'long' })
+            };
+            window.dataLayer.push(eventData);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('📊 GTM Event pushed:', eventData);
+            }
+        }
     };
 
     const handleRefresh = () => {
@@ -147,8 +162,8 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
                                     onClick={() => handleTimeSelect(slot)}
                                     variant={data.selectedTime === slot ? "default" : "outline"}
                                     className={`text-sm md:text-base py-2 md:py-3 ${data.selectedTime === slot
-                                            ? "bg-[#044D8E] hover:bg-[#0F61AC]"
-                                            : "border-[#9FCAE3] hover:border-[#044D8E] text-[#044D8E]"
+                                        ? "bg-[#044D8E] hover:bg-[#0F61AC]"
+                                        : "border-[#9FCAE3] hover:border-[#044D8E] text-[#044D8E]"
                                         }`}
                                 >
                                     {slot}

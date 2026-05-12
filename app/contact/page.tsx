@@ -9,6 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Mail, Phone, MessageCircle, MapPin, Building2 } from "lucide-react";
 import { CONTACT, COMPANY } from "@/lib/constants";
 
+// Note: Metadata cannot be exported from client components.
+// For SEO, consider splitting this into a server component wrapper.
+
 export default function ContactPage() {
     const [formData, setFormData] = useState({
         name: "",

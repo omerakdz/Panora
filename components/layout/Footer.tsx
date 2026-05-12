@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Facebook, Instagram } from "lucide-react";
-import { CONTACT, COMPANY } from "@/lib/constants";
+import { CONTACT, COMPANY, SOCIAL_MEDIA } from "@/lib/constants";
 
 const Footer = () => {
     return (
@@ -18,7 +18,7 @@ const Footer = () => {
                         <div className="mb-4 relative h-[120px] -ml-7 -mt-20">
                             <Image
                                 src="/images/PANORA_LOGO_WHITE.png"
-                                alt="PANORA"
+                                alt="PANORA wit logo - Professionele raamreiniging Gent"
                                 width={200}
                                 height={120}
                                 quality={90}
@@ -30,7 +30,7 @@ const Footer = () => {
                         </p>
                         <div className="flex gap-3">
                             <a
-                                href="https://www.facebook.com/profile.php?id=61584108477064&locale=nl_BE"
+                                href={SOCIAL_MEDIA.facebook}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group w-11 h-11 bg-white/10 hover:bg-white hover:scale-110 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -39,7 +39,7 @@ const Footer = () => {
                                 <Facebook size={20} className="group-hover:text-[#044D8E] transition-colors" />
                             </a>
                             <a
-                                href="https://www.instagram.com/panora.ramenwas/"
+                                href={SOCIAL_MEDIA.instagram}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group w-11 h-11 bg-white/10 hover:bg-white hover:scale-110 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -48,7 +48,7 @@ const Footer = () => {
                                 <Instagram size={20} className="group-hover:text-[#044D8E] transition-colors" />
                             </a>
                             <a
-                                href="https://www.tiktok.com/@panora.ramenwas"
+                                href={SOCIAL_MEDIA.tiktok}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="group w-11 h-11 bg-white/10 hover:bg-white hover:scale-110 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg hover:shadow-xl"

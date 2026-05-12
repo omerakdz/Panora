@@ -48,9 +48,10 @@ export const CONTACT = {
 
 // Social Media Links
 export const SOCIAL_MEDIA = {
-  facebook: "https://facebook.com",
-  instagram: "https://instagram.com",
-  linkedin: "https://linkedin.com",
+  facebook:
+    "https://www.facebook.com/profile.php?id=61584108477064&locale=nl_BE",
+  instagram: "https://www.instagram.com/panora.ramenwas/",
+  tiktok: "https://www.tiktok.com/@panora.ramenwas",
 };
 
 // Property Types for Calculator

@@ -2,6 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Droplets, Sparkles, Euro } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Buitenreiniging — Panora Gent",
+    description: "Professionele buitenreiniging van ramen in Gent. Osmose-techniek voor streepvrije ramen. Vanaf €2,50 per raam. Direct online boeken.",
+    alternates: {
+        canonical: "https://www.panora.be/services/exterior",
+    },
+    openGraph: {
+        title: "Buitenreiniging — Panora Gent",
+        description: "Professionele buitenreiniging van ramen. Osmose-techniek, vanaf €2,50 per raam. Direct online boeken in Gent.",
+        url: "https://www.panora.be/services/exterior",
+    },
+};
 
 export default function ExteriorServicePage() {
     return (

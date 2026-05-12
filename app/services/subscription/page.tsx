@@ -2,6 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Calendar, Percent, TrendingDown, Clock } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Abonnement Raamreiniging — Panora Gent",
+    description: "Abonnement voor regelmatige raamreiniging in Gent. Korting voor vaste klanten. Altijd schone ramen zonder zorgen. Flexibele schema's.",
+    alternates: {
+        canonical: "https://www.panora.be/services/subscription",
+    },
+    openGraph: {
+        title: "Abonnement Raamreiniging — Panora Gent",
+        description: "Regelmatige raamreiniging met korting. Flexibele abonnementen voor particulieren en bedrijven in Gent.",
+        url: "https://www.panora.be/services/subscription",
+    },
+};
 
 export default function SubscriptionServicePage() {
     return (

@@ -21,7 +21,7 @@ const Navbar = () => {
                         <div className="flex items-center justify-center relative w-[170px] h-[70px]">
                             <Image
                                 src="/images/LOGO_PANORA_TEXT.png"
-                                alt="PANORA"
+                                alt="PANORA raamreiniging logo - Terug naar home"
                                 width={170}
                                 height={70}
                                 priority

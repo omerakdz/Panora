@@ -51,7 +51,7 @@ const BenefitsSection = () => {
                     }}
                 >
                     <div className="mx-auto relative w-20 h-20">
-                        <Image src="/images/panora-logo.png" alt="PANORA Logo" width={80} height={80} quality={90} className="object-contain" />
+                        <Image src="/images/panora-logo.png" alt="PANORA voordelen icoon - Professionele raamreiniging" width={80} height={80} quality={90} className="object-contain" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold text-[#044D8E] mb-3">
                         Waarom kiezen voor PANORA?

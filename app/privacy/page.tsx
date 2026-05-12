@@ -5,6 +5,9 @@ import { CONTACT } from "@/lib/constants";
 export const metadata = {
     title: "Privacybeleid - PANORA",
     description: "Privacybeleid en gegevensbescherming van PANORA Glasreinigingsdiensten",
+    alternates: {
+        canonical: "https://www.panora.be/privacy",
+    },
 };
 
 export default function PrivacyPage() {

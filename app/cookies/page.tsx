@@ -6,6 +6,9 @@ import { CONTACT } from "@/lib/constants";
 export const metadata = {
     title: "Cookiebeleid - PANORA",
     description: "Cookiebeleid van PANORA Glasreinigingsdiensten",
+    alternates: {
+        canonical: "https://www.panora.be/cookies",
+    },
 };
 
 export default function CookiesPage() {

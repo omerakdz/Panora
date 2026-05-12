@@ -2,6 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Sparkles, Home, Crown } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Premium Glasreiniging — Panora",
+    description: "Complete glasreiniging binnen en buiten in Gent. Premium dienst met osmose-techniek en eco-vriendelijke behandeling. Vanaf €4,50 per raam.",
+    alternates: {
+        canonical: "https://www.panora.be/services/premium",
+    },
+    openGraph: {
+        title: "Premium Glasreiniging — Panora",
+        description: "Volledige glasreiniging binnen en buiten. Premium kwaliteit, osmose-techniek. Vanaf €4,50 per raam in Gent.",
+        url: "https://www.panora.be/services/premium",
+    },
+};
 
 export default function PremiumServicePage() {
     return (

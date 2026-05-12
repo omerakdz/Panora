@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import { COMPANY, CONTACT } from '@/lib/constants';
+import { COMPANY, CONTACT, SOCIAL_MEDIA } from '@/lib/constants';
 
 export default function StructuredData() {
     const structuredData = {
@@ -44,9 +44,9 @@ export default function StructuredData() {
             }
         ],
         sameAs: [
-            // Voeg hier je social media links toe
-            // SOCIAL_MEDIA.facebook,
-            // SOCIAL_MEDIA.instagram,
+            SOCIAL_MEDIA.facebook,
+            SOCIAL_MEDIA.instagram,
+            SOCIAL_MEDIA.tiktok
         ],
         description: 'Professionele ruitenwasser in Gent en omgeving. Wij bieden betrouwbare glasreinigingsdiensten voor particulieren en bedrijven.',
         slogan: COMPANY.tagline,

@@ -55,14 +55,7 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 mobile-spacing relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight fade-in-up"
-              style={{
-                letterSpacing: '-0.02em',
-                willChange: 'opacity, transform',
-                animation: shouldReduceMotion ? 'none' : 'fadeInUp 0.5s ease-out forwards'
-              }}
-            >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="block bg-gradient-to-r from-[#044D8E] to-[#1792D0] bg-clip-text text-transparent">
                 Professionele ramenwas - Gent
               </span>
@@ -141,7 +134,7 @@ export default function HomePage() {
                 <div className="relative w-[280px] h-[100px]">
                   <Image
                     src="/images/LOGO_PANORA_TEXT.png"
-                    alt="PANORA"
+                    alt="PANORA logo - Professionele raamreiniging Gent"
                     width={280}
                     height={100}
                     quality={90}
@@ -202,7 +195,7 @@ export default function HomePage() {
             <div className="relative w-[280px] h-[140px] mb-10 ">
               <Image
                 src="/images/PANORA_LOGO_WHITE.png"
-                alt="PANORA"
+                alt="PANORA wit logo - Direct online boeken"
                 width={280}
                 height={140}
                 quality={90}
@@ -243,7 +236,7 @@ export default function HomePage() {
               <div className="relative w-[280px] h-[140px] mb-10 ">
                 <Image
                   src="/images/LOGO_PANORA_TEXT.png"
-                  alt="PANORA"
+                  alt="PANORA logo tekst - Voor en na resultaten"
                   width={280}
                   height={140}
                   quality={90}
@@ -308,7 +301,7 @@ export default function HomePage() {
             <div className="relative w-[280px] h-[140px] mb-8 ">
               <Image
                 src="/images/LOGO_PANORA_TEXT.png"
-                alt="PANORA"
+                alt="PANORA logo - Start de prijscalculator"
                 width={280}
                 height={140}
                 quality={90}

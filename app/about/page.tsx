@@ -2,6 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Sparkles, Clock, Award, Users } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Over Panora — Professionele Raamreiniging Gent",
+    description: "Leer meer over PANORA, de moderne ramenwasdienst in Gent. Transparante prijzen, digitale service en osmose-techniek voor streepvrije ramen.",
+    alternates: {
+        canonical: "https://www.panora.be/about",
+    },
+    openGraph: {
+        title: "Over Panora — Professionele Raamreiniging Gent",
+        description: "Moderne ramenwasdienst met transparante prijzen en digitale service. Osmose-techniek voor streepvrije ramen in Gent.",
+        url: "https://www.panora.be/about",
+    },
+};
 
 export default function AboutPage() {
     return (

@@ -5,6 +5,9 @@ import { CONTACT } from "@/lib/constants";
 export const metadata = {
     title: "Algemene Voorwaarden - PANORA",
     description: "Algemene voorwaarden van PANORA Glasreinigingsdiensten",
+    alternates: {
+        canonical: "https://www.panora.be/terms",
+    },
 };
 
 export default function TermsPage() {

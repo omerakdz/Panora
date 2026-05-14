@@ -35,8 +35,6 @@ export async function getBookings(): Promise<Booking[]> {
       createdAt: record.created_at,
     }));
 
-    console.log(`📊 Valid bookings from Supabase: ${validBookings.length}`);
-
     return validBookings;
   } catch (error) {
     console.error("Error reading bookings:", error);
@@ -102,7 +100,7 @@ export async function getBookingsByDate(date: string): Promise<Booking[]> {
       return [];
     }
 
-    const bookings = (data || []).map((record: any) => ({
+    return (data || []).map((record: any) => ({
       id: record.id,
       customerName: record.customer_name,
       customerEmail: record.customer_email,
@@ -121,15 +119,6 @@ export async function getBookingsByDate(date: string): Promise<Booking[]> {
       customerNotes: record.customer_notes,
       createdAt: record.created_at,
     }));
-
-    console.log(`📅 Bookings for ${date}: ${bookings.length} found`);
-    if (bookings.length > 0) {
-      bookings.forEach((b) =>
-        console.log(`   - ${b.time} | ${b.customerName}`),
-      );
-    }
-
-    return bookings;
   } catch (error) {
     console.error("Error in getBookingsByDate:", error);
     return [];
@@ -138,9 +127,7 @@ export async function getBookingsByDate(date: string): Promise<Booking[]> {
 
 export async function getBookedSlotsForDate(date: string): Promise<string[]> {
   const bookings = await getBookingsByDate(date);
-  const slots = bookings.map((b) => b.time);
-  console.log(`🔒 Booked slots for ${date}:`, slots);
-  return slots;
+  return bookings.map((b) => b.time);
 }
 
 export async function isSlotAvailable(
@@ -148,9 +135,5 @@ export async function isSlotAvailable(
   time: string,
 ): Promise<boolean> {
   const bookedSlots = await getBookedSlotsForDate(date);
-  const available = !bookedSlots.includes(time);
-  console.log(
-    `🔍 Slot ${date} ${time}: ${available ? "✅ Available" : "❌ Taken"}`,
-  );
-  return available;
+  return !bookedSlots.includes(time);
 }

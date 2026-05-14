@@ -11,8 +11,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const dateParam = searchParams.get("date");
 
-    console.log("🔍 Availability API called for date:", dateParam);
-
     if (!dateParam) {
       return NextResponse.json(
         { error: "Date parameter is required" },
@@ -30,7 +28,6 @@ export async function GET(request: Request) {
     }
 
     if (!isDateAvailable(date)) {
-      console.log("❌ Date not available:", dateParam);
       return NextResponse.json(
         {
           date: dateParam,
@@ -45,23 +42,15 @@ export async function GET(request: Request) {
 
     // 1. Haal bookings uit Supabase (website bookings)
     const bookedSlotsFromDB = await getBookedSlotsForDate(dateParam);
-    console.log("🔒 Booked slots from database:", bookedSlotsFromDB);
 
     // 2. Haal ALLE events uit Google Calendar
-    // Dit blokkeert automatisch:
-    // - Klantafspraken (events die exact matchen met TIME_SLOTS)
-    // - Werkuren/busy times (events die overlappen met TIME_SLOTS)
     let bookedSlotsFromCalendar: string[] = [];
     if (isGoogleCalendarConfigured()) {
       try {
         bookedSlotsFromCalendar =
           await getGoogleCalendarBookingsForDate(dateParam);
-        console.log(
-          "📅 Blocked slots from Google Calendar:",
-          bookedSlotsFromCalendar,
-        );
       } catch (error) {
-        console.warn("⚠️ Could not fetch Google Calendar events:", error);
+        console.warn("⚠️ Google Calendar error:", error);
       }
     }
 
@@ -69,11 +58,9 @@ export async function GET(request: Request) {
     const allBookedSlots = Array.from(
       new Set([...bookedSlotsFromDB, ...bookedSlotsFromCalendar]),
     );
-    console.log("🔒 Total blocked slots (combined):", allBookedSlots);
 
     // 4. Bereken beschikbare slots
     const availableSlots = getAvailableTimeSlots(date, allBookedSlots);
-    console.log("✅ Available slots:", availableSlots);
 
     return NextResponse.json(
       {

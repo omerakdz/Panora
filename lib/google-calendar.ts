@@ -114,8 +114,15 @@ Bron: Website
       },
     };
 
+    // Gebruik de laatste calendar ID uit GOOGLE_CALENDAR_IDS als bestemming voor nieuwe events
+    // (meestal de Panora agenda)
+    const calendarIds = process.env.GOOGLE_CALENDAR_IDS
+      ? process.env.GOOGLE_CALENDAR_IDS.split(",").map((id) => id.trim())
+      : [process.env.GOOGLE_CALENDAR_ID || "primary"];
+    const targetCalendarId = calendarIds[calendarIds.length - 1]; // Laatste ID = Panora agenda
+
     const response = await calendar.events.insert({
-      calendarId: process.env.GOOGLE_CALENDAR_ID || "primary",
+      calendarId: targetCalendarId,
       requestBody: event,
       sendUpdates: "none", // Don't send email notifications from Google
     });
@@ -141,26 +148,16 @@ export async function getGoogleCalendarBookingsForDate(
     const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
     const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
 
-    console.log(`📅 Fetching calendar events for ${date}...`);
-    console.log(
-      `   Range: ${startOfDay.toLocaleString("nl-BE")} - ${endOfDay.toLocaleString("nl-BE")}`,
-    );
-
     // Check meerdere calendars indien geconfigureerd
-    // GOOGLE_CALENDAR_IDS = comma-separated list van calendar IDs
-    // Bijvoorbeeld: "primary,panora_calendar_id,work_calendar_id"
     const calendarIds = process.env.GOOGLE_CALENDAR_IDS
       ? process.env.GOOGLE_CALENDAR_IDS.split(",").map((id) => id.trim())
       : [process.env.GOOGLE_CALENDAR_ID || "primary"];
-
-    console.log(`   Checking ${calendarIds.length} calendar(s):`, calendarIds);
 
     const allEvents: any[] = [];
 
     // Haal events op van ALLE geconfigureerde calendars
     for (const calendarId of calendarIds) {
       try {
-        console.log(`   📆 Fetching from calendar: ${calendarId}`);
         const response = await calendar.events.list({
           calendarId: calendarId,
           timeMin: startOfDay.toISOString(),
@@ -170,33 +167,21 @@ export async function getGoogleCalendarBookingsForDate(
         });
 
         const events = response.data.items || [];
-        console.log(`      Found ${events.length} event(s)`);
         allEvents.push(...events);
       } catch (error) {
-        console.error(`      ⚠️ Error fetching from ${calendarId}:`, error);
-        // Continue met de volgende calendar
+        console.error(`⚠️ Google Calendar error:`, error);
       }
     }
-
-    console.log(
-      `📊 Found ${allEvents.length} total events across all calendars`,
-    );
 
     const bookedSlots: string[] = [];
 
     allEvents.forEach((event) => {
       if (!event.start?.dateTime || !event.end?.dateTime) {
-        console.log(`  ⚠️ Event "${event.summary}" has no dateTime, skipping`);
         return;
       }
 
       const eventStart = new Date(event.start.dateTime);
       const eventEnd = new Date(event.end.dateTime);
-
-      console.log(`  📍 Checking event: "${event.summary}"`);
-      console.log(
-        `     Time: ${eventStart.toLocaleString("nl-BE")} - ${eventEnd.toLocaleString("nl-BE")}`,
-      );
 
       const startTime = `${eventStart.getHours().toString().padStart(2, "0")}:${eventStart.getMinutes().toString().padStart(2, "0")}`;
       const endTime = `${eventEnd.getHours().toString().padStart(2, "0")}:${eventEnd.getMinutes().toString().padStart(2, "0")}`;
@@ -206,17 +191,11 @@ export async function getGoogleCalendarBookingsForDate(
       const exactMatch = TIME_SLOTS.find((slot) => slot === eventTimeSlot);
 
       if (exactMatch) {
-        console.log(
-          `  ✓ Event is een klantafspraak (exact match: ${eventTimeSlot})`,
-        );
         if (!bookedSlots.includes(exactMatch)) {
           bookedSlots.push(exactMatch);
         }
       } else {
         // Als het NIET exact matcht, check of het overlapt met TIME_SLOTS (= werkuren/busy time)
-        console.log(
-          `  👤 Event is geen klantafspraak, check overlaps met alle slots...`,
-        );
 
         TIME_SLOTS.forEach((slot) => {
           const { start, end } = parseTimeSlot(slot);
@@ -296,12 +275,6 @@ export async function getGoogleCalendarBookingsForDate(
       }
     });
 
-    console.log(`\n✅ Google Calendar check complete for ${date}`);
-    console.log(`   Total blocked slots: ${bookedSlots.length}`);
-    if (bookedSlots.length > 0) {
-      console.log(`   Blocked: ${bookedSlots.join(", ")}`);
-    }
-
     return bookedSlots;
   } catch (error) {
     console.error("❌ Error fetching Google Calendar bookings:", error);
@@ -316,8 +289,14 @@ export async function deleteFromGoogleCalendar(
     const auth = getGoogleCalendarAuth();
     const calendar = google.calendar({ version: "v3", auth });
 
+    // Gebruik de laatste calendar ID uit GOOGLE_CALENDAR_IDS als bestemming
+    const calendarIds = process.env.GOOGLE_CALENDAR_IDS
+      ? process.env.GOOGLE_CALENDAR_IDS.split(",").map((id) => id.trim())
+      : [process.env.GOOGLE_CALENDAR_ID || "primary"];
+    const targetCalendarId = calendarIds[calendarIds.length - 1];
+
     await calendar.events.delete({
-      calendarId: process.env.GOOGLE_CALENDAR_ID || "primary",
+      calendarId: targetCalendarId,
       eventId: eventId,
       sendUpdates: "none",
     });

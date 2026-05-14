@@ -1,6 +1,3 @@
-// Company and Application Constants
-
-// Company Information
 export const COMPANY = {
   name: "PANORA",
   tagline: "Professionele ramenwas in Gent",
@@ -42,11 +39,10 @@ export const CONTACT = {
   whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP,
   workingHours: {
     weekdays: "09:00 - 17:00",
-    weekend: "Gesloten",
+    weekend: "09:00 - 17:00", // Ook weekend beschikbaar
   },
 };
 
-// Social Media Links
 export const SOCIAL_MEDIA = {
   facebook:
     "https://www.facebook.com/profile.php?id=61584108477064&locale=nl_BE",
@@ -54,7 +50,6 @@ export const SOCIAL_MEDIA = {
   tiktok: "https://www.tiktok.com/@panora.ramenwas",
 };
 
-// Property Types for Calculator
 export const PROPERTY_TYPES = [
   { value: "apartment", label: "Appartement" },
   { value: "townhouse", label: "Rijhuis" },
@@ -110,7 +105,6 @@ export const APP_CONFIG = {
   dateFormat: "dd/MM/yyyy",
 };
 
-// Common UI Text
 export const UI_TEXT = {
   cta: {
     primary: "Bereken jouw prijs zonder verborgen kosten",
@@ -214,7 +208,7 @@ export const EMAIL_CONFIG = {
   internalEmail: process.env.INTERNAL_EMAIL,
 };
 
-// Available Time Slots (1 uur per dienst + 30 min reistijd = 1,5 uur per slot)
+// Available Time Slots (1 uur per slot + 30 min reistijd tussen slots)
 export const TIME_SLOTS = [
   "09:00 - 10:00",
   "10:30 - 11:30",
@@ -222,6 +216,7 @@ export const TIME_SLOTS = [
   "13:30 - 14:30",
   "15:00 - 16:00",
   "16:30 - 17:30",
+  "18:00 - 19:00",
 ];
 
 // ?Days to exclude?
@@ -238,8 +233,8 @@ export const CALENDAR_CONFIG = {
     start: parseInt(process.env.WORKING_HOURS_START || "9"), // 9:00
     end: parseInt(process.env.WORKING_HOURS_END || "17"), // 17:00
   },
-  workingDays: [1, 2, 3, 4, 5], // Monday to Friday
-  slotDuration: 90, // 1 uur dienst + 30 min reistijd = 90 minuten per slot
+  workingDays: [0, 1, 2, 3, 4, 5, 6], // Alle dagen (0=zondag, 6=zaterdag)
+  slotDuration: 60, // 1 uur per slot (30 min reistijd tussen slots)
   maxBookingDays: 90, // Max days in advance for booking
   slotsPerDay: parseInt(process.env.MAX_SLOTS_PER_DAY || "6"), // Max 6 appointments per day (was 4)
 };

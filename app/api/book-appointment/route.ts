@@ -109,11 +109,36 @@ export async function POST(request: Request) {
     }
 
     if (existingBookings && existingBookings.length > 0) {
-      console.error("❌ Slot not available");
+      console.error("❌ Slot not available (database booking exists)");
       return NextResponse.json(
         { error: "This time slot is no longer available" },
         { status: 409 },
       );
+    }
+
+    // IMPORTANT: Also check Google Calendar for conflicts
+    if (isGoogleCalendarConfigured()) {
+      try {
+        const { getGoogleCalendarBookingsForDate } =
+          await import("@/lib/google-calendar");
+        const blockedSlots =
+          await getGoogleCalendarBookingsForDate(bookingDate);
+
+        if (blockedSlots.includes(data.selectedTime)) {
+          console.error("❌ Slot not available (Google Calendar conflict)");
+          return NextResponse.json(
+            { error: "This time slot is no longer available" },
+            { status: 409 },
+          );
+        }
+        console.log("✅ No Google Calendar conflicts found");
+      } catch (error) {
+        console.warn(
+          "⚠️ Could not verify Google Calendar availability:",
+          error,
+        );
+        // Continue anyway - better to allow booking than to block unnecessarily
+      }
     }
 
     console.log("✅ Slot is available, creating booking...");

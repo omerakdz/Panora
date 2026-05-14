@@ -136,28 +136,55 @@ export async function getGoogleCalendarBookingsForDate(
     const auth = getGoogleCalendarAuth();
     const calendar = google.calendar({ version: "v3", auth });
 
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Parse datum correct om timezone problemen te voorkomen
+    const [year, month, day] = date.split("-").map(Number);
+    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
 
     console.log(`📅 Fetching calendar events for ${date}...`);
+    console.log(
+      `   Range: ${startOfDay.toLocaleString("nl-BE")} - ${endOfDay.toLocaleString("nl-BE")}`,
+    );
 
-    const response = await calendar.events.list({
-      calendarId: process.env.GOOGLE_CALENDAR_ID || "primary",
-      timeMin: startOfDay.toISOString(),
-      timeMax: endOfDay.toISOString(),
-      singleEvents: true,
-      orderBy: "startTime",
-    });
+    // Check meerdere calendars indien geconfigureerd
+    // GOOGLE_CALENDAR_IDS = comma-separated list van calendar IDs
+    // Bijvoorbeeld: "primary,panora_calendar_id,work_calendar_id"
+    const calendarIds = process.env.GOOGLE_CALENDAR_IDS
+      ? process.env.GOOGLE_CALENDAR_IDS.split(",").map((id) => id.trim())
+      : [process.env.GOOGLE_CALENDAR_ID || "primary"];
 
-    const events = response.data.items || [];
-    console.log(`📊 Found ${events.length} total events in calendar`);
+    console.log(`   Checking ${calendarIds.length} calendar(s):`, calendarIds);
+
+    const allEvents: any[] = [];
+
+    // Haal events op van ALLE geconfigureerde calendars
+    for (const calendarId of calendarIds) {
+      try {
+        console.log(`   📆 Fetching from calendar: ${calendarId}`);
+        const response = await calendar.events.list({
+          calendarId: calendarId,
+          timeMin: startOfDay.toISOString(),
+          timeMax: endOfDay.toISOString(),
+          singleEvents: true,
+          orderBy: "startTime",
+        });
+
+        const events = response.data.items || [];
+        console.log(`      Found ${events.length} event(s)`);
+        allEvents.push(...events);
+      } catch (error) {
+        console.error(`      ⚠️ Error fetching from ${calendarId}:`, error);
+        // Continue met de volgende calendar
+      }
+    }
+
+    console.log(
+      `📊 Found ${allEvents.length} total events across all calendars`,
+    );
 
     const bookedSlots: string[] = [];
 
-    events.forEach((event) => {
+    allEvents.forEach((event) => {
       if (!event.start?.dateTime || !event.end?.dateTime) {
         console.log(`  ⚠️ Event "${event.summary}" has no dateTime, skipping`);
         return;
@@ -165,6 +192,11 @@ export async function getGoogleCalendarBookingsForDate(
 
       const eventStart = new Date(event.start.dateTime);
       const eventEnd = new Date(event.end.dateTime);
+
+      console.log(`  📍 Checking event: "${event.summary}"`);
+      console.log(
+        `     Time: ${eventStart.toLocaleString("nl-BE")} - ${eventEnd.toLocaleString("nl-BE")}`,
+      );
 
       const startTime = `${eventStart.getHours().toString().padStart(2, "0")}:${eventStart.getMinutes().toString().padStart(2, "0")}`;
       const endTime = `${eventEnd.getHours().toString().padStart(2, "0")}:${eventEnd.getMinutes().toString().padStart(2, "0")}`;
@@ -175,7 +207,7 @@ export async function getGoogleCalendarBookingsForDate(
 
       if (exactMatch) {
         console.log(
-          `  ✓ Event "${event.summary}" (${eventTimeSlot}) is een klantafspraak`,
+          `  ✓ Event is een klantafspraak (exact match: ${eventTimeSlot})`,
         );
         if (!bookedSlots.includes(exactMatch)) {
           bookedSlots.push(exactMatch);
@@ -183,7 +215,7 @@ export async function getGoogleCalendarBookingsForDate(
       } else {
         // Als het NIET exact matcht, check of het overlapt met TIME_SLOTS (= werkuren/busy time)
         console.log(
-          `  👤 Event "${event.summary}" (${eventTimeSlot}) is geen exacte match, check overlaps...`,
+          `  👤 Event is geen klantafspraak, check overlaps met alle slots...`,
         );
 
         TIME_SLOTS.forEach((slot) => {
@@ -191,25 +223,84 @@ export async function getGoogleCalendarBookingsForDate(
           const [startHours, startMinutes] = start.split(":").map(Number);
           const [endHours, endMinutes] = end.split(":").map(Number);
 
-          const slotStart = new Date(date);
-          slotStart.setHours(startHours, startMinutes, 0, 0);
+          // Parse datum correct om timezone problemen te voorkomen
+          const [year, month, day] = date.split("-").map(Number);
+          const slotStart = new Date(
+            year,
+            month - 1,
+            day,
+            startHours,
+            startMinutes,
+            0,
+            0,
+          );
+          const slotEnd = new Date(
+            year,
+            month - 1,
+            day,
+            endHours,
+            endMinutes,
+            0,
+            0,
+          );
 
-          const slotEnd = new Date(date);
-          slotEnd.setHours(endHours, endMinutes, 0, 0);
+          // Check of het event overlapt met deze timeslot OF reistijd nodig is
+          // Blokkeer de slot als:
+          // 1. Event overlapt met slot (zelfs als ze elkaar alleen raken)
+          // 2. Event eindigt binnen 30 min voor slot begint (reistijd nodig NA event)
+          // 3. Event begint binnen 30 min na slot eindigt (reistijd nodig VOOR event)
 
-          // Check of het event overlapt met deze timeslot
-          // eventEnd >= slotStart betekent: als het event eindigt op of na het begin van de slot
-          const overlaps = eventStart < slotEnd && eventEnd >= slotStart;
+          // Bereken reistijd buffers (30 minuten)
+          const slotStartMinus30 = new Date(
+            slotStart.getTime() - 30 * 60 * 1000,
+          );
+          const slotEndPlus30 = new Date(slotEnd.getTime() + 30 * 60 * 1000);
 
-          if (overlaps && !bookedSlots.includes(slot)) {
-            console.log(
-              `    🔒 Blocking slot ${slot} (overlapt met "${event.summary}")`,
-            );
-            bookedSlots.push(slot);
+          // Overlap of raken: event eindigt op of na slot start EN event begint op of voor slot eind
+          const hasOverlapOrTouch =
+            eventStart <= slotEnd && eventEnd >= slotStart;
+
+          // Reistijd nodig na event: event eindigt binnen 30 min voor slot
+          const needsTravelTimeAfter =
+            eventEnd > slotStartMinus30 && eventEnd < slotStart;
+
+          // Reistijd nodig voor event: event begint binnen 30 min na slot
+          const needsTravelTimeBefore =
+            eventStart > slotEnd && eventStart < slotEndPlus30;
+
+          if (
+            hasOverlapOrTouch ||
+            needsTravelTimeAfter ||
+            needsTravelTimeBefore
+          ) {
+            if (!bookedSlots.includes(slot)) {
+              let reason = "overlapt/raakt";
+              if (!hasOverlapOrTouch && needsTravelTimeAfter)
+                reason = "reistijd na event nodig";
+              if (!hasOverlapOrTouch && needsTravelTimeBefore)
+                reason = "reistijd voor event nodig";
+
+              console.log(
+                `    🔒 Blocking slot ${slot} (${reason}: "${event.summary}")`,
+              );
+              console.log(
+                `       Event: ${eventStart.toLocaleString("nl-BE")} - ${eventEnd.toLocaleString("nl-BE")}`,
+              );
+              console.log(
+                `       Slot:  ${slotStart.toLocaleString("nl-BE")} - ${slotEnd.toLocaleString("nl-BE")}`,
+              );
+              bookedSlots.push(slot);
+            }
           }
         });
       }
     });
+
+    console.log(`\n✅ Google Calendar check complete for ${date}`);
+    console.log(`   Total blocked slots: ${bookedSlots.length}`);
+    if (bookedSlots.length > 0) {
+      console.log(`   Blocked: ${bookedSlots.join(", ")}`);
+    }
 
     return bookedSlots;
   } catch (error) {

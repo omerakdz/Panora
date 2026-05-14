@@ -134,8 +134,32 @@ export async function POST(request: Request) {
       const dateAvailable = isDateAvailable(currentDate);
 
       if (dateAvailable) {
-        const bookedSlots = await getBookedSlotsForDate(dateStr);
-        const availableSlots = getAvailableTimeSlots(currentDate, bookedSlots);
+        // Haal bookings uit Supabase
+        const bookedSlotsFromDB = await getBookedSlotsForDate(dateStr);
+
+        // Haal ALLE events uit Google Calendar
+        let bookedSlotsFromCalendar: string[] = [];
+        if (isGoogleCalendarConfigured()) {
+          try {
+            bookedSlotsFromCalendar =
+              await getGoogleCalendarBookingsForDate(dateStr);
+          } catch (error) {
+            console.warn(
+              `⚠️ Could not fetch Google Calendar events for ${dateStr}:`,
+              error,
+            );
+          }
+        }
+
+        // Combineer beide bronnen (verwijder duplicaten)
+        const allBookedSlots = Array.from(
+          new Set([...bookedSlotsFromDB, ...bookedSlotsFromCalendar]),
+        );
+
+        const availableSlots = getAvailableTimeSlots(
+          currentDate,
+          allBookedSlots,
+        );
 
         availability[dateStr] = {
           available: availableSlots.length > 0,

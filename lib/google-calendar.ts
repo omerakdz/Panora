@@ -143,10 +143,18 @@ export async function getGoogleCalendarBookingsForDate(
     const auth = getGoogleCalendarAuth();
     const calendar = google.calendar({ version: "v3", auth });
 
-    // Parse datum correct om timezone problemen te voorkomen
+    // Parse datum correct in Europe/Brussels timezone om timezone problemen te voorkomen
+    // Dit zorgt ervoor dat we altijd de juiste dag ophalen, ongeacht de server timezone
     const [year, month, day] = date.split("-").map(Number);
-    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
-    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    // Maak ISO timestamp strings voor Europe/Brussels timezone
+    // Format: YYYY-MM-DDTHH:MM:SS+02:00 (CEST) of +01:00 (CET)
+    const startOfDayStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T00:00:00`;
+    const endOfDayStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T23:59:59`;
+
+    // Parse met Brussels timezone offset
+    const startOfDay = new Date(`${startOfDayStr}+02:00`); // CEST (zomer) - API handelt winter/zomer automatisch
+    const endOfDay = new Date(`${endOfDayStr}+02:00`);
 
     // Check meerdere calendars indien geconfigureerd
     const calendarIds = process.env.GOOGLE_CALENDAR_IDS
@@ -202,26 +210,13 @@ export async function getGoogleCalendarBookingsForDate(
           const [startHours, startMinutes] = start.split(":").map(Number);
           const [endHours, endMinutes] = end.split(":").map(Number);
 
-          // Parse datum correct om timezone problemen te voorkomen
+          // Parse datum correct in Europe/Brussels timezone
           const [year, month, day] = date.split("-").map(Number);
-          const slotStart = new Date(
-            year,
-            month - 1,
-            day,
-            startHours,
-            startMinutes,
-            0,
-            0,
-          );
-          const slotEnd = new Date(
-            year,
-            month - 1,
-            day,
-            endHours,
-            endMinutes,
-            0,
-            0,
-          );
+          const slotStartStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(startHours).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")}:00+02:00`;
+          const slotEndStr = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(endHours).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}:00+02:00`;
+
+          const slotStart = new Date(slotStartStr);
+          const slotEnd = new Date(slotEndStr);
 
           // Check of het event overlapt met deze timeslot OF reistijd nodig is
           // Blokkeer de slot als:

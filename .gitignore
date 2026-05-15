@@ -47,3 +47,5 @@ PANORA – WEBSITE BRIEFING DOCUMENT.md
 
 # OAuth setup script (contains secrets)
 get-refresh-token.js
+
+.vercel

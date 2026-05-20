@@ -15,6 +15,7 @@ import {
   isValidEmail,
   isValidPhone,
 } from "@/lib/sanitize";
+import { calculatePrice } from "@/lib/pricing";
 
 export async function POST(request: Request) {
   // Rate limiting: 5 bookings per hour per IP
@@ -82,6 +83,105 @@ export async function POST(request: Request) {
       console.error("❌ Invalid phone format:", data.customerPhone);
       return NextResponse.json(
         { error: "Invalid phone number" },
+        { status: 400 },
+      );
+    }
+
+    // SECURITY: Validate window counts
+    if (
+      typeof data.totalWindows !== "number" ||
+      typeof data.exteriorWindows !== "number" ||
+      typeof data.interiorExteriorWindows !== "number" ||
+      data.totalWindows < 1 ||
+      data.totalWindows > 200 ||
+      data.exteriorWindows < 0 ||
+      data.interiorExteriorWindows < 0
+    ) {
+      console.error("❌ Invalid window counts:", {
+        total: data.totalWindows,
+        exterior: data.exteriorWindows,
+        interiorExterior: data.interiorExteriorWindows,
+      });
+      return NextResponse.json(
+        { error: "Invalid window count data" },
+        { status: 400 },
+      );
+    }
+
+    // SECURITY: Validate window count logic
+    if (
+      data.exteriorWindows + data.interiorExteriorWindows !==
+      data.totalWindows
+    ) {
+      console.error("❌ Window count mismatch:", {
+        total: data.totalWindows,
+        exterior: data.exteriorWindows,
+        interiorExterior: data.interiorExteriorWindows,
+        sum: data.exteriorWindows + data.interiorExteriorWindows,
+      });
+      return NextResponse.json(
+        { error: "Window count validation failed" },
+        { status: 400 },
+      );
+    }
+
+    // SECURITY: Recalculate price server-side and validate
+    const serverCalculatedPrice = calculatePrice({
+      propertyType: data.propertyType,
+      totalWindows: data.totalWindows,
+      exteriorWindows: data.exteriorWindows,
+      interiorExteriorWindows: data.interiorExteriorWindows,
+      hardToReach: data.hardToReach || false,
+      firstTimeInLong: data.firstTimeInLong || false,
+      cleanFrames: data.cleanFrames || false,
+    });
+
+    console.log("💰 Price validation:", {
+      clientPrice: data.calculatedPrice,
+      serverPrice: serverCalculatedPrice,
+      difference: Math.abs(serverCalculatedPrice - (data.calculatedPrice || 0)),
+    });
+
+    // Check for price manipulation (allow 0.01 difference for rounding)
+    const priceDifference = Math.abs(
+      serverCalculatedPrice - (data.calculatedPrice || 0),
+    );
+    if (priceDifference > 0.01) {
+      console.error("🚨 SECURITY: Price manipulation detected!", {
+        clientSentPrice: data.calculatedPrice,
+        correctServerPrice: serverCalculatedPrice,
+        difference: priceDifference,
+        bookingData: {
+          propertyType: data.propertyType,
+          totalWindows: data.totalWindows,
+          exteriorWindows: data.exteriorWindows,
+          interiorExteriorWindows: data.interiorExteriorWindows,
+          hardToReach: data.hardToReach,
+          firstTimeInLong: data.firstTimeInLong,
+          cleanFrames: data.cleanFrames,
+        },
+      });
+      return NextResponse.json(
+        {
+          error: "Price validation failed. Please recalculate and try again.",
+          correctPrice: serverCalculatedPrice,
+        },
+        { status: 400 },
+      );
+    }
+
+    // Use server-calculated price (not client-sent price)
+    const validatedPrice = serverCalculatedPrice;
+
+    // Additional minimum price check
+    const minimumPrice = 2.5; // At least 1 exterior window
+    if (validatedPrice < minimumPrice) {
+      console.error("❌ Price below minimum:", {
+        calculatedPrice: validatedPrice,
+        minimumPrice,
+      });
+      return NextResponse.json(
+        { error: "Invalid pricing calculation" },
         { status: 400 },
       );
     }
@@ -163,7 +263,7 @@ export async function POST(request: Request) {
       hard_to_reach: data.hardToReach || false,
       first_time_in_long: data.firstTimeInLong || false,
       clean_frames: data.cleanFrames || false,
-      calculated_price: data.calculatedPrice || 0,
+      calculated_price: validatedPrice, // Use server-validated price
       status: "pending",
     };
 
@@ -201,7 +301,7 @@ export async function POST(request: Request) {
       hardToReach: data.hardToReach || false,
       firstTimeInLong: data.firstTimeInLong || false,
       cleanFrames: data.cleanFrames || false,
-      calculatedPrice: data.calculatedPrice || 0,
+      calculatedPrice: validatedPrice, // Use server-validated price
       customerNotes: data.customerNotes || "",
       createdAt: new Date().toISOString(),
     };

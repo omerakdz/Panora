@@ -30,32 +30,27 @@ export default function CookieConsent() {
     }, []);
 
     const saveConsent = (prefs: typeof preferences) => {
-        localStorage.setItem("cookie-consent", JSON.stringify(prefs));
+        // Save consent preferences to localStorage
+        localStorage.setItem("cookie-consent", JSON.stringify({
+            necessary: prefs.necessary,
+            analytics: prefs.analytics,
+            marketing: prefs.marketing
+        }));
+
         setShowBanner(false);
 
-        // Update Google Tag Manager consent (Consent Mode v2)
+        // Update Google Consent Mode v2 via gtag
         if (typeof window !== 'undefined') {
-            // Use dataLayer for GTM
             (window as any).dataLayer = (window as any).dataLayer || [];
-            (window as any).dataLayer.push({
-                'event': 'consent_update',
-                'consent': {
-                    'analytics_storage': prefs.analytics ? 'granted' : 'denied',
-                    'ad_storage': prefs.marketing ? 'granted' : 'denied',
-                    'ad_user_data': prefs.marketing ? 'granted' : 'denied',
-                    'ad_personalization': prefs.marketing ? 'granted' : 'denied',
-                }
-            });
+            function gtag(...args: any[]) { (window as any).dataLayer.push(arguments); }
 
-            // Also update gtag for GA4 (if loaded independently)
-            if ((window as any).gtag) {
-                (window as any).gtag('consent', 'update', {
-                    'analytics_storage': prefs.analytics ? 'granted' : 'denied',
-                    'ad_storage': prefs.marketing ? 'granted' : 'denied',
-                    'ad_user_data': prefs.marketing ? 'granted' : 'denied',
-                    'ad_personalization': prefs.marketing ? 'granted' : 'denied',
-                });
-            }
+            // Direct gtag consent update (GTM will pick this up automatically)
+            gtag('consent', 'update', {
+                'analytics_storage': prefs.analytics ? 'granted' : 'denied',
+                'ad_storage': prefs.marketing ? 'granted' : 'denied',
+                'ad_user_data': prefs.marketing ? 'granted' : 'denied',
+                'ad_personalization': prefs.marketing ? 'granted' : 'denied',
+            });
         }
     };
 

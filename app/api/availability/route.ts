@@ -45,13 +45,35 @@ export async function GET(request: Request) {
 
     // 2. Haal ALLE events uit Google Calendar
     let bookedSlotsFromCalendar: string[] = [];
+    let calendarError: string | null = null;
+    let calendarConfigured = false;
+
     if (isGoogleCalendarConfigured()) {
+      calendarConfigured = true;
       try {
+        console.log(`🔍 Checking Google Calendar for date: ${dateParam}`);
         bookedSlotsFromCalendar =
           await getGoogleCalendarBookingsForDate(dateParam);
+        console.log(
+          `✅ Google Calendar check successful: ${bookedSlotsFromCalendar.length} slots blocked`,
+        );
       } catch (error) {
-        console.warn("⚠️ Google Calendar error:", error);
+        calendarError = error instanceof Error ? error.message : String(error);
+        console.error(
+          "❌ CRITICAL: Google Calendar synchronization failed:",
+          error,
+        );
+        console.error(
+          "⚠️  WARNING: Bookings may be accepted during unavailable times!",
+        );
       }
+    } else {
+      console.warn(
+        "⚠️ Google Calendar NOT configured - only using database bookings",
+      );
+      console.warn(
+        "   Work shifts and manual bookings will NOT block availability!",
+      );
     }
 
     // 3. Combineer beide bronnen (verwijder duplicaten)
@@ -71,6 +93,11 @@ export async function GET(request: Request) {
         bookedFromDB: bookedSlotsFromDB.length,
         bookedFromCalendar: bookedSlotsFromCalendar.length,
         totalSlots: 6,
+        googleCalendar: {
+          configured: calendarConfigured,
+          working: calendarConfigured && calendarError === null,
+          error: calendarError,
+        },
       },
       {
         status: 200,

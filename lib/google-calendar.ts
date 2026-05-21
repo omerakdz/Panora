@@ -140,6 +140,7 @@ export async function getGoogleCalendarBookingsForDate(
   date: string,
 ): Promise<string[]> {
   try {
+    console.log(`📅 Fetching Google Calendar events for ${date}...`);
     const auth = getGoogleCalendarAuth();
     const calendar = google.calendar({ version: "v3", auth });
 
@@ -156,16 +157,23 @@ export async function getGoogleCalendarBookingsForDate(
     const startOfDay = new Date(`${startOfDayStr}+02:00`); // CEST (zomer) - API handelt winter/zomer automatisch
     const endOfDay = new Date(`${endOfDayStr}+02:00`);
 
+    console.log(
+      `   Time range: ${startOfDay.toISOString()} - ${endOfDay.toISOString()}`,
+    );
+
     // Check meerdere calendars indien geconfigureerd
     const calendarIds = process.env.GOOGLE_CALENDAR_IDS
       ? process.env.GOOGLE_CALENDAR_IDS.split(",").map((id) => id.trim())
       : [process.env.GOOGLE_CALENDAR_ID || "primary"];
+
+    console.log(`   Checking ${calendarIds.length} calendar(s):`, calendarIds);
 
     const allEvents: any[] = [];
 
     // Haal events op van ALLE geconfigureerde calendars
     for (const calendarId of calendarIds) {
       try {
+        console.log(`   Fetching from calendar: ${calendarId}`);
         const response = await calendar.events.list({
           calendarId: calendarId,
           timeMin: startOfDay.toISOString(),
@@ -175,16 +183,42 @@ export async function getGoogleCalendarBookingsForDate(
         });
 
         const events = response.data.items || [];
+        console.log(
+          `   ✓ Found ${events.length} event(s) in calendar ${calendarId}`,
+        );
+
+        // Log elk event voor debugging
+        events.forEach((event, index) => {
+          console.log(
+            `     Event ${index + 1}: "${event.summary}" (${event.start?.dateTime || event.start?.date} - ${event.end?.dateTime || event.end?.date})`,
+          );
+        });
+
         allEvents.push(...events);
       } catch (error) {
-        console.error(`⚠️ Google Calendar error:`, error);
+        console.error(
+          `❌ Error fetching calendar ${calendarId}:`,
+          error instanceof Error ? error.message : error,
+        );
+        throw error; // Re-throw to make the error visible
       }
     }
 
+    console.log(`   Total events found: ${allEvents.length}`);
+
+    console.log(`   Total events found: ${allEvents.length}`);
+
     const bookedSlots: string[] = [];
+
+    console.log(
+      `   Processing events against ${TIME_SLOTS.length} time slots...`,
+    );
 
     allEvents.forEach((event) => {
       if (!event.start?.dateTime || !event.end?.dateTime) {
+        console.log(
+          `   ⏭️  Skipping all-day event: "${event.summary || "Untitled"}"`,
+        );
         return;
       }
 
@@ -195,16 +229,25 @@ export async function getGoogleCalendarBookingsForDate(
       const endTime = `${eventEnd.getHours().toString().padStart(2, "0")}:${eventEnd.getMinutes().toString().padStart(2, "0")}`;
       const eventTimeSlot = `${startTime} - ${endTime}`;
 
+      console.log(
+        `   📌 Processing event: "${event.summary || "Untitled"}" (${startTime} - ${endTime})`,
+      );
+
       // Check of het event EXACT matcht met een van onze TIME_SLOTS (= klantafspraak)
       const exactMatch = TIME_SLOTS.find((slot) => slot === eventTimeSlot);
 
       if (exactMatch) {
         if (!bookedSlots.includes(exactMatch)) {
+          console.log(`      🔒 EXACT MATCH - Blocking slot: ${exactMatch}`);
           bookedSlots.push(exactMatch);
         }
       } else {
         // Als het NIET exact matcht, check of het overlapt met TIME_SLOTS (= werkuren/busy time)
+        console.log(
+          `      Checking overlap with time slots (this could be a work shift or personal appointment)...`,
+        );
 
+        let blockedCount = 0;
         TIME_SLOTS.forEach((slot) => {
           const { start, end } = parseTimeSlot(slot);
           const [startHours, startMinutes] = start.split(":").map(Number);
@@ -254,26 +297,48 @@ export async function getGoogleCalendarBookingsForDate(
               if (!hasOverlapOrTouch && needsTravelTimeBefore)
                 reason = "reistijd voor event nodig";
 
+              console.log(`         🔒 BLOCKING slot ${slot} (${reason})`);
               console.log(
-                `    🔒 Blocking slot ${slot} (${reason}: "${event.summary}")`,
+                `            Event: ${eventStart.toLocaleString("nl-BE")} - ${eventEnd.toLocaleString("nl-BE")}`,
               );
               console.log(
-                `       Event: ${eventStart.toLocaleString("nl-BE")} - ${eventEnd.toLocaleString("nl-BE")}`,
-              );
-              console.log(
-                `       Slot:  ${slotStart.toLocaleString("nl-BE")} - ${slotEnd.toLocaleString("nl-BE")}`,
+                `            Slot:  ${slotStart.toLocaleString("nl-BE")} - ${slotEnd.toLocaleString("nl-BE")}`,
               );
               bookedSlots.push(slot);
+              blockedCount++;
             }
           }
         });
+
+        if (blockedCount > 0) {
+          console.log(
+            `      ✓ Blocked ${blockedCount} slot(s) due to this event`,
+          );
+        } else {
+          console.log(
+            `      ✓ No slots blocked (event doesn't overlap with booking times)`,
+          );
+        }
       }
     });
+
+    console.log(`\n📊 SUMMARY for ${date}:`);
+    console.log(`   Total events processed: ${allEvents.length}`);
+    console.log(`   Total slots blocked: ${bookedSlots.length}`);
+    console.log(
+      `   Blocked slots: ${bookedSlots.length > 0 ? bookedSlots.join(", ") : "none"}`,
+    );
+    console.log(
+      `   Available slots: ${TIME_SLOTS.length - bookedSlots.length}\n`,
+    );
 
     return bookedSlots;
   } catch (error) {
     console.error("❌ Error fetching Google Calendar bookings:", error);
-    return [];
+    console.error(
+      "   This means work shifts and manual bookings will NOT block availability!",
+    );
+    throw error; // Re-throw to make the error visible in the API
   }
 }
 
@@ -305,9 +370,27 @@ export async function deleteFromGoogleCalendar(
 }
 
 export function isGoogleCalendarConfigured(): boolean {
-  return !!(
+  const configured = !!(
     process.env.GOOGLE_CLIENT_ID &&
     process.env.GOOGLE_CLIENT_SECRET &&
     process.env.GOOGLE_REFRESH_TOKEN
   );
+
+  if (!configured) {
+    console.warn("⚠️ Google Calendar is NOT properly configured!");
+    console.warn("   Missing environment variables:");
+    if (!process.env.GOOGLE_CLIENT_ID) console.warn("   - GOOGLE_CLIENT_ID");
+    if (!process.env.GOOGLE_CLIENT_SECRET)
+      console.warn("   - GOOGLE_CLIENT_SECRET");
+    if (!process.env.GOOGLE_REFRESH_TOKEN)
+      console.warn("   - GOOGLE_REFRESH_TOKEN");
+    console.warn(
+      "\n   Work shifts and manual bookings will NOT block availability!",
+    );
+    console.warn(
+      "   Please configure Google Calendar credentials to enable full synchronization.\n",
+    );
+  }
+
+  return configured;
 }

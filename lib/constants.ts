@@ -7,7 +7,7 @@ export const COMPANY = {
   vatNumber: process.env.NEXT_PUBLIC_VAT_NUMBER,
 };
 
-// Toegestane postcodes (Gent en max 20km radius)
+// Toegestane postcodes (Gent + blauwe zone uit servicegebied kaart)
 export const ALLOWED_POSTAL_CODES = [
   "9000", // Gent centrum
   "9030", // Mariakerke
@@ -19,16 +19,30 @@ export const ALLOWED_POSTAL_CODES = [
   "9050", // Gentbrugge
   "9051", // Sint-Denijs-Westrem
   "9052", // Zwijnaarde
+  "9060", // Zelzate
   "9070", // Destelbergen (~5km)
   "9080", // Lochristi (~10km)
   "9090", // Melle (~7km)
+  "9200", // Oosterzele
   "9230", // Wetteren (~15km)
+  "9231", // Kalken
   "9270", // Laarne (~12km)
+  "9800", // Deinze (!! belangrijke toevoeging uit briefing)
+  "9810", // Nazareth
   "9820", // Merelbeke (~5km)
   "9830", // Sint-Martens-Latem (~8km)
   "9831", // Deurle (~15km)
   "9840", // De Pinte (~8km)
+  "9850", // Nevele
+  "9860", // Zaffelare
+  "9890", // Gavere
+  "9900", // Eeklo
+  "9920", // Lovendegem
+  "9930", // Zomergem
   "9940", // Evergem (~8km)
+  "9950", // Waarschoot
+  "9970", // Kaprijke
+  "9982", // Sint-Kruis-Winkel
 ];
 
 // Contact Information

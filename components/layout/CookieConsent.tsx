@@ -30,26 +30,33 @@ export default function CookieConsent() {
     }, []);
 
     const saveConsent = (prefs: typeof preferences) => {
-        // Save consent preferences to localStorage
+        // 1. Sla voorkeuren op in localStorage
         localStorage.setItem("cookie-consent", JSON.stringify({
-            necessary: prefs.necessary,
+            necessary: true,
             analytics: prefs.analytics,
             marketing: prefs.marketing
         }));
 
+        // 2. Sluit de banner
         setShowBanner(false);
 
-        // Update Google Consent Mode v2 via gtag
+        // 3. Consent update via window.gtag (NIET via IIFE)
         if (typeof window !== 'undefined') {
             (window as any).dataLayer = (window as any).dataLayer || [];
-            function gtag(...args: any[]) { (window as any).dataLayer.push(arguments); }
+            (window as any).gtag = (window as any).gtag || function () { (window as any).dataLayer.push(arguments); };
 
-            // Direct gtag consent update (GTM will pick this up automatically)
-            gtag('consent', 'update', {
+            (window as any).gtag('consent', 'update', {
                 'analytics_storage': prefs.analytics ? 'granted' : 'denied',
                 'ad_storage': prefs.marketing ? 'granted' : 'denied',
                 'ad_user_data': prefs.marketing ? 'granted' : 'denied',
-                'ad_personalization': prefs.marketing ? 'granted' : 'denied',
+                'ad_personalization': prefs.marketing ? 'granted' : 'denied'
+            });
+
+            // 4. Push custom event voor GTM trigger
+            (window as any).dataLayer.push({
+                event: 'consent_update',
+                consent_analytics: prefs.analytics,
+                consent_marketing: prefs.marketing
             });
         }
     };

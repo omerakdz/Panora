@@ -69,7 +69,7 @@ export function generateCustomerEmailHTML(data: EmailData): string {
                 <tr>
                   <td style="padding: 15px 0; border-bottom: 1px solid #e9ecef;">
                     <strong style="color: #044D8E; display: block; margin-bottom: 5px;">📍 Adres</strong>
-                    <span style="color: #0F61AC; font-size: 16px;">${data.customerAddress}</span>
+                    <span style="color: #0F61AC; font-size: 16px;">${data.customerAddress}${data.customerPostalCode ? `, ${data.customerPostalCode}` : ""}${data.customerCity ? ` ${data.customerCity}` : ""}</span>
                   </td>
                 </tr>
                 <tr>
@@ -229,7 +229,7 @@ export function generateInternalEmailHTML(data: EmailData): string {
                     <strong style="color: #044D8E;">Adres:</strong>
                   </td>
                   <td style="padding: 10px 0; border-bottom: 1px solid #e9ecef; text-align: right;">
-                    <span style="color: #0F61AC;">${data.customerAddress}</span>
+                    <span style="color: #0F61AC;">${data.customerAddress}${data.customerPostalCode ? `, ${data.customerPostalCode}` : ""}${data.customerCity ? ` ${data.customerCity}` : ""}</span>
                   </td>
                 </tr>
               </table>
@@ -352,7 +352,7 @@ AFSPRAAKDETAILS:
 ━━━━━━━━━━━━━━━━
 Datum: ${formattedDate}
 Tijdstip: ${data.selectedTime}
-Adres: ${data.customerAddress}
+Adres: ${data.customerAddress}${data.customerPostalCode ? `, ${data.customerPostalCode}` : ""}${data.customerCity ? ` ${data.customerCity}` : ""}
 
 Richtprijs (incl. BTW): €${data.calculatedPrice.toFixed(2)}
 (Exacte prijs wordt bevestigd na inspectie)
@@ -391,7 +391,7 @@ KLANTGEGEVENS:
 Naam: ${data.customerName}
 Email: ${data.customerEmail}
 Telefoon: ${data.customerPhone}
-Adres: ${data.customerAddress}
+Adres: ${data.customerAddress}${data.customerPostalCode ? `, ${data.customerPostalCode}` : ""}${data.customerCity ? ` ${data.customerCity}` : ""}
 
 AFSPRAAK:
 ━━━━━━━━━━━━━━━━

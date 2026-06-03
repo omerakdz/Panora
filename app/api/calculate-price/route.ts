@@ -88,12 +88,14 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("✅ Price calculated:", {
-      price,
-      totalWindows: data.totalWindows,
-      exteriorWindows: data.exteriorWindows,
-      interiorExteriorWindows: data.interiorExteriorWindows,
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.log("✅ Price calculated:", {
+        price,
+        totalWindows: data.totalWindows,
+        exteriorWindows: data.exteriorWindows,
+        interiorExteriorWindows: data.interiorExteriorWindows,
+      });
+    }
 
     return NextResponse.json(
       {

@@ -51,29 +51,15 @@ export async function GET(request: Request) {
     if (isGoogleCalendarConfigured()) {
       calendarConfigured = true;
       try {
-        console.log(`🔍 Checking Google Calendar for date: ${dateParam}`);
         bookedSlotsFromCalendar =
           await getGoogleCalendarBookingsForDate(dateParam);
-        console.log(
-          `✅ Google Calendar check successful: ${bookedSlotsFromCalendar.length} slots blocked`,
-        );
       } catch (error) {
         calendarError = error instanceof Error ? error.message : String(error);
         console.error(
           "❌ CRITICAL: Google Calendar synchronization failed:",
           error,
         );
-        console.error(
-          "⚠️  WARNING: Bookings may be accepted during unavailable times!",
-        );
       }
-    } else {
-      console.warn(
-        "⚠️ Google Calendar NOT configured - only using database bookings",
-      );
-      console.warn(
-        "   Work shifts and manual bookings will NOT block availability!",
-      );
     }
 
     // 3. Combineer beide bronnen (verwijder duplicaten)

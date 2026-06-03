@@ -145,6 +145,8 @@ export default function ConfirmationContent() {
                                     <p className="font-semibold text-[#044D8E] mb-1">Adres</p>
                                     <p className="text-[#0F61AC]">
                                         {bookingDetails.customerAddress}
+                                        {bookingDetails.customerPostalCode && `, ${bookingDetails.customerPostalCode}`}
+                                        {bookingDetails.customerCity && ` ${bookingDetails.customerCity}`}
                                     </p>
                                 </div>
                             </div>

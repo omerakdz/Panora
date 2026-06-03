@@ -34,7 +34,9 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
 
-    console.log("📧 Email API called for:", data.customerName);
+    if (process.env.NODE_ENV === "development") {
+      console.log("📧 Email API called");
+    }
 
     // Validate required fields
     if (
@@ -92,9 +94,9 @@ export async function POST(request: Request) {
       html: internalEmailHTML,
     });
 
-    console.log("✅ Emails sent successfully");
-    console.log("Customer email sent to:", data.customerEmail);
-    console.log("Internal email sent to:", EMAIL_CONFIG.internalEmail);
+    if (process.env.NODE_ENV === "development") {
+      console.log("✅ Emails sent successfully");
+    }
 
     return NextResponse.json(
       {

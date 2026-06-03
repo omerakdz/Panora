@@ -1,50 +1,55 @@
 //Calculator.tsx
 export interface CalculatorData {
-    propertyType: "appartement" | "rijhuis" | "halfopen" | "vrijstaand" | "kantoor" | "";
+  propertyType:
+    | "appartement"
+    | "rijhuis"
+    | "halfopen"
+    | "vrijstaand"
+    | "kantoor"
+    | "";
 
-    totalWindows: number;
-    exteriorWindows: number;
-    interiorExteriorWindows: number;
+  totalWindows: number;
+  exteriorWindows: number;
+  interiorExteriorWindows: number;
 
-    // extras
-    hardToReach: boolean;
-    firstTimeInLong: boolean;
-    cleanFrames: boolean;
+  // extras
+  hardToReach: boolean;
+  firstTimeInLong: boolean;
+  cleanFrames: boolean;
 
-    calculatedPrice: number;
+  calculatedPrice: number;
 
-    // Schedule
-    selectedDate: Date | null;
-    selectedTime: string;
+  // Schedule
+  selectedDate: Date | null;
+  selectedTime: string;
 
-    customerName: string;
-    customerPhone: string;
-    customerEmail: string;
-    customerAddress: string;
-    customerCity: string;
-    customerPostalCode: string;
-    customerNotes: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  customerAddress: string;
+  customerCity: string;
+  customerPostalCode: string;
+  customerNotes: string;
 }
-
 
 // confirmation page
 export interface BookingDetails {
-    customerName: string;
-    customerEmail: string;
-    customerPhone: string;
-    customerAddress: string;
-    customerCity: string;
-    customerPostalCode: string;
-    selectedDate: string;
-    selectedTime: string;
-    calculatedPrice: number;
-    propertyType: string;
-    totalWindows: number;
-    exteriorWindows: number;
-    interiorExteriorWindows: number;
-    hardToReach: boolean;
-    firstTimeInLong: boolean;
-    cleanFrames: boolean;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress: string;
+  customerCity: string;
+  customerPostalCode: string;
+  selectedDate: string;
+  selectedTime: string;
+  calculatedPrice: number;
+  propertyType: string;
+  totalWindows: number;
+  exteriorWindows: number;
+  interiorExteriorWindows: number;
+  hardToReach: boolean;
+  firstTimeInLong: boolean;
+  cleanFrames: boolean;
 }
 
 // lib calendar.ts
@@ -61,6 +66,8 @@ export interface Booking {
   customerEmail: string;
   customerPhone: string;
   customerAddress: string;
+  customerCity?: string;
+  customerPostalCode?: string;
   date: string; // YYYY-MM-DD
   time: string;
   propertyType: string;
@@ -82,6 +89,8 @@ export interface EmailData {
   customerEmail: string;
   customerPhone: string;
   customerAddress: string;
+  customerCity?: string;
+  customerPostalCode?: string;
   selectedDate: Date;
   selectedTime: string;
   calculatedPrice: number;
@@ -93,8 +102,7 @@ export interface EmailData {
   firstTimeInLong: boolean;
   cleanFrames: boolean;
   customerNotes?: string;
-} 
-
+}
 
 export interface Review {
   id: string;

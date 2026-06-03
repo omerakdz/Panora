@@ -31,7 +31,9 @@ export async function POST(request: Request) {
     return createRateLimitResponse(Date.now() + 60 * 60 * 1000);
   }
 
-  console.log("🔵 Book appointment API called");
+  if (process.env.NODE_ENV === "development") {
+    console.log("🔵 Book appointment API called");
+  }
 
   try {
     const rawData = await request.json();
@@ -39,12 +41,7 @@ export async function POST(request: Request) {
     // Sanitize all user input
     const data = sanitizeBookingData(rawData);
 
-    console.log("📝 Booking data received:", {
-      customerName: data.customerName,
-      customerEmail: data.customerEmail,
-      date: data.selectedDate,
-      time: data.selectedTime,
-    });
+    // No sensitive data logging in production
 
     // Validation
     if (
@@ -71,7 +68,7 @@ export async function POST(request: Request) {
 
     // Email validation
     if (!isValidEmail(data.customerEmail)) {
-      console.error("❌ Invalid email format:", data.customerEmail);
+      console.error("❌ Invalid email format");
       return NextResponse.json(
         { error: "Invalid email address" },
         { status: 400 },
@@ -80,7 +77,7 @@ export async function POST(request: Request) {
 
     // Phone validation
     if (!isValidPhone(data.customerPhone)) {
-      console.error("❌ Invalid phone format:", data.customerPhone);
+      console.error("❌ Invalid phone format");
       return NextResponse.json(
         { error: "Invalid phone number" },
         { status: 400 },
@@ -136,12 +133,6 @@ export async function POST(request: Request) {
       cleanFrames: data.cleanFrames || false,
     });
 
-    console.log("💰 Price validation:", {
-      clientPrice: data.calculatedPrice,
-      serverPrice: serverCalculatedPrice,
-      difference: Math.abs(serverCalculatedPrice - (data.calculatedPrice || 0)),
-    });
-
     // Check for price manipulation (allow 0.01 difference for rounding)
     const priceDifference = Math.abs(
       serverCalculatedPrice - (data.calculatedPrice || 0),
@@ -187,11 +178,6 @@ export async function POST(request: Request) {
     }
 
     const bookingDate = new Date(data.selectedDate).toISOString().split("T")[0];
-    console.log(
-      "📅 Checking slot availability for:",
-      bookingDate,
-      data.selectedTime,
-    );
 
     // Check slot availability in Supabase
     const { data: existingBookings, error: checkError } = await supabaseAdmin
@@ -231,7 +217,6 @@ export async function POST(request: Request) {
             { status: 409 },
           );
         }
-        console.log("✅ No Google Calendar conflicts found");
       } catch (error) {
         console.warn(
           "⚠️ Could not verify Google Calendar availability:",
@@ -240,8 +225,6 @@ export async function POST(request: Request) {
         // Continue anyway - better to allow booking than to block unnecessarily
       }
     }
-
-    console.log("✅ Slot is available, creating booking...");
 
     const bookingId = `BK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -267,8 +250,6 @@ export async function POST(request: Request) {
       status: "pending",
     };
 
-    console.log("💾 Saving booking to Supabase...");
-
     const { data: savedBooking, error: insertError } = await supabaseAdmin
       .from("bookings")
       .insert([bookingRecord])
@@ -283,8 +264,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log("✅ Booking saved successfully");
-
     // Convert to Booking type for Google Calendar
     const booking: Booking = {
       id: bookingId,
@@ -292,6 +271,8 @@ export async function POST(request: Request) {
       customerEmail: data.customerEmail,
       customerPhone: data.customerPhone,
       customerAddress: data.customerAddress,
+      customerCity: data.customerCity || "",
+      customerPostalCode: data.customerPostalCode || "",
       date: bookingDate,
       time: data.selectedTime,
       propertyType: data.propertyType || "",
@@ -310,9 +291,7 @@ export async function POST(request: Request) {
     let googleCalendarEventId: string | undefined;
     if (isGoogleCalendarConfigured()) {
       try {
-        console.log("📅 Adding to Google Calendar...");
         googleCalendarEventId = await addToGoogleCalendar(booking);
-        console.log("✅ Added to Google Calendar:", googleCalendarEventId);
       } catch (error) {
         console.warn("⚠️ Failed to add to Google Calendar:", error);
       }
@@ -322,8 +301,6 @@ export async function POST(request: Request) {
     try {
       const baseUrl = request.headers.get("origin") || "http://localhost:3000";
       const emailUrl = `${baseUrl}/api/send-email`;
-
-      console.log("📧 Sending emails via:", emailUrl);
 
       const emailResponse = await fetch(emailUrl, {
         method: "POST",
@@ -338,18 +315,11 @@ export async function POST(request: Request) {
 
       if (!emailResponse.ok) {
         const errorText = await emailResponse.text();
-        console.error("⚠️ Email API returned error:", {
-          status: emailResponse.status,
-          error: errorText,
-        });
-      } else {
-        console.log("✅ Emails sent successfully");
+        console.error("⚠️ Email API error:", emailResponse.status);
       }
     } catch (error) {
       console.error("⚠️ Failed to send emails (booking still saved):", error);
     }
-
-    console.log("✅ Booking process completed successfully");
 
     return NextResponse.json(
       {

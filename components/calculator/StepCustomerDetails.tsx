@@ -23,6 +23,8 @@ export default function StepCustomerDetails({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [postalCodeError, setPostalCodeError] = useState("");
     const [showContactLink, setShowContactLink] = useState(false);
+    const [contactUrl, setContactUrl] = useState("");
+    const [contactButtonText, setContactButtonText] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -33,6 +35,8 @@ export default function StepCustomerDetails({
             const errorInfo = getPostalCodeErrorMessage(data.calculatedPrice);
             setPostalCodeError(errorInfo.message);
             setShowContactLink(errorInfo.showContactLink);
+            setContactUrl(errorInfo.contactUrl || "");
+            setContactButtonText(errorInfo.contactButtonText || "");
             return;
         }
 
@@ -224,6 +228,8 @@ export default function StepCustomerDetails({
                             updateData({ customerPostalCode: e.target.value });
                             setPostalCodeError(""); // Clear error when user types
                             setShowContactLink(false);
+                            setContactUrl("");
+                            setContactButtonText("");
                         }}
                         className={`border-[#9FCAE3] focus:border-[#044D8E] ${postalCodeError ? 'border-red-500' : ''}`}
                         placeholder="9000"
@@ -234,10 +240,12 @@ export default function StepCustomerDetails({
                             <p>{postalCodeError}</p>
                             {showContactLink && (
                                 <a
-                                    href="/contact"
-                                    className="text-[#044D8E] underline hover:text-[#0F61AC] font-semibold mt-1 inline-block"
+                                    href={contactUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-block mt-2 px-4 py-2 bg-[#25D366] hover:bg-[#20BA5A] text-white font-semibold rounded-lg transition-colors"
                                 >
-                                    Neem contact met ons op →
+                                    {contactButtonText}
                                 </a>
                             )}
                         </div>

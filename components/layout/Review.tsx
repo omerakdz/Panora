@@ -138,10 +138,14 @@ const Review = () => {
 
     const goToPrevious = () => {
         setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
+        setHasAnimated(false);
+        setTimeout(() => setHasAnimated(true), 50);
     };
 
     const goToNext = () => {
         setCurrentPage((prev) => (prev === totalPages - 1 ? 0 : prev + 1));
+        setHasAnimated(false);
+        setTimeout(() => setHasAnimated(true), 50);
     };
 
     const startIndex = currentPage * REVIEWS_PER_PAGE;
@@ -175,14 +179,14 @@ const Review = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {currentReviews.map((review, index) => (
                             <div
-                                key={review.id}
-                                className="h-full transition-all duration-300 ease-out hover:md:-translate-y-3"
+                                key={`${review.id}-${currentPage}`}
+                                className="h-full"
                                 style={{
                                     opacity: hasAnimated ? 1 : 0,
-                                    animation: (shouldReduceMotion || hasAnimated) ? 'none' : `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`
+                                    transition: `opacity 0.5s ease-out ${index * 0.1}s`
                                 }}
                             >
-                                <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] transition-all duration-200 relative overflow-hidden group">
+                                <Card className="border-2 border-slate-200 h-full bg-white/80 backdrop-blur-sm hover:border-[#1792D0] hover:shadow-xl hover:md:-translate-y-3 transition-all duration-300 ease-in-out relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 w-24 h-24 bg-[#1792D0]/5 rounded-full blur-2xl group-hover:bg-[#1792D0]/10 transition-all duration-700 ease-out"></div>
                                     <CardContent className="p-6 relative z-10">
                                         {/* Quote icon */}
@@ -226,7 +230,7 @@ const Review = () => {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-200 w-12 h-12"
+                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] hover:scale-110 active:scale-95 transition-all duration-200 w-12 h-12"
                                 onClick={goToPrevious}
                             >
                                 <ChevronLeft className="h-6 w-6" />
@@ -237,10 +241,14 @@ const Review = () => {
                                 {[...Array(totalPages)].map((_, index) => (
                                     <button
                                         key={index}
-                                        onClick={() => setCurrentPage(index)}
-                                        className={`h-3 rounded-full transition-all duration-300 ${index === currentPage
-                                                ? "bg-[#044D8E] w-8"
-                                                : "bg-[#9FCAE3] w-3"
+                                        onClick={() => {
+                                            setCurrentPage(index);
+                                            setHasAnimated(false);
+                                            setTimeout(() => setHasAnimated(true), 50);
+                                        }}
+                                        className={`h-3 rounded-full transition-all duration-300 hover:scale-125 ${index === currentPage
+                                            ? "bg-[#044D8E] w-8"
+                                            : "bg-[#9FCAE3] w-3"
                                             }`}
                                         aria-label={`Go to page ${index + 1}`}
                                     />
@@ -250,7 +258,7 @@ const Review = () => {
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] active:scale-95 transition-all duration-200 w-12 h-12"
+                                className="bg-white hover:bg-[#044D8E] hover:text-white hover:border-[#044D8E] hover:scale-110 active:scale-95 transition-all duration-200 w-12 h-12"
                                 onClick={goToNext}
                             >
                                 <ChevronRight className="h-6 w-6" />

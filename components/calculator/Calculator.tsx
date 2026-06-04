@@ -180,9 +180,9 @@ export default function Calculator() {
                 {/* Gradient background overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1792D0]/5 via-transparent to-[#044D8E]/5 opacity-50"></div>
 
-                <CardContent className="p-4 md:p-6 relative z-10">
+                <CardContent className="p-3 md:p-5 relative z-10">
                     {/* Premium Progress Indicator */}
-                    <div className="mb-4 md:mb-6">
+                    <div className="mb-3 md:mb-4">
                         {/* Horizontal stepper - all screens */}
                         <div className="flex justify-between items-start mb-3 md:mb-4">
                             {steps.map((step, index) => {
@@ -250,7 +250,7 @@ export default function Calculator() {
                     <AnimatePresence mode="wait">
                         <motion.h3
                             key={currentStep}
-                            className="text-lg md:text-2xl font-bold text-[#044D8E] mb-3 md:mb-4 text-center"
+                            className="text-lg md:text-2xl font-bold text-[#044D8E] mb-2 md:mb-3 text-center"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
@@ -264,7 +264,7 @@ export default function Calculator() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentStep}
-                            className="min-h-[120px] md:min-h-[160px]"
+                            className="min-h-[100px] md:min-h-[140px]"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: -20 }}
@@ -275,7 +275,7 @@ export default function Calculator() {
                     </AnimatePresence>
 
                     {/* Navigation Buttons */}
-                    <div className="flex justify-between mt-4 md:mt-6 pt-3 md:pt-4 border-t border-white/50">
+                    <div className="flex justify-between mt-3 md:mt-4 pt-3 border-t border-white/50">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                             <Button
                                 onClick={prevStep}

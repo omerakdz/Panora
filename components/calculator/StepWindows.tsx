@@ -3,8 +3,12 @@
 import { CalculatorData } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { AlertCircle, HelpCircle } from "lucide-react";
 import { SERVICE_TYPES } from "@/lib/constants";
+import { useState } from "react";
+import Image from "next/image";
 
 interface StepWindowsProps {
     data: CalculatorData;
@@ -12,6 +16,17 @@ interface StepWindowsProps {
 }
 
 export default function StepWindows({ data, updateData }: StepWindowsProps) {
+    // Simple state - starts as true to show popup on mount
+    const [isDialogOpen, setIsDialogOpen] = useState(true);
+
+    const closeDialog = () => {
+        setIsDialogOpen(false);
+    };
+
+    const openDialog = () => {
+        setIsDialogOpen(true);
+    };
+
     const isValid =
         data.totalWindows > 0 &&
         data.exteriorWindows + data.interiorExteriorWindows === data.totalWindows;
@@ -20,9 +35,56 @@ export default function StepWindows({ data, updateData }: StepWindowsProps) {
 
     return (
         <div className="space-y-4 md:space-y-6">
-            <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
-                Vul het aantal ramen in dat gereinigd moet worden
-            </p>
+            {/* Help Guide Dialog - Always rendered */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <div className="p-4 md:p-6">
+                        <div className="mb-4">
+                            <h2 className="text-2xl font-bold text-[#044D8E] text-center mb-2">
+                                Hoe tel je je ramen?
+                            </h2>
+                            <p className="text-[#0F61AC] text-center text-sm md:text-base">
+                                Volg deze eenvoudige uitleg om je raampanelen correct te tellen
+                            </p>
+                        </div>
+
+                        <div className="relative w-full aspect-4/3 mb-6 rounded-lg overflow-hidden bg-gray-50">
+                            <Image
+                                src="/images/ramen.png"
+                                alt="Uitleg over het tellen van raampanelen"
+                                fill
+                                className="object-contain"
+                                priority
+                                unoptimized
+                            />
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                onClick={closeDialog}
+                                className="w-full bg-[#044D8E] hover:bg-[#0F61AC] text-white font-semibold py-3 text-base"
+                                type="button"
+                            >
+                                Begrepen, ik ga verder
+                            </Button>
+                        </DialogFooter>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <div className="flex items-center justify-center gap-2 mb-4">
+                <p className="text-center text-[#0F61AC] text-sm md:text-base">
+                    Vul het aantal ramen in dat gereinigd moet worden
+                </p>
+                <button
+                    onClick={openDialog}
+                    className="text-[#044D8E] hover:text-[#0F61AC] transition-colors flex items-center gap-1"
+                    title="Hulp bij het tellen van ramen"
+                    type="button"
+                >
+                    <HelpCircle className="w-5 h-5" />
+                </button>
+            </div>
 
             <div className="space-y-3 md:space-y-4 max-w-md mx-auto">
                 {/* Total Windows */}
@@ -97,7 +159,7 @@ export default function StepWindows({ data, updateData }: StepWindowsProps) {
           `}
                 >
                     <AlertCircle
-                        className={`w-5 h-5 mt-0.5 flex-shrink-0 ${!isValid && totalCount > 0
+                        className={`w-5 h-5 mt-0.5 shrink-0 ${!isValid && totalCount > 0
                             ? "text-red-500"
                             : totalCount === data.totalWindows && data.totalWindows > 0
                                 ? "text-green-600"

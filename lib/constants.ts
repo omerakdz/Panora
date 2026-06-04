@@ -270,17 +270,28 @@ export function isPostalCodeAllowed(postalCode: string): boolean {
 export function getPostalCodeErrorMessage(calculatedPrice: number): {
   message: string;
   showContactLink: boolean;
+  contactUrl?: string;
+  contactButtonText?: string;
 } {
-  if (calculatedPrice >= 100) {
+  // Scenario B: Opdracht van €50 of meer - bied contact optie aan
+  if (calculatedPrice >= 50) {
     return {
       message:
-        "Deze locatie ligt buiten onze standaard service area (max 20km van Gent).",
+        "We zijn normaal gesproken niet actief in jouw regio. Omdat je een grotere opdracht hebt, bekijken we echter graag of we alsnog een uitzondering voor je kunnen maken!",
       showContactLink: true,
+      contactUrl: CONTACT.whatsapp
+        ? `https://wa.me/${CONTACT.whatsapp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+            `Hallo! Ik wil graag een afspraak maken voor ramenwas (€${calculatedPrice}), maar mijn postcode ligt buiten jullie standaard gebied. Kunnen we dit bespreken?`,
+          )}`
+        : "/contact",
+      contactButtonText: "Contacteer ons via WhatsApp",
     };
   }
+
+  // Scenario A: Opdracht minder dan €50 - standaard afwijzing
   return {
     message:
-      "Helaas bedienen we momenteel alleen Gent en directe omstreken (max 20km radius).",
-    showContactLink: true,
+      "Helaas zijn we (nog) niet actief in jouw regio. We richten ons momenteel op Gent en directe omgeving.",
+    showContactLink: false,
   };
 }

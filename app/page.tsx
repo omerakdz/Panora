@@ -224,7 +224,7 @@ export default function HomePage() {
       </section>
 
       {/* Before/After Gallery */}
-      <section className="py-15 bg-white">
+      <section className="py-10 bg-white">
         <div className="container mx-auto px-4">
           <div
             style={{
@@ -247,7 +247,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#044D8E]">
               Voor & Na
             </h2>
-            <p className="text-center text-[#0F61AC] mb-12">
+            <p className="text-center text-[#0F61AC] mb-8">
               Bekijk het verschil dat PANORA maakt
             </p>
           </div>

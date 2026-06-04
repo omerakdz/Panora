@@ -11,6 +11,7 @@ interface GooglePlaceReview {
 interface GooglePlaceDetailsResponse {
   result?: {
     reviews?: GooglePlaceReview[];
+    user_ratings_total?: number;
   };
   status: string;
   error_message?: string;
@@ -106,8 +107,8 @@ export async function GET() {
 
     console.log("📡 Fetching Google reviews from server-side...");
 
-    // Gebruik Google Places API vanaf de server (geen referer restrictions nodig)
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,reviews,user_ratings_total&key=${apiKey}`;
+    // Gebruik Google Places API vanaf de server met Nederlandse taal en alle reviews
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,rating,reviews,user_ratings_total&language=nl&reviews_sort=newest&key=${apiKey}`;
 
     const response = await fetch(url, {
       next: { revalidate: 3600 },
@@ -169,6 +170,11 @@ export async function GET() {
         },
       });
     }
+
+    console.log(
+      `📊 Total reviews available: ${data.result.user_ratings_total || "unknown"}`,
+    );
+    console.log(`📥 Reviews received from API: ${data.result.reviews.length}`);
 
     // Transform Google reviews to our format
     const transformedReviews = data.result.reviews.map((review, index) => ({

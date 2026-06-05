@@ -72,10 +72,9 @@ export function calculatePrice(
     basePrice += PRICING.cleanFramesExtra;
   }
 
-  // For kantoor/handelszaak, exclude BTW (divide by 1.21)
-  if (data.propertyType === "kantoor") {
-    basePrice = basePrice / 1.21;
-  }
+  // NOTE: BTW correctie is verwijderd op verzoek van eigenaar
+  // Kantoren betalen dezelfde prijs als particulieren
+  // Eigenaar regelt BTW zelf op de factuur
 
   // Round to 2 decimal places
   const finalPrice = Math.round(basePrice * 100) / 100;

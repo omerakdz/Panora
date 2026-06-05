@@ -80,6 +80,27 @@ export default function Calculator() {
                 }
             }
 
+            // Track price_confirm event - wanneer gebruiker prijs bevestigt
+            if (currentStep === 3 && typeof window !== 'undefined') {
+                window.dataLayer = window.dataLayer || [];
+                const eventData = {
+                    event: "price_confirm",
+                    funnel_name: "calculator",
+                    service_type: data.propertyType,
+                    total_windows: data.totalWindows,
+                    exterior_windows: data.exteriorWindows,
+                    interior_exterior_windows: data.interiorExteriorWindows,
+                    has_hard_to_reach: data.hardToReach,
+                    has_first_time_long: data.firstTimeInLong,
+                    has_clean_frames: data.cleanFrames,
+                    price_value: data.calculatedPrice
+                };
+                window.dataLayer.push(eventData);
+                if (process.env.NODE_ENV === 'development') {
+                    console.log('📊 GTM Event pushed:', eventData);
+                }
+            }
+
             // Track lead_form_start event
             if (currentStep === 4 && typeof window !== 'undefined') {
                 window.dataLayer = window.dataLayer || [];

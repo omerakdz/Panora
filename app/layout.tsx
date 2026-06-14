@@ -97,8 +97,7 @@ export const metadata = {
     apple: '/images/PANORA_LOGO_1_1400x1400.png',
   },
   verification: {
-    // Voeg later je Google Search Console verification code toe
-    // google: 'verification_code_here',
+    google: '0zERXeWBtJ3emmd1tkUfI6Dv04Zgz-HgTfXDdwLJZT4',
   },
 };
 

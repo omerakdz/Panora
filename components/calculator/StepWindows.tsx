@@ -16,8 +16,8 @@ interface StepWindowsProps {
 }
 
 export default function StepWindows({ data, updateData }: StepWindowsProps) {
-    // Simple state - starts as true to show popup on mount
-    const [isDialogOpen, setIsDialogOpen] = useState(true);
+    // Dialog is closed by default, opens when user clicks help button
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const closeDialog = () => {
         setIsDialogOpen(false);

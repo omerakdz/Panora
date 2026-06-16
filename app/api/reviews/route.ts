@@ -17,72 +17,125 @@ interface GooglePlaceDetailsResponse {
   error_message?: string;
 }
 
-// Tijdelijke mock data als fallback
-// export const mockReviews = [
-//   {
-//     id: "1",
-//     rating: 5,
-//     comment: "Super tevreden! Snelle service en perfecte ramen. De online booking was zo makkelijk.",
-//     author: "Sarah D.",
-//     location: "Gent"
-//   },
-//   {
-//     id: "2",
-//     rating: 5,
-//     comment: "Eindelijk een ramenwasser die duidelijkheid geeft over de prijs. Geen verrassingen achteraf!",
-//     author: "Tom V.",
-//     location: "Merelbeke"
-//   },
-//   {
-//     id: "3",
-//     rating: 5,
-//     comment: "Professioneel werk en vriendelijke service. Mijn ramen hebben nog nooit zo glanzend geweest!",
-//     author: "Lisa M.",
-//     location: "Deinze"
-//   },
-//   {
-//     id: "4",
-//     rating: 5,
-//     comment: "Zeer correct en netjes gewerkt. De communicatie verliep vlot en de afspraak was precies op tijd!",
-//     author: "Jan P.",
-//     location: "Gentbrugge"
-//   },
-//   {
-//     id: "5",
-//     rating: 5,
-//     comment: "Fantastisch resultaat! Ik boek zeker opnieuw. De osmose-techniek maakt echt een verschil.",
-//     author: "Emma L.",
-//     location: "Sint-Amandsberg"
-//   },
-//   {
-//     id: "6",
-//     rating: 5,
-//     comment: "Heel tevreden over de service. Punctueel, professioneel en betaalbaar. Aanrader!",
-//     author: "Kevin B.",
-//     location: "Destelbergen"
-//   },
-//   {
-//     id: "7",
-//     rating: 5,
-//     comment: "Uitstekende ervaring van begin tot eind. De calculator werkt perfect en het eindresultaat is top!",
-//     author: "Sophie W.",
-//     location: "Lochristi"
-//   },
-//   {
-//     id: "8",
-//     rating: 5,
-//     comment: "Zeer vakkundig werk. Mijn ramen zijn kraakhelder en de service was vriendelijk en efficiënt.",
-//     author: "Marc T.",
-//     location: "Melle"
-//   },
-//   {
-//     id: "9",
-//     rating: 5,
-//     comment: "Top service! Snel, betrouwbaar en perfect resultaat. De foto's na afloop zijn een leuke bonus.",
-//     author: "Nina K.",
-//     location: "De Pinte"
-//   }
-// ];
+// Echte Google reviews - hardcoded als fallback wanneer Google API niet werkt
+const mockReviews = [
+  {
+    id: "1",
+    rating: 5,
+    comment:
+      "Hartelijk dank voor de snelle reactie, de positieve houding en de grote beschikbaarheid.",
+    author: "DailyHappyVibes LuxaladGent",
+    location: "Google Reviews",
+  },
+  {
+    id: "2",
+    rating: 5,
+    comment:
+      "Een correcte voorafgaande inspectie met voorafgakende prijs. Snelle service, goed werk en lage prijs. Heel tevreden.",
+    author: "Kurt De Taeye",
+    location: "Google Reviews",
+  },
+  {
+    id: "3",
+    rating: 5,
+    comment:
+      "Matti is altijd stipt op zijn afspraak, ramen wassen doet hij snel en correct. Een echte topper voor je ramen.",
+    author: "Wesley Filez",
+    location: "Google Reviews",
+  },
+  {
+    id: "4",
+    rating: 5,
+    comment:
+      "Mijn ramen, deuren en rolluiken werden gewassen door een vriendelijk en vakbekwaam team aan een zeer schappelijke prijs!",
+    author: "Roger Van Damme",
+    location: "Google Reviews",
+  },
+  {
+    id: "5",
+    rating: 5,
+    comment: "Bedankt voor uw snelle service 👌🏻",
+    author: "ersan cevirgen",
+    location: "Google Reviews",
+  },
+  {
+    id: "6",
+    rating: 5,
+    comment: "Prijs kwaliteit op en top!",
+    author: "NICO DE BUCK",
+    location: "Google Reviews",
+  },
+  {
+    id: "7",
+    rating: 5,
+    comment:
+      "Heel tevreden over de service! De ramen zijn perfect schoon en de communicatie verliep vlot en vriendelijk!",
+    author: "Jenka Barakina",
+    location: "Google Reviews",
+  },
+  {
+    id: "8",
+    rating: 5,
+    comment:
+      "Zeer tevreden over de werkzaamheden van Panora Glazenwasser! Alles werd perfect uitgevoerd, met oog voor detail. De communicatie verliep zeer vlot.",
+    author: "Toon Rombaut",
+    location: "Google Reviews",
+  },
+  {
+    id: "9",
+    rating: 5,
+    comment: "Professioneel, vriendelijk en bekwaam. Alles tip top in orde.",
+    author: "Els Bouckaert",
+    location: "Google Reviews",
+  },
+  {
+    id: "10",
+    rating: 5,
+    comment:
+      "Professionele service. Knap werk afgeleverd en op tijd zoals afgesproken.",
+    author: "Lieven Vandecaveye",
+    location: "Google Reviews",
+  },
+  {
+    id: "11",
+    rating: 5,
+    comment:
+      "Zeer goede en perfecte service. Maakt tijd voor een goede opstart. Heel flexibel. Ik maakte alvast mijn tweede afspraak.",
+    author: "Dalila Bouchema",
+    location: "Google Reviews",
+  },
+  {
+    id: "12",
+    rating: 5,
+    comment:
+      "Ik boekte enkele weken geleden een afspraak voor mijn ruiten. Super content met het resultaat en de service ☺️ Doe zo verder ideale ruitenwasser",
+    author: "Beauty Libre",
+    location: "Google Reviews",
+  },
+  {
+    id: "13",
+    rating: 5,
+    comment:
+      "Het was de eerste keer en ik moet zeggen ...ik ben super tevreden, ze nemen hun tijd en alles is gedaan...omlijsting..plekjes vd vliegen...alles werd grondig aangepakt en heel sympathiek...ons volgende afspraak is al gemaakt",
+    author: "Cindy Uitterhaegen",
+    location: "Google Reviews",
+  },
+  {
+    id: "14",
+    rating: 5,
+    comment:
+      "Op het afgesproken uur verscheen er een zeer vriendelijke en beleefde persoon. Ramen waren zeer vuil en zie hoe ze blinken 🥰",
+    author: "San Vavo",
+    location: "Google Reviews",
+  },
+  {
+    id: "15",
+    rating: 5,
+    comment: "",
+    author: "Baets Aissati",
+    location: "Google Reviews",
+  },
+];
 
 export async function GET() {
   try {
@@ -94,15 +147,14 @@ export async function GET() {
     console.log("API Key:", apiKey ? "EXISTS" : "MISSING");
 
     if (!placeId || !apiKey) {
-      console.error("❌ Missing Google credentials");
-      return NextResponse.json(
-        {
-          error: "Missing credentials",
-          placeId: !!placeId,
-          apiKey: !!apiKey,
-        },
-        { status: 500 },
+      console.log(
+        "⚠️  Missing Google credentials, using fallback mock reviews",
       );
+      return NextResponse.json(mockReviews, {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+        },
+      });
     }
 
     console.log("📡 Fetching Google reviews from server-side...");
@@ -122,14 +174,12 @@ export async function GET() {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("❌ HTTP error:", response.status, errorText);
-      return NextResponse.json(
-        {
-          error: "HTTP error",
-          status: response.status,
-          details: errorText,
+      console.log("⚠️  Using fallback mock reviews");
+      return NextResponse.json(mockReviews, {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
         },
-        { status: response.status },
-      );
+      });
     }
 
     const data: GooglePlaceDetailsResponse = await response.json();
@@ -152,14 +202,12 @@ export async function GET() {
     }
 
     if (data.status !== "OK") {
-      return NextResponse.json(
-        {
-          error: "Google API error",
-          status: data.status,
-          message: data.error_message || "Unknown error",
+      console.log("⚠️  Google API error, using fallback mock reviews");
+      return NextResponse.json(mockReviews, {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
         },
-        { status: 400 },
-      );
+      });
     }
 
     if (!data.result?.reviews) {
@@ -194,12 +242,11 @@ export async function GET() {
     });
   } catch (error) {
     console.error("❌ Error fetching reviews:", error);
-    return NextResponse.json(
-      {
-        error: "Fetch failed",
-        details: error instanceof Error ? error.message : String(error),
+    console.log("⚠️  Using fallback mock reviews");
+    return NextResponse.json(mockReviews, {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
       },
-      { status: 500 },
-    );
+    });
   }
 }

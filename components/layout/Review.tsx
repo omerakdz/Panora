@@ -215,7 +215,14 @@ const Review = () => {
                                                 {review.author}
                                             </p>
                                             <p className="text-slate-500 text-xs mt-1">
-                                                📍 {review.location}
+                                                📍 <a
+                                                    href="https://www.google.com/search?sa=X&sca_esv=ec2bff8bd1e2ef21&sxsrf=ANbL-n6QSiW7bVVxCY8mhJ4N2GYXVTv6KQ:1781633324199&q=PANORA+%E2%80%93+Professionele+Ramenwasser+Gent+Reviews&rflfq=1&num=20&stick=H4sIAAAAAAAAAONgkxI2NjAxtDAxMDA1MwFhUxNDow2MjK8YDQMc_fyDHBUeNUxWCCjKT0stLs7Mz0vNSVUISsxNzStPLC5OLVJwT80rUQhKLctMLS9exEq6HgAu0oXaggAAAA&rldimm=3041840056405645412&tbm=lcl&hl=nl-BE&ved=2ahUKEwjHoaKrrYyVAxXeU6QEHZ1ZGr0Q9fQKegQIRRAG&biw=1536&bih=730&dpr=1.25#lkt=LocalPoiReviews"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="hover:text-[#1792D0] hover:underline transition-colors"
+                                                >
+                                                    {review.location}
+                                                </a>
                                             </p>
                                         </div>
                                     </CardContent>

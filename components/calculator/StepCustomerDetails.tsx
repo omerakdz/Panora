@@ -25,10 +25,42 @@ export default function StepCustomerDetails({
     const [showContactLink, setShowContactLink] = useState(false);
     const [contactUrl, setContactUrl] = useState("");
     const [contactButtonText, setContactButtonText] = useState("");
+    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Valideer alle velden
+        const errors: { [key: string]: string } = {};
+
+        if (!data.customerName.trim()) {
+            errors.customerName = "Vul je volledige naam in";
+        }
+        if (!data.customerPhone.trim()) {
+            errors.customerPhone = "Vul je telefoonnummer in";
+        }
+        if (!data.customerEmail.trim()) {
+            errors.customerEmail = "Vul je e-mailadres in";
+        }
+        if (!data.customerAddress.trim()) {
+            errors.customerAddress = "Vul je straat en huisnummer in";
+        }
+        if (!data.customerPostalCode.trim()) {
+            errors.customerPostalCode = "Vul je postcode in";
+        }
+        if (!data.customerCity.trim()) {
+            errors.customerCity = "Vul je stad in";
+        }
+
+        // Als er fouten zijn, toon ze en stop
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            return;
+        }
+
+        // Clear field errors
+        setFieldErrors({});
 
         // Valideer postcode voordat we submitten
         if (!isPostalCodeAllowed(data.customerPostalCode)) {
@@ -140,15 +172,6 @@ export default function StepCustomerDetails({
         }
     };
 
-    const isFormValid =
-        data.customerName &&
-        data.customerPhone &&
-        data.customerEmail &&
-        data.customerAddress &&
-        data.customerCity &&
-        data.customerPostalCode &&
-        !postalCodeError;
-
     return (
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 max-w-md mx-auto">
             <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
@@ -163,11 +186,19 @@ export default function StepCustomerDetails({
                     id="customerName"
                     type="text"
                     value={data.customerName}
-                    onChange={(e) => updateData({ customerName: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11"
-                    placeholder="Jan Janssens"
+                    onChange={(e) => {
+                        updateData({ customerName: e.target.value });
+                        if (fieldErrors.customerName) {
+                            setFieldErrors(prev => ({ ...prev, customerName: "" }));
+                        }
+                    }}
+                    className={`border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11 placeholder:text-gray-400 ${fieldErrors.customerName ? 'border-red-500' : ''}`}
+                    placeholder="Vul je volledige naam in..."
                     required
                 />
+                {fieldErrors.customerName && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.customerName}</p>
+                )}
             </div>
 
             <div>
@@ -178,11 +209,19 @@ export default function StepCustomerDetails({
                     id="customerPhone"
                     type="tel"
                     value={data.customerPhone}
-                    onChange={(e) => updateData({ customerPhone: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11"
-                    placeholder="+32 123 45 67 89"
+                    onChange={(e) => {
+                        updateData({ customerPhone: e.target.value });
+                        if (fieldErrors.customerPhone) {
+                            setFieldErrors(prev => ({ ...prev, customerPhone: "" }));
+                        }
+                    }}
+                    className={`border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11 placeholder:text-gray-400 ${fieldErrors.customerPhone ? 'border-red-500' : ''}`}
+                    placeholder="Vul je telefoonnummer in..."
                     required
                 />
+                {fieldErrors.customerPhone && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.customerPhone}</p>
+                )}
             </div>
 
             <div>
@@ -193,11 +232,19 @@ export default function StepCustomerDetails({
                     id="customerEmail"
                     type="email"
                     value={data.customerEmail}
-                    onChange={(e) => updateData({ customerEmail: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11"
-                    placeholder="jan@voorbeeld.be"
+                    onChange={(e) => {
+                        updateData({ customerEmail: e.target.value });
+                        if (fieldErrors.customerEmail) {
+                            setFieldErrors(prev => ({ ...prev, customerEmail: "" }));
+                        }
+                    }}
+                    className={`border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11 placeholder:text-gray-400 ${fieldErrors.customerEmail ? 'border-red-500' : ''}`}
+                    placeholder="Vul je e-mailadres in..."
                     required
                 />
+                {fieldErrors.customerEmail && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.customerEmail}</p>
+                )}
             </div>
 
             <div>
@@ -208,11 +255,19 @@ export default function StepCustomerDetails({
                     id="customerAddress"
                     type="text"
                     value={data.customerAddress}
-                    onChange={(e) => updateData({ customerAddress: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E]"
-                    placeholder="Korenmarkt 1"
+                    onChange={(e) => {
+                        updateData({ customerAddress: e.target.value });
+                        if (fieldErrors.customerAddress) {
+                            setFieldErrors(prev => ({ ...prev, customerAddress: "" }));
+                        }
+                    }}
+                    className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${fieldErrors.customerAddress ? 'border-red-500' : ''}`}
+                    placeholder="Vul je straat en huisnummer in..."
                     required
                 />
+                {fieldErrors.customerAddress && (
+                    <p className="text-red-600 text-sm mt-1">{fieldErrors.customerAddress}</p>
+                )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -230,11 +285,17 @@ export default function StepCustomerDetails({
                             setShowContactLink(false);
                             setContactUrl("");
                             setContactButtonText("");
+                            if (fieldErrors.customerPostalCode) {
+                                setFieldErrors(prev => ({ ...prev, customerPostalCode: "" }));
+                            }
                         }}
-                        className={`border-[#9FCAE3] focus:border-[#044D8E] ${postalCodeError ? 'border-red-500' : ''}`}
-                        placeholder="9000"
+                        className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${postalCodeError || fieldErrors.customerPostalCode ? 'border-red-500' : ''}`}
+                        placeholder="Vul je postcode in..."
                         required
                     />
+                    {fieldErrors.customerPostalCode && (
+                        <p className="text-red-600 text-sm mt-1">{fieldErrors.customerPostalCode}</p>
+                    )}
                     {postalCodeError && (
                         <div className="text-red-600 text-sm mt-1">
                             <p>{postalCodeError}</p>
@@ -259,11 +320,19 @@ export default function StepCustomerDetails({
                         id="customerCity"
                         type="text"
                         value={data.customerCity}
-                        onChange={(e) => updateData({ customerCity: e.target.value })}
-                        className="border-[#9FCAE3] focus:border-[#044D8E]"
-                        placeholder="Gent"
+                        onChange={(e) => {
+                            updateData({ customerCity: e.target.value });
+                            if (fieldErrors.customerCity) {
+                                setFieldErrors(prev => ({ ...prev, customerCity: "" }));
+                            }
+                        }}
+                        className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${fieldErrors.customerCity ? 'border-red-500' : ''}`}
+                        placeholder="Vul je stad in..."
                         required
                     />
+                    {fieldErrors.customerCity && (
+                        <p className="text-red-600 text-sm mt-1">{fieldErrors.customerCity}</p>
+                    )}
                 </div>
             </div>
 
@@ -275,14 +344,14 @@ export default function StepCustomerDetails({
                     id="customerNotes"
                     value={data.customerNotes}
                     onChange={(e) => updateData({ customerNotes: e.target.value })}
-                    className="border-[#9FCAE3] focus:border-[#044D8E] min-h-[100px]"
+                    className="border-[#9FCAE3] focus:border-[#044D8E] min-h-[100px] placeholder:text-gray-400"
                     placeholder="Eventuele extra informatie of speciale verzoeken..."
                 />
             </div>
 
             <Button
                 type="submit"
-                disabled={!isFormValid || isSubmitting}
+                disabled={isSubmitting}
                 className="w-full bg-[#044D8E] hover:bg-[#0F61AC] disabled:opacity-50 text-lg py-6"
             >
                 {isSubmitting ? "Bezig met bevestigen..." : "Bevestig jouw afspraak"}

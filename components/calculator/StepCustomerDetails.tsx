@@ -193,7 +193,7 @@ export default function StepCustomerDetails({
                         }
                     }}
                     className={`border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11 placeholder:text-gray-400 ${fieldErrors.customerName ? 'border-red-500' : ''}`}
-                    placeholder="Vul je volledige naam in..."
+                    placeholder="Bijv. Jan Jansen"
                     required
                 />
                 {fieldErrors.customerName && (
@@ -216,7 +216,7 @@ export default function StepCustomerDetails({
                         }
                     }}
                     className={`border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11 placeholder:text-gray-400 ${fieldErrors.customerPhone ? 'border-red-500' : ''}`}
-                    placeholder="Vul je telefoonnummer in..."
+                    placeholder="Bijv. 0476 12 34 56"
                     required
                 />
                 {fieldErrors.customerPhone && (
@@ -239,7 +239,7 @@ export default function StepCustomerDetails({
                         }
                     }}
                     className={`border-[#9FCAE3] focus:border-[#044D8E] h-10 md:h-11 placeholder:text-gray-400 ${fieldErrors.customerEmail ? 'border-red-500' : ''}`}
-                    placeholder="Vul je e-mailadres in..."
+                    placeholder="Bijv. jan.jansen@example.com"
                     required
                 />
                 {fieldErrors.customerEmail && (
@@ -262,7 +262,7 @@ export default function StepCustomerDetails({
                         }
                     }}
                     className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${fieldErrors.customerAddress ? 'border-red-500' : ''}`}
-                    placeholder="Vul je straat en huisnummer in..."
+                    placeholder="Bijv. Korte Nieuwstraat 12"
                     required
                 />
                 {fieldErrors.customerAddress && (
@@ -290,7 +290,7 @@ export default function StepCustomerDetails({
                             }
                         }}
                         className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${postalCodeError || fieldErrors.customerPostalCode ? 'border-red-500' : ''}`}
-                        placeholder="Vul je postcode in..."
+                        placeholder="Bijv. 9000"
                         required
                     />
                     {fieldErrors.customerPostalCode && (
@@ -327,7 +327,7 @@ export default function StepCustomerDetails({
                             }
                         }}
                         className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${fieldErrors.customerCity ? 'border-red-500' : ''}`}
-                        placeholder="Vul je stad in..."
+                        placeholder="Bijv. Gent"
                         required
                     />
                     {fieldErrors.customerCity && (

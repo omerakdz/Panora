@@ -244,23 +244,29 @@ const Review = () => {
                             </Button>
 
                             {/* Page Indicator */}
-                            <div className="flex gap-2">
-                                {[...Array(totalPages)].map((_, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => {
-                                            setCurrentPage(index);
-                                            setHasAnimated(false);
-                                            setTimeout(() => setHasAnimated(true), 50);
-                                        }}
-                                        className={`h-3 rounded-full transition-all duration-300 hover:scale-125 ${index === currentPage
-                                            ? "bg-[#044D8E] w-8"
-                                            : "bg-[#9FCAE3] w-3"
-                                            }`}
-                                        aria-label={`Go to page ${index + 1}`}
-                                    />
-                                ))}
-                            </div>
+                            {isMobile ? (
+                                <div className="min-w-[60px] text-center font-semibold text-[#044D8E] text-lg">
+                                    {currentPage + 1}/{totalPages}
+                                </div>
+                            ) : (
+                                <div className="flex gap-2">
+                                    {[...Array(totalPages)].map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => {
+                                                setCurrentPage(index);
+                                                setHasAnimated(false);
+                                                setTimeout(() => setHasAnimated(true), 50);
+                                            }}
+                                            className={`h-3 rounded-full transition-all duration-300 hover:scale-125 ${index === currentPage
+                                                    ? "bg-[#044D8E] w-8"
+                                                    : "bg-[#9FCAE3] w-3"
+                                                }`}
+                                            aria-label={`Go to page ${index + 1}`}
+                                        />
+                                    ))}
+                                </div>
+                            )}
 
                             <Button
                                 variant="outline"

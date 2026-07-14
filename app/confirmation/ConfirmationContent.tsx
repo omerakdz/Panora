@@ -66,10 +66,16 @@ export default function ConfirmationContent() {
                         <h1 className="text-3xl md:text-5xl font-bold text-[#044D8E] mb-4">
                             Ontvangen! Jij staat ingepland.
                         </h1>
-                        <p className="text-lg text-[#0F61AC]">
-                            Je afspraak is bevestigd. We hebben een bevestigingsmail gestuurd naar{" "}
-                            <span className="font-semibold">{bookingDetails.customerEmail}</span>
-                        </p>
+                        {bookingDetails.confirmationMessage ? (
+                            <p className="text-lg text-[#0F61AC] max-w-2xl mx-auto">
+                                {bookingDetails.confirmationMessage}
+                            </p>
+                        ) : (
+                            <p className="text-lg text-[#0F61AC]">
+                                Je afspraak is bevestigd. We hebben een bevestigingsmail gestuurd naar{" "}
+                                <span className="font-semibold">{bookingDetails.customerEmail}</span>
+                            </p>
+                        )}
                     </div>
 
                     {/* Booking Summary Card */}

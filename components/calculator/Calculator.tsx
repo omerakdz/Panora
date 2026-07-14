@@ -47,7 +47,8 @@ export default function Calculator() {
                 window.dataLayer = window.dataLayer || [];
                 const eventData = {
                     event: "calculator_start",
-                    funnel_name: "calculator"
+                    funnel_name: "calculator",
+                    version: "slotbrein_v2"
                 };
                 window.dataLayer.push(eventData);
                 if (process.env.NODE_ENV === 'development') {
@@ -136,12 +137,17 @@ export default function Calculator() {
             case 3:
                 return true; // Price is shown, always can proceed
             case 4:
-                return data.selectedDate !== null && data.selectedTime !== "";
+                // Address must be filled and slot selected
+                return (
+                    data.customerAddress !== "" &&
+                    data.customerCity !== "" &&
+                    data.customerPostalCode !== "" &&
+                    data.selectedSlotStart !== undefined
+                );
             case 5:
                 return (
                     data.customerName !== "" &&
-                    data.customerPhone !== "" &&
-                    data.customerEmail !== "" &&
+                    (data.customerPhone !== "" || data.customerEmail !== "") &&
                     data.customerAddress !== "" &&
                     data.customerCity !== "" &&
                     data.customerPostalCode !== ""
@@ -302,7 +308,7 @@ export default function Calculator() {
                                 onClick={prevStep}
                                 disabled={currentStep === 1}
                                 variant="outline"
-                                className="glass-frosted border-2 border-[#044D8E]/30 text-[#044D8E] disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base h-10 md:h-12 px-6 font-semibold hover:bg-[#044D8E]/10 transition-all duration-300"
+                                className="glass-frosted border-2 border-[#044D8E]/30 text-[#044D8E] disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base h-10 md:h-12 px-6 font-semibold hover:bg-[#044D8E]/20 hover:border-[#044D8E] hover:text-[#044D8E] hover:shadow-lg transition-all duration-300 cursor-pointer"
                             >
                                 <ChevronLeft className="w-4 h-4 mr-2" />
                                 Vorige
@@ -316,7 +322,7 @@ export default function Calculator() {
                                 <Button
                                     onClick={nextStep}
                                     disabled={!canProceed()}
-                                    className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base h-10 md:h-12 px-8 font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                                    className="bg-gradient-to-r from-[#044D8E] to-[#1792D0] hover:from-[#0F61AC] hover:to-[#1792D0] disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base h-10 md:h-12 px-8 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                                 >
                                     Volgende
                                     <ChevronRight className="w-4 h-4 ml-2" />

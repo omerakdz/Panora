@@ -19,9 +19,18 @@ export interface CalculatorData {
 
   calculatedPrice: number;
 
-  // Schedule
+  // Schedule (old system)
   selectedDate: Date | null;
   selectedTime: string;
+
+  // Schedule V2 (new API system)
+  selectedSlotStart?: string;
+  selectedSlotEnd?: string;
+  selectedSlotTitel?: string;
+  selectedSlotBadge?: string;
+  klantPinLatitude?: string;
+  klantPinLongitude?: string;
+  klantPinPrecisie?: string;
 
   customerName: string;
   customerPhone: string;
@@ -50,6 +59,7 @@ export interface BookingDetails {
   hardToReach: boolean;
   firstTimeInLong: boolean;
   cleanFrames: boolean;
+  confirmationMessage?: string;
 }
 
 // lib calendar.ts

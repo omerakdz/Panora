@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, MessageCircle, MapPin, Building2 } from "lucide-react";
 import { CONTACT, COMPANY } from "@/lib/constants";
@@ -22,9 +23,18 @@ export default function ContactPage() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+    const [privacyAccepted, setPrivacyAccepted] = useState(false);
+    const [privacyError, setPrivacyError] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Check privacy checkbox
+        if (!privacyAccepted) {
+            setPrivacyError(true);
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -143,6 +153,42 @@ export default function ContactPage() {
                                         placeholder="Vertel ons waar we je mee kunnen helpen..."
                                         rows={5}
                                     />
+                                </div>
+
+                                {/* Privacy checkbox - REQUIRED */}
+                                <div className="flex items-start space-x-2 pt-2 border-t border-slate-200">
+                                    <Checkbox
+                                        id="privacyAccepted"
+                                        checked={privacyAccepted}
+                                        onCheckedChange={(checked) => {
+                                            setPrivacyAccepted(checked as boolean);
+                                            setPrivacyError(false);
+                                        }}
+                                        className={`mt-1 ${privacyError ? 'border-red-500' : ''}`}
+                                        required
+                                    />
+                                    <div>
+                                        <label
+                                            htmlFor="privacyAccepted"
+                                            className="text-sm text-slate-700 cursor-pointer"
+                                        >
+                                            Ik ga akkoord met het{" "}
+                                            <a
+                                                href="/privacy"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-[#044D8E] underline hover:text-[#1792D0]"
+                                            >
+                                                privacybeleid
+                                            </a>
+                                            {" "}van Panora *
+                                        </label>
+                                        {privacyError && (
+                                            <p className="text-red-600 text-xs mt-1">
+                                                Je moet akkoord gaan met het privacybeleid om het formulier te versturen
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 {submitStatus === "success" && (

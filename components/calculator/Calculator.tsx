@@ -47,8 +47,7 @@ export default function Calculator() {
                 window.dataLayer = window.dataLayer || [];
                 const eventData = {
                     event: "calculator_start",
-                    funnel_name: "calculator",
-                    version: "slotbrein_v2"
+                    funnel_name: "calculator"
                 };
                 window.dataLayer.push(eventData);
                 if (process.env.NODE_ENV === 'development') {
@@ -137,12 +136,13 @@ export default function Calculator() {
             case 3:
                 return true; // Price is shown, always can proceed
             case 4:
-                // Address must be filled and slot selected
+                // Address, date and time must be selected
                 return (
                     data.customerAddress !== "" &&
                     data.customerCity !== "" &&
                     data.customerPostalCode !== "" &&
-                    data.selectedSlotStart !== undefined
+                    data.selectedSlotStart !== undefined &&
+                    data.selectedSlotStart !== ""
                 );
             case 5:
                 return (

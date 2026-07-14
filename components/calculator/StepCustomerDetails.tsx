@@ -27,7 +27,6 @@ export default function StepCustomerDetails({
     const [contactUrl, setContactUrl] = useState("");
     const [contactButtonText, setContactButtonText] = useState("");
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-    const [eerderOk, setEerderOk] = useState(false);
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const router = useRouter();
 
@@ -97,7 +96,7 @@ export default function StepCustomerDetails({
                 aantalBinnenBuiten: data.interiorExteriorWindows,
                 totaalRamen: data.totalWindows,
                 prijs: String(data.calculatedPrice),
-                opmerkingen: eerderOk ? "Vroeger mag ook - verwittig me als er een plek vrijkomt" : "",
+                opmerkingen: data.customerNotes || "",
                 start: data.selectedSlotStart,
                 eind: data.selectedSlotEnd,
                 bron: "Website",
@@ -338,95 +337,6 @@ export default function StepCustomerDetails({
             </div>
 
             <div>
-                <Label htmlFor="customerAddress" className="text-[#044D8E] font-semibold">
-                    Straat en huisnummer *
-                </Label>
-                <Input
-                    id="customerAddress"
-                    type="text"
-                    value={data.customerAddress}
-                    onChange={(e) => {
-                        updateData({ customerAddress: e.target.value });
-                        if (fieldErrors.customerAddress) {
-                            setFieldErrors(prev => ({ ...prev, customerAddress: "" }));
-                        }
-                    }}
-                    className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${fieldErrors.customerAddress ? 'border-red-500' : ''}`}
-                    placeholder="Bijv. Korte Nieuwstraat 12"
-                    required
-                />
-                {fieldErrors.customerAddress && (
-                    <p className="text-red-600 text-sm mt-1">{fieldErrors.customerAddress}</p>
-                )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <Label htmlFor="customerPostalCode" className="text-[#044D8E] font-semibold">
-                        Postcode *
-                    </Label>
-                    <Input
-                        id="customerPostalCode"
-                        type="text"
-                        value={data.customerPostalCode}
-                        onChange={(e) => {
-                            updateData({ customerPostalCode: e.target.value });
-                            setPostalCodeError("");
-                            setShowContactLink(false);
-                            setContactUrl("");
-                            setContactButtonText("");
-                            if (fieldErrors.customerPostalCode) {
-                                setFieldErrors(prev => ({ ...prev, customerPostalCode: "" }));
-                            }
-                        }}
-                        className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${postalCodeError || fieldErrors.customerPostalCode ? 'border-red-500' : ''}`}
-                        placeholder="Bijv. 9000"
-                        required
-                    />
-                    {fieldErrors.customerPostalCode && (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.customerPostalCode}</p>
-                    )}
-                    {postalCodeError && (
-                        <div className="text-red-600 text-sm mt-1">
-                            {postalCodeError}
-                            {showContactLink && contactUrl && (
-                                <Button
-                                    type="button"
-                                    onClick={() => window.location.href = contactUrl}
-                                    className="mt-2 w-full bg-[#044D8E] hover:bg-[#1792D0]"
-                                >
-                                    {contactButtonText}
-                                </Button>
-                            )}
-                        </div>
-                    )}
-                </div>
-
-                <div>
-                    <Label htmlFor="customerCity" className="text-[#044D8E] font-semibold">
-                        Gemeente *
-                    </Label>
-                    <Input
-                        id="customerCity"
-                        type="text"
-                        value={data.customerCity}
-                        onChange={(e) => {
-                            updateData({ customerCity: e.target.value });
-                            if (fieldErrors.customerCity) {
-                                setFieldErrors(prev => ({ ...prev, customerCity: "" }));
-                            }
-                        }}
-                        className={`border-[#9FCAE3] focus:border-[#044D8E] placeholder:text-gray-400 ${fieldErrors.customerCity ? 'border-red-500' : ''}`}
-                        placeholder="Bijv. Gent"
-                        required
-                    />
-                    {fieldErrors.customerCity && (
-                        <p className="text-red-600 text-sm mt-1">{fieldErrors.customerCity}</p>
-                    )}
-                </div>
-            </div>
-
-            <div>
                 <Label htmlFor="customerNotes" className="text-[#044D8E] font-semibold">
                     Opmerkingen (optioneel)
                 </Label>
@@ -437,27 +347,6 @@ export default function StepCustomerDetails({
                     className="border-[#9FCAE3] focus:border-[#044D8E] min-h-[80px] placeholder:text-gray-400"
                     placeholder="Bijv. moeilijk bereikbare ramen, huisdieren, etc."
                 />
-            </div>
-
-            {/* Vroeger mag ook checkbox */}
-            <div className="flex items-start space-x-2 bg-blue-50 p-4 rounded-lg border border-blue-200">
-                <Checkbox
-                    id="eerderOk"
-                    checked={eerderOk}
-                    onCheckedChange={(checked) => setEerderOk(checked as boolean)}
-                    className="mt-1 cursor-pointer"
-                />
-                <div>
-                    <label
-                        htmlFor="eerderOk"
-                        className="text-sm font-medium text-[#044D8E] cursor-pointer"
-                    >
-                        Vroeger mag ook
-                    </label>
-                    <p className="text-xs text-slate-600">
-                        Verwittig me als er een plek vrijkomt voor een eerder moment
-                    </p>
-                </div>
             </div>
 
             {/* Privacy checkbox - REQUIRED */}
@@ -509,10 +398,6 @@ export default function StepCustomerDetails({
             >
                 {isSubmitting ? "Bezig met boeken..." : "Bevestig afspraak"}
             </Button>
-
-            <p className="text-xs text-center text-slate-500">
-                * = verplicht veld
-            </p>
         </form>
     );
 }

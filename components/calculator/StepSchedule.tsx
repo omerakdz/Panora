@@ -3,10 +3,11 @@
 import { CalculatorData } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
 import { useState, useEffect } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, MapPin, Clock, ChevronDown } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { nl } from "date-fns/locale";
+import { isDateAvailable } from "@/lib/calendar";
+import { Loader2, MapPin, RefreshCw } from "lucide-react";
 
 interface SlotData {
     start: string;
@@ -45,14 +46,16 @@ interface StepScheduleProps {
 export default function StepSchedule({ data, updateData }: StepScheduleProps) {
     const [loading, setLoading] = useState(false);
     const [availabilityData, setAvailabilityData] = useState<AvailabilityResponse | null>(null);
-    const [selectedSlot, setSelectedSlot] = useState<SlotData | null>(null);
-    const [showMoreSlots, setShowMoreSlots] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+    const [availableSlots, setAvailableSlots] = useState<SlotData[]>([]);
+    const [isRecommendedDay, setIsRecommendedDay] = useState(false);
     const [error, setError] = useState<string>("");
     const [needsAddressConfirmation, setNeedsAddressConfirmation] = useState(false);
     const [suggestedAddress, setSuggestedAddress] = useState<string>("");
     const [showAddressForm, setShowAddressForm] = useState(true);
     const [addressSubmitted, setAddressSubmitted] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+    const [recommendedDates, setRecommendedDates] = useState<Set<string>>(new Set());
 
     // Check if address is already filled
     useEffect(() => {
@@ -63,29 +66,59 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
         }
     }, []);
 
+    // When date is selected, filter slots for that day
+    useEffect(() => {
+        if (!selectedDate) {
+            setAvailableSlots([]);
+            setIsRecommendedDay(false);
+            return;
+        }
+
+        if (!availabilityData) return;
+
+        const dateStr = selectedDate.toISOString().split('T')[0];
+
+        // Get all slots (primary + more + fallback)
+        const allSlots = [
+            ...(availabilityData.slots || []),
+            ...(availabilityData.meer_slots || []),
+            ...(availabilityData.fallback || [])
+        ];
+
+        // Filter slots for this day
+        const slotsForDay = allSlots.filter(slot => {
+            const slotDate = new Date(slot.start).toISOString().split('T')[0];
+            return slotDate === dateStr;
+        });
+
+        // If no slots from n8n for this day, fetch from Google Calendar API
+        if (slotsForDay.length === 0) {
+            fetchGoogleCalendarSlots(selectedDate);
+        } else {
+            setAvailableSlots(slotsForDay);
+        }
+        const hasRecommended = slotsForDay.some(slot => slot.recommended ||
+            slot.badge === "Aanbevolen" ||
+            slot.badge === "Past goed in de route");
+        setIsRecommendedDay(hasRecommended);
+
+        // Also check if date itself is in recommended set
+        if (recommendedDates.has(dateStr)) {
+            setIsRecommendedDay(true);
+        }
+    }, [selectedDate, availabilityData, recommendedDates]);
+
     const calculateDuration = (): number => {
         const totalWindows = data.totalWindows;
         const hasInterior = data.interiorExteriorWindows > 0;
 
-        // Klein, enkel buiten (≤10 panelen): 45
         if (!hasInterior && totalWindows <= 10) return 45;
-
-        // Normaal, enkel buiten: 60
         if (!hasInterior && totalWindows <= 30) return 60;
-
-        // Groot (≥25 panelen): 90
         if (!hasInterior && totalWindows > 30) return 90;
-
-        // Binnen + buiten, t/m 10 ramen: 60
         if (hasInterior && totalWindows <= 10) return 60;
-
-        // Binnen + buiten, 11-20 ramen: 90
         if (hasInterior && totalWindows <= 20) return 90;
-
-        // Binnen + buiten, meer dan 20: 120
         if (hasInterior && totalWindows > 20) return 120;
 
-        // Default
         return 60;
     };
 
@@ -123,6 +156,22 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
 
                 setAvailabilityData(result);
 
+                // Build set of dates with slots and recommended dates
+                const allSlots = [
+                    ...(result.slots || []),
+                    ...(result.meer_slots || []),
+                    ...(result.fallback || [])
+                ];
+
+                const recDates = new Set<string>();
+                allSlots.forEach(slot => {
+                    const dateStr = new Date(slot.start).toISOString().split('T')[0];
+                    if (slot.recommended || slot.badge === "Aanbevolen" || slot.badge === "Past goed in de route") {
+                        recDates.add(dateStr);
+                    }
+                });
+                setRecommendedDates(recDates);
+
                 // Handle different response codes
                 if (result.code === "ADDRESS_CONFIRMATION_REQUIRED") {
                     setNeedsAddressConfirmation(true);
@@ -147,11 +196,18 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
         }
     };
 
-    const handleSlotSelect = (slot: SlotData) => {
-        setSelectedSlot(slot);
+    const handleDateSelect = (date: Date | undefined) => {
+        console.log('📅 Date selected:', date);
+        setSelectedDate(date);
+        updateData({ selectedDate: date || null, selectedTime: "" });
+    };
 
-        // Store slot data in calculator data for later use
+    const handleTimeSelect = (slot: SlotData) => {
+        console.log('⏰ Time selected:', slot.tijd);
+
+        // Store slot data in calculator data
         updateData({
+            selectedTime: slot.tijd,
             selectedSlotStart: slot.start,
             selectedSlotEnd: slot.end,
             selectedSlotTitel: slot.titel,
@@ -160,6 +216,80 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
             klantPinLongitude: availabilityData?.klant_pin?.longitude,
             klantPinPrecisie: availabilityData?.klant_pin?.precisie,
         });
+
+        // Track appointment_select event
+        if (typeof window !== 'undefined' && selectedDate) {
+            window.dataLayer = window.dataLayer || [];
+            const eventData = {
+                event: "appointment_select",
+                funnel_name: "calculator",
+                appointment_time: slot.tijd,
+                appointment_day_of_week: selectedDate.toLocaleDateString('en-US', { weekday: 'long' })
+            };
+            window.dataLayer.push(eventData);
+            if (process.env.NODE_ENV === 'development') {
+                console.log('📊 GTM Event pushed:', eventData);
+            }
+        }
+    };
+
+    const handleRefresh = () => {
+        if (addressSubmitted) {
+            console.log('🔄 Manual refresh requested');
+            fetchAvailability(false);
+        }
+    };
+
+    // Fetch time slots from Google Calendar API for dates not in n8n response
+    const fetchGoogleCalendarSlots = async (date: Date) => {
+        setLoading(true);
+        try {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            console.log('📅 Fetching Google Calendar slots for:', dateStr);
+
+            const timestamp = new Date().getTime();
+            const response = await fetch(`/api/availability?date=${dateStr}&t=${timestamp}`, {
+                cache: 'no-store'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('📅 Google Calendar Response:', result);
+
+                // Convert string slots to SlotData format
+                const googleSlots: SlotData[] = (result.slots || []).map((timeStr: string) => {
+                    const [hours, minutes] = timeStr.split(':');
+                    const startDate = new Date(date);
+                    startDate.setHours(parseInt(hours), parseInt(minutes), 0);
+                    const endDate = new Date(startDate);
+                    endDate.setMinutes(endDate.getMinutes() + 60); // Assume 1 hour slots
+
+                    return {
+                        start: startDate.toISOString(),
+                        end: endDate.toISOString(),
+                        titel: timeStr,
+                        tijd: timeStr,
+                        badge: "",
+                        uitleg: "",
+                        recommended: false
+                    };
+                });
+
+                setAvailableSlots(googleSlots);
+            } else {
+                console.error('Failed to fetch Google Calendar availability');
+                setAvailableSlots([]);
+            }
+        } catch (error) {
+            console.error('Error fetching Google Calendar availability:', error);
+            setAvailableSlots([]);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleAddressConfirmation = (confirmed: boolean) => {
@@ -199,72 +329,42 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
         fetchAvailability(false);
     };
 
-    const renderSlot = (slot: SlotData, isRecommended: boolean = false, isFallback: boolean = false) => {
-        const isSelected = selectedSlot?.start === slot.start;
+    // Get dates with available slots for calendar
+    const getDatesWithSlots = () => {
+        if (!availabilityData) return new Set<string>();
 
-        return (
-            <motion.div
-                key={slot.start}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-            >
-                <Button
-                    onClick={() => handleSlotSelect(slot)}
-                    variant={isSelected ? "default" : "outline"}
-                    className={`w-full text-left h-auto p-4 relative overflow-hidden transition-all duration-300 ${isRecommended
-                        ? isSelected
-                            ? "bg-gradient-to-br from-[#1792D0] to-[#044D8E] text-white border-2 border-[#044D8E] shadow-lg"
-                            : "border-2 border-[#1792D0] hover:border-[#044D8E] bg-blue-50/50"
-                        : isSelected
-                            ? "bg-[#044D8E] text-white"
-                            : "border-[#9FCAE3] hover:border-[#044D8E]"
-                        }`}
-                >
-                    {/* Badge */}
-                    <div className="absolute top-2 right-2">
-                        <Badge
-                            variant={isRecommended ? "default" : "secondary"}
-                            className={`text-xs ${isRecommended
-                                ? "bg-emerald-500 hover:bg-emerald-600 text-white"
-                                : isFallback
-                                    ? "bg-amber-500 hover:bg-amber-600 text-white"
-                                    : "bg-slate-200 text-slate-700"
-                                }`}
-                        >
-                            {slot.badge}
-                        </Badge>
-                    </div>
+        const allSlots = [
+            ...(availabilityData.slots || []),
+            ...(availabilityData.meer_slots || []),
+            ...(availabilityData.fallback || [])
+        ];
 
-                    <div className="pr-24">
-                        {/* Titel */}
-                        <div className={`font-semibold mb-1 ${isSelected ? 'text-white' : 'text-[#044D8E]'}`}>
-                            <Clock className="inline-block w-4 h-4 mr-1" />
-                            {slot.titel}
-                        </div>
+        const datesSet = new Set<string>();
+        allSlots.forEach(slot => {
+            const dateStr = new Date(slot.start).toISOString().split('T')[0];
+            datesSet.add(dateStr);
+        });
 
-                        {/* Uitleg */}
-                        <div className={`text-sm ${isSelected ? 'text-blue-100' : 'text-slate-600'}`}>
-                            {slot.uitleg}
-                        </div>
-                    </div>
+        return datesSet;
+    };
 
-                    {isSelected && (
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="absolute bottom-2 right-2"
-                        >
-                            <div className="bg-white rounded-full p-1">
-                                <svg className="w-5 h-5 text-[#044D8E]" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                </svg>
-                            </div>
-                        </motion.div>
-                    )}
-                </Button>
-            </motion.div>
-        );
+    const availableDatesSet = getDatesWithSlots();
+
+    // Custom modifiers for calendar styling - FIX: no pointer-events issue, just simple classes
+    const modifiers = {
+        recommended: (date: Date) => {
+            const dateStr = date.toISOString().split('T')[0];
+            return recommendedDates.has(dateStr);
+        },
+        available: (date: Date) => {
+            const dateStr = date.toISOString().split('T')[0];
+            return availableDatesSet.has(dateStr);
+        }
+    };
+
+    const modifiersClassNames = {
+        recommended: "bg-emerald-100 text-emerald-900 font-bold animate-pulse border-2 border-emerald-400 hover:bg-emerald-200",
+        available: "hover:bg-blue-50"
     };
 
     // Address form (Step 4A)
@@ -346,7 +446,7 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
 
                 <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-[#1792D0] to-[#044D8E] hover:from-[#0F61AC] hover:to-[#033465] text-white font-semibold py-3 text-lg cursor-pointer transition-all duration-300 hover:shadow-lg"
+                    className="w-full bg-gradient-to-r from-[#1792D0] to-[#044D8E] hover:from-[#0F61AC] hover:to-[#033465] text-white font-semibold py-3 text-lg transition-all duration-300 hover:shadow-lg"
                 >
                     Beschikbare momenten tonen
                 </Button>
@@ -358,12 +458,9 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
+                <div className="animate-spin">
                     <Loader2 className="w-12 h-12 text-[#1792D0]" />
-                </motion.div>
+                </div>
                 <div className="text-center">
                     <p className="text-[#044D8E] font-semibold text-lg mb-2">
                         Momentje… We stemmen onze agenda exclusief af op jouw buurt! 🚗✨
@@ -436,72 +533,111 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
         );
     }
 
-    // Render available slots (Step 4C)
+    // Calendar + time slots view (Step 4C)
     return (
-        <div className="space-y-4">
-            <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4">
-                Kies een moment dat past bij jouw planning
+        <div className="space-y-4 md:space-y-6">
+            <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
+                Selecteer een datum en tijdslot voor je afspraak
             </p>
 
-            {/* Primary slots */}
-            {availabilityData.slots && availabilityData.slots.length > 0 && (
-                <div className="space-y-3">
-                    {availabilityData.slots.map((slot, index) =>
-                        renderSlot(slot, index === 0 && slot.recommended)
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                {/* Calendar */}
+                <div className="flex justify-center">
+                    <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={handleDateSelect}
+                        disabled={(date) => !isDateAvailable(date)}
+                        modifiers={modifiers}
+                        modifiersClassNames={modifiersClassNames}
+                        locale={nl}
+                        className="rounded-lg border border-[#9FCAE3] scale-90 md:scale-100"
+                    />
+                </div>
+
+                {/* Time Slots */}
+                <div>
+                    <div className="flex items-center justify-between mb-3 md:mb-4">
+                        <h4 className="font-semibold text-[#044D8E] text-sm md:text-base">
+                            {selectedDate
+                                ? `Tijden ${selectedDate.toLocaleDateString("nl-BE", { day: 'numeric', month: 'short' })}`
+                                : "Selecteer datum"}
+                        </h4>
+                        {availabilityData && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleRefresh}
+                                disabled={loading}
+                                className="text-[#044D8E] h-8 w-8 p-0"
+                            >
+                                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                            </Button>
+                        )}
+                    </div>
+
+                    {/* Recommended day message */}
+                    {selectedDate && isRecommendedDay && (
+                        <div className="bg-emerald-50 border-2 border-emerald-300 rounded-lg p-3 mb-4 text-center">
+                            <p className="text-emerald-800 font-semibold text-sm md:text-base">
+                                Deze dag zijn wij in jouw buurt!
+                            </p>
+                        </div>
+                    )}
+
+                    {selectedDate && availableSlots.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2 md:gap-3">
+                            {availableSlots.map((slot) => {
+                                const isRecommended = slot.recommended ||
+                                    slot.badge === "Aanbevolen" ||
+                                    slot.badge === "Past goed in de route";
+                                const isSelected = data.selectedTime === slot.tijd;
+
+                                return (
+                                    <Button
+                                        key={slot.start}
+                                        onClick={() => handleTimeSelect(slot)}
+                                        variant={isSelected ? "default" : "outline"}
+                                        className={`text-sm md:text-base py-2 md:py-3 cursor-pointer ${isRecommended
+                                            ? isSelected
+                                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                : "bg-emerald-50 border-[#9FCAE3] hover:bg-emerald-100 text-emerald-800 font-semibold"
+                                            : isSelected
+                                                ? "bg-[#044D8E] hover:bg-[#0F61AC]"
+                                                : "border-[#9FCAE3] hover:border-[#044D8E] text-[#044D8E]"
+                                            }`}
+                                    >
+                                        {slot.tijd}
+                                        {isRecommended && !isSelected && (
+                                            <span className="ml-1"></span>
+                                        )}
+                                    </Button>
+                                );
+                            })}
+                        </div>
+                    ) : selectedDate ? (
+                        <div className="text-center py-4 md:py-6 bg-orange-50 border border-orange-200 rounded-lg">
+                            <p className="text-orange-800 font-semibold text-sm md:text-base">
+                                Geen beschikbare tijden voor deze datum
+                            </p>
+                        </div>
+                    ) : (
+                        <p className="text-[#0F61AC] text-xs md:text-sm">
+                            Selecteer een datum om beschikbare tijden te zien.
+                        </p>
                     )}
                 </div>
-            )}
+            </div>
 
-            {/* More slots toggle */}
-            {availabilityData.meer_beschikbaar && availabilityData.meer_slots && availabilityData.meer_slots.length > 0 && (
-                <div className="space-y-3">
-                    <Button
-                        onClick={() => setShowMoreSlots(!showMoreSlots)}
-                        variant="ghost"
-                        className="w-full text-[#044D8E] hover:bg-[#044D8E]/10 hover:text-[#023A6B] cursor-pointer transition-all duration-300 flex items-center justify-center"
-                    >
-                        {showMoreSlots ? "Minder momenten" : "Meer momenten"}
-                        <ChevronDown
-                            className={`ml-2 w-4 h-4 transition-transform ${showMoreSlots ? "rotate-180" : ""
-                                }`}
-                        />
-                    </Button>
-
-                    <AnimatePresence>
-                        {showMoreSlots && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="space-y-3"
-                            >
-                                {availabilityData.meer_slots.map(slot => renderSlot(slot))}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            )}
-
-            {/* Fallback slots (extra optie) */}
-            {(!availabilityData.slots || availabilityData.slots.length === 0) &&
-                availabilityData.fallback && availabilityData.fallback.length > 0 && (
-                    <div className="space-y-3">
-                        <p className="text-sm text-slate-600 text-center mb-2">Extra optie:</p>
-                        {availabilityData.fallback.map(slot => renderSlot(slot, false, true))}
-                    </div>
-                )}
-
-            {/* Selected confirmation */}
-            {selectedSlot && (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-emerald-50 border-2 border-emerald-200 rounded-lg p-4 text-center"
-                >
-                    <p className="text-emerald-800 font-semibold">
-                        ✓ Je hebt gekozen voor <strong>{selectedSlot.titel}</strong>
+            {data.selectedDate && data.selectedTime && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4 text-center">
+                    <p className="text-green-800 text-sm md:text-base">
+                        ✓ Je hebt gekozen voor{" "}
+                        <strong>
+                            {data.selectedDate.toLocaleDateString("nl-BE")} om {data.selectedTime}
+                        </strong>
                     </p>
-                </motion.div>
+                </div>
             )}
         </div>
     );

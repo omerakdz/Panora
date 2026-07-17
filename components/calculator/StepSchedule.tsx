@@ -45,6 +45,7 @@ interface StepScheduleProps {
 
 export default function StepSchedule({ data, updateData }: StepScheduleProps) {
     const [loading, setLoading] = useState(false);
+    const [loadingTimeSlots, setLoadingTimeSlots] = useState(false); // FIX 2: aparte loading state voor tijden
     const [availabilityData, setAvailabilityData] = useState<AvailabilityResponse | null>(null);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [availableSlots, setAvailableSlots] = useState<SlotData[]>([]);
@@ -96,6 +97,7 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
             fetchGoogleCalendarSlots(selectedDate);
         } else {
             setAvailableSlots(slotsForDay);
+            setLoadingTimeSlots(false);
         }
         const hasRecommended = slotsForDay.some(slot => slot.recommended ||
             slot.badge === "Aanbevolen" ||
@@ -199,6 +201,9 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
     const handleDateSelect = (date: Date | undefined) => {
         console.log('📅 Date selected:', date);
         setSelectedDate(date);
+        if (date) {
+            setLoadingTimeSlots(true);
+        }
         updateData({ selectedDate: date || null, selectedTime: "" });
     };
 
@@ -242,7 +247,7 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
 
     // Fetch time slots from Google Calendar API for dates not in n8n response
     const fetchGoogleCalendarSlots = async (date: Date) => {
-        setLoading(true);
+        setLoadingTimeSlots(true);
         try {
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -252,9 +257,15 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
             console.log('📅 Fetching Google Calendar slots for:', dateStr);
 
             const timestamp = new Date().getTime();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
             const response = await fetch(`/api/availability?date=${dateStr}&t=${timestamp}`, {
-                cache: 'no-store'
+                cache: 'no-store',
+                signal: controller.signal
             });
+
+            clearTimeout(timeoutId);
 
             if (response.ok) {
                 const result = await response.json();
@@ -285,10 +296,14 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
                 setAvailableSlots([]);
             }
         } catch (error) {
-            console.error('Error fetching Google Calendar availability:', error);
+            if (error instanceof Error && error.name === 'AbortError') {
+                console.error('⏱️ Google Calendar request timeout - mogelijk netwerk probleem');
+            } else {
+                console.error('❌ Error fetching Google Calendar availability:', error);
+            }
             setAvailableSlots([]);
         } finally {
-            setLoading(false);
+            setLoadingTimeSlots(false);
         }
     };
 
@@ -305,8 +320,6 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
 
     const handleAddressSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Validate address fields
         const errors: { [key: string]: string } = {};
         if (!data.customerAddress.trim()) {
             errors.customerAddress = "Vul je straat en huisnummer in";
@@ -350,24 +363,26 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
 
     const availableDatesSet = getDatesWithSlots();
 
-    // Custom modifiers for calendar styling - FIX: no pointer-events issue, just simple classes
+    // Custom modifiers for calendar styling
     const modifiers = {
         recommended: (date: Date) => {
             const dateStr = date.toISOString().split('T')[0];
             return recommendedDates.has(dateStr);
         },
         available: (date: Date) => {
+            // Alle werkdagen die niet recommended zijn, tonen als blauw 
+            if (!isDateAvailable(date)) return false;
             const dateStr = date.toISOString().split('T')[0];
-            return availableDatesSet.has(dateStr);
+            // Alleen blauw als het NIET al groen (recommended) is
+            return !recommendedDates.has(dateStr);
         }
     };
 
     const modifiersClassNames = {
-        recommended: "bg-emerald-100 text-emerald-900 font-bold animate-pulse border-2 border-emerald-400 hover:bg-emerald-200",
-        available: "hover:bg-blue-50"
+        recommended: "rounded-xl bg-emerald-400 text-white font-bold border-2 border-emerald-500 hover:bg-emerald-500 shadow-md",
+        available: "rounded-xl bg-blue-50 text-blue-900 hover:bg-blue-100 border border-blue-200"
     };
-
-    // Address form (Step 4A)
+    // Address form 
     if (showAddressForm) {
         return (
             <form onSubmit={handleAddressSubmit} className="space-y-4 max-w-md mx-auto">
@@ -505,7 +520,7 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
         );
     }
 
-    // Error state
+    // Error state - FIX 1: herstelbaar maken
     if (error) {
         return (
             <div className="space-y-4">
@@ -513,12 +528,26 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
                     <p className="text-red-800 font-semibold mb-2">
                         {error}
                     </p>
-                    <Button
-                        onClick={() => window.location.href = "/contact"}
-                        className="bg-[#044D8E] hover:bg-[#1792D0] mt-4"
-                    >
-                        Neem contact op
-                    </Button>
+                    <div className="flex gap-3 justify-center mt-4">
+                        <Button
+                            onClick={() => {
+                                setError("");
+                                setShowAddressForm(true);
+                                setAddressSubmitted(false);
+                                setAvailabilityData(null);
+                            }}
+                            variant="outline"
+                            className="border-[#044D8E] text-[#044D8E] hover:bg-[#044D8E] hover:text-white"
+                        >
+                            Adres aanpassen
+                        </Button>
+                        <Button
+                            onClick={() => window.location.href = "/contact"}
+                            className="bg-[#044D8E] hover:bg-[#1792D0]"
+                        >
+                            Neem contact op
+                        </Button>
+                    </div>
                 </div>
             </div>
         );
@@ -542,7 +571,7 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
 
             <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                 {/* Calendar */}
-                <div className="flex justify-center">
+                <div className="flex flex-col items-center">
                     <Calendar
                         mode="single"
                         selected={selectedDate}
@@ -553,6 +582,21 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
                         locale={nl}
                         className="rounded-lg border border-[#9FCAE3] scale-90 md:scale-100"
                     />
+                    {/* FIX 3: Legenda */}
+                    <div className="mt-4 space-y-2 text-xs md:text-sm text-left w-full max-w-[280px]">
+                        <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-emerald-400 border-2 border-emerald-500 rounded"></div>
+                            <span className="text-slate-700"><strong>Groen</strong> = wij zijn in je buurt</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-blue-50 border border-blue-200 rounded"></div>
+                            <span className="text-slate-700"><strong>Blauw</strong> = standaard beschikbaar</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-slate-100 border border-slate-300 rounded opacity-50"></div>
+                            <span className="text-slate-700"><strong>Grijs</strong> = volgeboekt / niet beschikbaar</span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Time Slots */}
@@ -576,55 +620,65 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
                         )}
                     </div>
 
-                    {/* Recommended day message */}
-                    {selectedDate && isRecommendedDay && (
-                        <div className="bg-emerald-50 border-2 border-emerald-300 rounded-lg p-3 mb-4 text-center">
-                            <p className="text-emerald-800 font-semibold text-sm md:text-base">
-                                Deze dag zijn wij in jouw buurt!
-                            </p>
-                        </div>
-                    )}
-
-                    {selectedDate && availableSlots.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-2 md:gap-3">
-                            {availableSlots.map((slot) => {
-                                const isRecommended = slot.recommended ||
-                                    slot.badge === "Aanbevolen" ||
-                                    slot.badge === "Past goed in de route";
-                                const isSelected = data.selectedTime === slot.tijd;
-
-                                return (
-                                    <Button
-                                        key={slot.start}
-                                        onClick={() => handleTimeSelect(slot)}
-                                        variant={isSelected ? "default" : "outline"}
-                                        className={`text-sm md:text-base py-2 md:py-3 cursor-pointer ${isRecommended
-                                            ? isSelected
-                                                ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                                                : "bg-emerald-50 border-[#9FCAE3] hover:bg-emerald-100 text-emerald-800 font-semibold"
-                                            : isSelected
-                                                ? "bg-[#044D8E] hover:bg-[#0F61AC]"
-                                                : "border-[#9FCAE3] hover:border-[#044D8E] text-[#044D8E]"
-                                            }`}
-                                    >
-                                        {slot.tijd}
-                                        {isRecommended && !isSelected && (
-                                            <span className="ml-1"></span>
-                                        )}
-                                    </Button>
-                                );
-                            })}
-                        </div>
-                    ) : selectedDate ? (
-                        <div className="text-center py-4 md:py-6 bg-orange-50 border border-orange-200 rounded-lg">
-                            <p className="text-orange-800 font-semibold text-sm md:text-base">
-                                Geen beschikbare tijden voor deze datum
-                            </p>
+                    {/* FIX 2: Loading state alleen voor tijden panel */}
+                    {loadingTimeSlots ? (
+                        <div className="flex flex-col items-center justify-center py-8 space-y-3">
+                            <Loader2 className="w-8 h-8 text-[#1792D0] animate-spin" />
+                            <p className="text-[#044D8E] text-sm">Beschikbare tijden laden...</p>
                         </div>
                     ) : (
-                        <p className="text-[#0F61AC] text-xs md:text-sm">
-                            Selecteer een datum om beschikbare tijden te zien.
-                        </p>
+                        <>
+                            {/* Recommended day message */}
+                            {selectedDate && isRecommendedDay && (
+                                <div className="bg-emerald-50 border-2 border-emerald-300 rounded-lg p-3 mb-4 text-center">
+                                    <p className="text-emerald-800 font-semibold text-sm md:text-base">
+                                        Deze dag zijn wij in jouw buurt!
+                                    </p>
+                                </div>
+                            )}
+
+                            {selectedDate && availableSlots.length > 0 ? (
+                                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                                    {availableSlots.map((slot) => {
+                                        const isRecommended = slot.recommended ||
+                                            slot.badge === "Aanbevolen" ||
+                                            slot.badge === "Past goed in de route";
+                                        const isSelected = data.selectedTime === slot.tijd;
+
+                                        return (
+                                            <Button
+                                                key={slot.start}
+                                                onClick={() => handleTimeSelect(slot)}
+                                                variant={isSelected ? "default" : "outline"}
+                                                className={`text-sm md:text-base py-2 md:py-3 cursor-pointer ${isRecommended
+                                                    ? isSelected
+                                                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                                        : "bg-emerald-50 border-[#9FCAE3] hover:bg-emerald-100 text-emerald-800 font-semibold"
+                                                    : isSelected
+                                                        ? "bg-[#044D8E] hover:bg-[#0F61AC]"
+                                                        : "border-[#9FCAE3] hover:border-[#044D8E] text-[#044D8E]"
+                                                    }`}
+                                            >
+                                                {slot.tijd}
+                                                {isRecommended && !isSelected && (
+                                                    <span className="ml-1"></span>
+                                                )}
+                                            </Button>
+                                        );
+                                    })}
+                                </div>
+                            ) : selectedDate ? (
+                                <div className="text-center py-4 md:py-6 bg-orange-50 border border-orange-200 rounded-lg">
+                                    <p className="text-orange-800 font-semibold text-sm md:text-base">
+                                        Geen beschikbare tijden voor deze datum
+                                    </p>
+                                </div>
+                            ) : (
+                                <p className="text-[#0F61AC] text-xs md:text-sm">
+                                    Selecteer een datum om beschikbare tijden te zien.
+                                </p>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

@@ -8,26 +8,27 @@ export interface CalculatorData {
     | "kantoor"
     | "";
 
-  totalWindows: number;
+  windowService: "exterior" | "premium" | "combination";
+
   exteriorWindows: number;
   interiorExteriorWindows: number;
 
-  // extras
+  totalWindows: number;
+
   hardToReach: boolean;
   firstTimeInLong: boolean;
   cleanFrames: boolean;
 
   calculatedPrice: number;
 
-  // Schedule (old system)
   selectedDate: Date | null;
   selectedTime: string;
 
-  // Schedule V2 (new API system)
   selectedSlotStart?: string;
   selectedSlotEnd?: string;
   selectedSlotTitel?: string;
   selectedSlotBadge?: string;
+
   klantPinLatitude?: string;
   klantPinLongitude?: string;
   klantPinPrecisie?: string;

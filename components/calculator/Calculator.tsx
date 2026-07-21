@@ -21,6 +21,7 @@ export default function Calculator() {
     const [calculatorStarted, setCalculatorStarted] = useState(false);
     const [data, setData] = useState<CalculatorData>({
         propertyType: "",
+        windowService: "exterior",
         totalWindows: 0,
         exteriorWindows: 0,
         interiorExteriorWindows: 0,
@@ -129,9 +130,10 @@ export default function Calculator() {
             case 1:
                 return data.propertyType !== "";
             case 2:
+                // Minimaal 1 raam EN minimum bedrag van €25
                 return (
-                    data.totalWindows > 0 &&
-                    data.exteriorWindows + data.interiorExteriorWindows === data.totalWindows
+                    (data.exteriorWindows > 0 || data.interiorExteriorWindows > 0) &&
+                    data.calculatedPrice >= 25
                 );
             case 3:
                 return true; // Price is shown, always can proceed

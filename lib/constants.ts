@@ -1,3 +1,5 @@
+import { SlotData } from "@/types";
+
 export const COMPANY = {
   name: "PANORA",
   tagline: "Professionele ramenwas in Gent",
@@ -295,3 +297,12 @@ export function getPostalCodeErrorMessage(calculatedPrice: number): {
     showContactLink: false,
   };
 }
+
+// Lokale datum-key i.p.v. toISOString (die naar UTC converteert en avondsloten
+// naar de verkeerde kalenderdag kan mappen)
+export const getDateStr = (date: Date): string => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};

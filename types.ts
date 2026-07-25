@@ -136,3 +136,38 @@ export interface BookingData {
   customerName: string;
   bookingId: string;
 }
+
+export interface SlotData {
+  start: string;
+  end: string;
+  titel: string;
+  tijd: string;
+  badge: string;
+  uitleg: string;
+  recommended: boolean;
+}
+
+export interface AvailabilityResponse {
+  adres_geverifieerd: boolean;
+  slots: SlotData[];
+  meer_slots?: SlotData[];
+  fallback?: SlotData[];
+  top_pick?: SlotData;
+  klant_pin?: {
+    latitude: string;
+    longitude: string;
+    precisie: string;
+  };
+  boodschap?: string;
+  code?: string;
+  adres_suggestie?: {
+    display_name: string;
+  };
+  meer_beschikbaar?: boolean;
+}
+
+export interface StepScheduleHandle {
+  // true  = intern afgehandeld (4B -> 4A), ouder mag NIET van stap wisselen
+  // false = we zitten al in 4A, ouder mag gewoon naar stap 3 gaan
+  goBack: () => boolean;
+}

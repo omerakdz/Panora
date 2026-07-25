@@ -1,6 +1,7 @@
 "use client";
 
 import { CalculatorData } from "@/types";
+import { forwardRef, useImperativeHandle } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -43,7 +44,13 @@ interface StepScheduleProps {
     updateData: (data: Partial<CalculatorData>) => void;
 }
 
-export default function StepSchedule({ data, updateData }: StepScheduleProps) {
+export interface StepScheduleHandle {
+    // true  = intern afgehandeld (4B -> 4A), ouder mag NIET van stap wisselen
+    // false = we zitten al in 4A, ouder mag gewoon naar stap 3 gaan
+    goBack: () => boolean;
+}
+
+const StepSchedule = forwardRef<StepScheduleHandle, StepScheduleProps>(function StepSchedule({ data, updateData }, ref) {
     const [loading, setLoading] = useState(false);
     const [loadingTimeSlots, setLoadingTimeSlots] = useState(false); // FIX 2: aparte loading state voor tijden
     const [availabilityData, setAvailabilityData] = useState<AvailabilityResponse | null>(null);
@@ -56,7 +63,23 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
     const [showAddressForm, setShowAddressForm] = useState(true);
     const [addressSubmitted, setAddressSubmitted] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
-    const [recommendedDates, setRecommendedDates] = useState<Set<string>>(new Set());
+    const [recommendedDates, setRecommendedDates] = useState<Set<string>>(new Set());;
+    const [checkedEmptyDates, setCheckedEmptyDates] = useState<Set<string>>(new Set()); // NIEUW
+
+    useImperativeHandle(ref, () => ({
+        goBack: () => {
+            // Zitten we in 4B (formulier al verzonden / kalender, loading, error, adresbevestiging)?
+            if (!showAddressForm) {
+                setShowAddressForm(true);
+                setAddressSubmitted(false);
+                setNeedsAddressConfirmation(false);
+                setError("");
+                setFieldErrors({});
+                return true; // intern afgehandeld, blijf op stap 4
+            }
+            return false; // we zitten al in 4A, ouder mag naar stap 3
+        }
+    }), [showAddressForm]);
 
     // Check if address is already filled
     useEffect(() => {
@@ -291,9 +314,22 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
                 });
 
                 setAvailableSlots(googleSlots);
+
+                // NIEUW: registreer of deze dag leeg is, zodat de kalenderlegenda klopt
+                if (googleSlots.length === 0) {
+                    setCheckedEmptyDates(prev => new Set(prev).add(dateStr));
+                } else {
+                    setCheckedEmptyDates(prev => {
+                        if (!prev.has(dateStr)) return prev;
+                        const next = new Set(prev);
+                        next.delete(dateStr);
+                        return next;
+                    });
+                }
             } else {
                 console.error('Failed to fetch Google Calendar availability');
                 setAvailableSlots([]);
+                setCheckedEmptyDates(prev => new Set(prev).add(dateStr)); // NIEUW: fout -> ook als leeg beschouwen
             }
         } catch (error) {
             if (error instanceof Error && error.name === 'AbortError') {
@@ -306,7 +342,6 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
             setLoadingTimeSlots(false);
         }
     };
-
     const handleAddressConfirmation = (confirmed: boolean) => {
         if (confirmed) {
             setNeedsAddressConfirmation(false);
@@ -370,17 +405,21 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
             return recommendedDates.has(dateStr);
         },
         available: (date: Date) => {
-            // Alle werkdagen die niet recommended zijn, tonen als blauw 
             if (!isDateAvailable(date)) return false;
             const dateStr = date.toISOString().split('T')[0];
-            // Alleen blauw als het NIET al groen (recommended) is
-            return !recommendedDates.has(dateStr);
+            if (recommendedDates.has(dateStr)) return false;
+            if (checkedEmptyDates.has(dateStr)) return false; // NIEUW: geen slots -> niet blauw
+            return true;
+        },
+        fullyBooked: (date: Date) => { // NIEUW
+            const dateStr = date.toISOString().split('T')[0];
+            return isDateAvailable(date) && checkedEmptyDates.has(dateStr) && !recommendedDates.has(dateStr);
         }
     };
 
     const modifiersClassNames = {
         recommended: "rounded-xl bg-emerald-400 text-white font-bold border-2 border-emerald-500 hover:bg-emerald-500 shadow-md",
-        available: "rounded-xl bg-blue-50 text-blue-900 hover:bg-blue-100 border border-blue-200"
+        available: "rounded-xl bg-blue-50 text-blue-900 hover:bg-blue-100 border border-blue-200",
     };
     // Address form 
     if (showAddressForm) {
@@ -695,4 +734,6 @@ export default function StepSchedule({ data, updateData }: StepScheduleProps) {
             )}
         </div>
     );
-}
+});
+
+export default StepSchedule;

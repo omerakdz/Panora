@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import StepPropertyType from "./StepPropertyType";
 import StepWindows from "./StepWindows";
 import StepPrice from "./StepPrice";
 import StepSchedule from "./StepSchedule";
+import type { StepScheduleHandle } from "./StepSchedule";
 import StepCustomerDetails from "./StepCustomerDetails";
 import { ChevronLeft, ChevronRight, Home, Grid3x3, Euro, Calendar, User, Check } from "lucide-react";
 import type { CalculatorData } from "@/types";
@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "motion/react";
 const TOTAL_STEPS = 5;
 
 export default function Calculator() {
+    const stepScheduleRef = useRef<StepScheduleHandle>(null);
     const [currentStep, setCurrentStep] = useState(1);
     const [calculatorStarted, setCalculatorStarted] = useState(false);
     const [data, setData] = useState<CalculatorData>({
@@ -120,6 +121,12 @@ export default function Calculator() {
     };
 
     const prevStep = () => {
+        // Als we op stap 4 zitten, geef StepSchedule eerst de kans om zelf terug te gaan (4B -> 4A)
+        if (currentStep === 4 && stepScheduleRef.current) {
+            const handledInternally = stepScheduleRef.current.goBack();
+            if (handledInternally) return;
+        }
+
         if (currentStep > 1) {
             setCurrentStep((prev) => prev - 1);
         }
@@ -185,7 +192,7 @@ export default function Calculator() {
             case 3:
                 return <StepPrice data={data} updateData={updateData} />;
             case 4:
-                return <StepSchedule data={data} updateData={updateData} />;
+                return <StepSchedule ref={stepScheduleRef} data={data} updateData={updateData} />;
             case 5:
                 return <StepCustomerDetails data={data} updateData={updateData} nextStep={nextStep} />;
             default:

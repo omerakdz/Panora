@@ -1,7 +1,7 @@
 "use client";
 
 import { CalculatorData } from "@/types";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
@@ -50,6 +50,16 @@ export interface StepScheduleHandle {
     goBack: () => boolean;
 }
 
+// Lokale datum-key i.p.v. toISOString (die naar UTC converteert en avondsloten
+// naar de verkeerde kalenderdag kan mappen)
+const getDateStr = (date: Date): string => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
+
+
 const StepSchedule = forwardRef<StepScheduleHandle, StepScheduleProps>(function StepSchedule({ data, updateData }, ref) {
     const [loading, setLoading] = useState(false);
     const [loadingTimeSlots, setLoadingTimeSlots] = useState(false); // FIX 2: aparte loading state voor tijden
@@ -64,7 +74,48 @@ const StepSchedule = forwardRef<StepScheduleHandle, StepScheduleProps>(function 
     const [addressSubmitted, setAddressSubmitted] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const [recommendedDates, setRecommendedDates] = useState<Set<string>>(new Set());;
-    const [checkedEmptyDates, setCheckedEmptyDates] = useState<Set<string>>(new Set()); // NIEUW
+    const [checkedEmptyDates, setCheckedEmptyDates] = useState<Set<string>>(new Set());
+
+    // dateStr -> SlotData[]. Ontbrekende key = nog niet opgehaald (dus disabled tot bekend).
+    const [slotsByDate, setSlotsByDateState] = useState<Record<string, SlotData[]>>({});
+    const slotsByDateRef = useRef<Record<string, SlotData[]>>({});
+    const fetchedMonthsRef = useRef<Set<string>>(new Set());
+
+    const setSlotsByDate = (updater: Record<string, SlotData[]> | ((prev: Record<string, SlotData[]>) => Record<string, SlotData[]>)) => {
+        setSlotsByDateState(prev => {
+            const next = typeof updater === "function" ? (updater as (p: Record<string, SlotData[]>) => Record<string, SlotData[]>)(prev) : updater;
+            slotsByDateRef.current = next;
+            return next;
+        });
+    };
+
+    const handleEditAddress = () => {
+        setShowAddressForm(true);
+        setAddressSubmitted(false);
+        setNeedsAddressConfirmation(false);
+        setError("");
+        setFieldErrors({});
+    };
+
+    useImperativeHandle(ref, () => ({
+        goBack: () => {
+            if (!showAddressForm) {
+                handleEditAddress();
+                return true;
+            }
+            return false;
+        }
+    }), [showAddressForm]);
+
+    useEffect(() => {
+        if (data.customerAddress && data.customerPostalCode && data.customerCity && !addressSubmitted) {
+            setShowAddressForm(false);
+            fetchAvailability(false);
+            setAddressSubmitted(true);
+        }
+    }, []);
+
+
 
     useImperativeHandle(ref, () => ({
         goBack: () => {
@@ -604,6 +655,22 @@ const StepSchedule = forwardRef<StepScheduleHandle, StepScheduleProps>(function 
     // Calendar + time slots view (Step 4C)
     return (
         <div className="space-y-4 md:space-y-6">
+            {/* Adres overzicht met wijzig-link */}
+            <div className="flex items-center justify-between flex-wrap gap-2 bg-[#F0F7FC] border border-[#9FCAE3] rounded-lg px-4 py-2.5">
+                <div className="flex items-center gap-2 text-sm md:text-base text-[#044D8E] min-w-0">
+                    <MapPin className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">
+                        <strong>Jouw Locatie:</strong> {data.customerAddress}, {data.customerPostalCode} {data.customerCity}
+                    </span>
+                </div>
+                <button
+                    type="button"
+                    onClick={handleEditAddress}
+                    className="text-sm md:text-base font-semibold text-[#1792D0] hover:text-[#044D8E] underline underline-offset-2 whitespace-nowrap cursor-pointer"
+                >
+                    Adres wijzigen
+                </button>
+            </div>
             <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
                 Selecteer een datum en tijdslot voor je afspraak
             </p>

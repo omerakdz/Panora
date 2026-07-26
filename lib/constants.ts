@@ -1,4 +1,5 @@
 import { SlotData } from "@/types";
+import { Building2, Home, Store } from "lucide-react";
 
 export const COMPANY = {
   name: "PANORA",
@@ -308,3 +309,11 @@ export const getDateStr = (date: Date): string => {
 };
 
 export const DEFAULT_WINDOWS = 8;
+
+export const propertyTypes = [
+  { value: "appartement", label: "Appartement", icon: Building2 },
+  { value: "rijhuis", label: "Rijhuis", icon: Home },
+  { value: "halfopen", label: "Halfopen woning", icon: Home },
+  { value: "vrijstaand", label: "Vrijstaande woning", icon: Home },
+  { value: "kantoor", label: "Kantoor/Handelszaak", icon: Store },
+] as const;

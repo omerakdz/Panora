@@ -122,7 +122,7 @@ export function useAvailability(
           const initialSlotsByDate: Record<string, SlotData[]> = {};
 
           allSlots.forEach((slot) => {
-            const dateStr = getDateStr(new Date(slot.start));
+            const dateStr = slot.datum || getDateStr(new Date(slot.start));
             if (!initialSlotsByDate[dateStr]) initialSlotsByDate[dateStr] = [];
             initialSlotsByDate[dateStr].push(slot);
 
@@ -232,6 +232,7 @@ export function useAvailability(
             return {
               start: startDate.toISOString(),
               end: endDate.toISOString(),
+              datum: dateStr,
               titel: timeStr,
               tijd: timeStr,
               badge: "",

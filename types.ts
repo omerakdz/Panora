@@ -52,6 +52,7 @@ export interface BookingDetails {
   customerPostalCode: string;
   selectedDate: string;
   selectedTime: string;
+  selectedSlotTitel?: string;
   calculatedPrice: number;
   propertyType: string;
   totalWindows: number;
@@ -138,6 +139,7 @@ export interface BookingData {
 }
 
 export interface SlotData {
+  datum?: string;
   start: string;
   end: string;
   titel: string;

@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { nl } from "date-fns/locale";
 import { isPostalCodeAllowed, getPostalCodeErrorMessage } from "@/lib/constants";
 
 interface StepCustomerDetailsProps {
@@ -29,6 +31,16 @@ export default function StepCustomerDetails({
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const router = useRouter();
+    const selectedDayLabel = data.selectedDate
+        ? format(data.selectedDate, "EEEE d MMMM", { locale: nl })
+        : "";
+    const selectedMomentLabel = data.selectedSlotTitel
+        ? selectedDayLabel && !data.selectedSlotTitel.toLowerCase().includes(selectedDayLabel.toLowerCase())
+            ? `${selectedDayLabel} om ${data.selectedSlotTitel}`
+            : data.selectedSlotTitel
+        : data.selectedDate && data.selectedTime
+            ? `${selectedDayLabel} om ${data.selectedTime}`
+            : "";
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -158,8 +170,9 @@ export default function StepCustomerDetails({
                     customerAddress: data.customerAddress,
                     customerCity: data.customerCity,
                     customerPostalCode: data.customerPostalCode,
-                    selectedDate: data.selectedSlotStart ? new Date(data.selectedSlotStart).toISOString().split('T')[0] : '',
-                    selectedTime: data.selectedSlotTitel || '',
+                    selectedDate: data.selectedDate ? format(data.selectedDate, "yyyy-MM-dd") : '',
+                    selectedTime: data.selectedTime || '',
+                    selectedSlotTitel: selectedMomentLabel,
                     calculatedPrice: data.calculatedPrice,
                     propertyType: data.propertyType,
                     totalWindows: data.totalWindows,
@@ -270,6 +283,13 @@ export default function StepCustomerDetails({
             <p className="text-center text-[#0F61AC] text-sm md:text-base mb-4 md:mb-6">
                 Vul je gegevens in om de afspraak te bevestigen
             </p>
+
+            {selectedMomentLabel && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-[#044D8E] text-sm font-semibold">Gekozen afspraakmoment</p>
+                    <p className="text-[#0F61AC] text-sm capitalize">{selectedMomentLabel}</p>
+                </div>
+            )}
 
             <div>
                 <Label htmlFor="customerName" className="text-[#044D8E] font-semibold text-sm md:text-base">

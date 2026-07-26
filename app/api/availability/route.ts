@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAvailableTimeSlots, isDateAvailable } from "@/lib/calendar";
 import { getBookedSlotsForDate } from "@/lib/bookings";
+import { getDateStr } from "@/lib/constants";
 import {
   getGoogleCalendarBookingsForDate,
   isGoogleCalendarConfigured,
@@ -130,7 +131,7 @@ export async function POST(request: Request) {
 
     const currentDate = new Date(start);
     while (currentDate <= end) {
-      const dateStr = currentDate.toISOString().split("T")[0];
+      const dateStr = getDateStr(currentDate);
       const dateAvailable = isDateAvailable(currentDate);
 
       if (dateAvailable) {

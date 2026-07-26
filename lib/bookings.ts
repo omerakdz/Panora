@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "./supabase";
 import type { Booking } from "@/types";
+import { getDateStr } from "./constants";
 
 // Get all VALID bookings (with date and time)
 export async function getBookings(): Promise<Booking[]> {
@@ -47,8 +48,8 @@ export async function getBookingsByDateRange(
   endDate: Date,
 ): Promise<Booking[]> {
   try {
-    const start = startDate.toISOString().split("T")[0];
-    const end = endDate.toISOString().split("T")[0];
+    const start = getDateStr(startDate);
+    const end = getDateStr(endDate);
 
     const { data, error } = await supabaseAdmin
       .from("bookings")

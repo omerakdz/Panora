@@ -16,6 +16,7 @@ import {
   isValidPhone,
 } from "@/lib/sanitize";
 import { calculatePrice } from "@/lib/pricing";
+import { getDateStr } from "@/lib/constants";
 
 export async function POST(request: Request) {
   // Rate limiting: 5 bookings per hour per IP
@@ -177,7 +178,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const bookingDate = new Date(data.selectedDate).toISOString().split("T")[0];
+    const bookingDate = getDateStr(new Date(data.selectedDate));
 
     // Check slot availability in Supabase
     const { data: existingBookings, error: checkError } = await supabaseAdmin

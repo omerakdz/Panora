@@ -89,9 +89,13 @@ export default function ConfirmationContent() {
                                 <Calendar className="w-6 h-6 text-[#1792D0] mt-1 flex-shrink-0" />
                                 <div className="flex-1">
                                     <p className="font-semibold text-[#044D8E] mb-1">Datum</p>
-                                    <p className="text-[#0F61AC] text-lg capitalize">
-                                        {formatDate(bookingDetails.selectedDate)}
-                                    </p>
+                                    {bookingDetails.selectedSlotTitel ? (
+                                        <p className="text-[#0F61AC] text-lg capitalize">{bookingDetails.selectedSlotTitel}</p>
+                                    ) : (
+                                        <p className="text-[#0F61AC] text-lg capitalize">
+                                            {formatDate(bookingDetails.selectedDate)}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 

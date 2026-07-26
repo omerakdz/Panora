@@ -10,11 +10,18 @@ interface AvailabilityCalendarProps {
     isDisabled: (date: Date) => boolean;
     modifiers: Record<string, (date: Date) => boolean>;
     modifiersClassNames: Record<string, string>;
+    loadingMonth: boolean;
 }
 
-const AvailabilityCalendar = ({ selectedDate, onSelect, currentMonth, onMonthChange, isDisabled, modifiers, modifiersClassNames, }: AvailabilityCalendarProps) => {
+const AvailabilityCalendar = ({ selectedDate, onSelect, currentMonth, onMonthChange, isDisabled, modifiers, modifiersClassNames, loadingMonth }: AvailabilityCalendarProps) => {
     return (
         <div className="flex flex-col items-center">
+            {loadingMonth && (
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-200">
+                    <div className="w-4 h-4 border-2 border-[#1792D0] border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-[#0F61AC] text-xs">Beschikbaarheid laden...</span>
+                </div>
+            )}
             <Calendar
                 mode="single"
                 selected={selectedDate}

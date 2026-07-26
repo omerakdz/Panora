@@ -21,6 +21,7 @@ const StepSchedule = forwardRef<StepScheduleHandle, StepScheduleProps>(function 
     const {
         loading,
         loadingTimeSlots,
+        loadingMonth,
         availabilityData,
         selectedDate,
         availableSlots,
@@ -125,6 +126,7 @@ const StepSchedule = forwardRef<StepScheduleHandle, StepScheduleProps>(function 
                     isDisabled={isDateDisabled}
                     modifiers={modifiers}
                     modifiersClassNames={modifiersClassNames}
+                    loadingMonth={loadingMonth}
                 />
 
                 <TimeSlotPicker

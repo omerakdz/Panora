@@ -10,6 +10,7 @@ export function useAvailability(
 ) {
   const [loading, setLoading] = useState(false);
   const [loadingTimeSlots, setLoadingTimeSlots] = useState(false);
+  const [loadingMonth, setLoadingMonth] = useState(false);
   const [availabilityData, setAvailabilityData] =
     useState<AvailabilityResponse | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -264,6 +265,7 @@ export function useAvailability(
       const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, "0")}`;
       if (fetchedMonthsRef.current.has(monthKey)) return;
       fetchedMonthsRef.current.add(monthKey);
+      setLoadingMonth(true);
 
       const year = monthDate.getFullYear();
       const month = monthDate.getMonth();
@@ -296,6 +298,7 @@ export function useAvailability(
         });
         return next;
       });
+      setLoadingMonth(false);
     },
     [fetchSingleDateSlots],
   );
@@ -453,13 +456,17 @@ export function useAvailability(
     if (!isDateAvailable(date)) return true;
     const ds = getDateStr(date);
     const slots = slotsByDate[ds];
-    return !slots || slots.length === 0;
+    // Onbekende dagen (nog niet opgehaald) mogen niet als grijs/disabled tonen.
+    // Pas disabled wanneer we zeker weten dat er 0 slots zijn.
+    if (slots === undefined) return false;
+    return slots.length === 0;
   };
 
   return {
     // states
     loading,
     loadingTimeSlots,
+    loadingMonth,
     availabilityData,
     selectedDate,
     availableSlots,

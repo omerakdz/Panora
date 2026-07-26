@@ -7,10 +7,9 @@ import StepPropertyType from "./StepPropertyType";
 import StepWindows from "./StepWindows";
 import StepPrice from "./StepPrice";
 import StepSchedule from "./StepSchedule";
-import type { StepScheduleHandle } from "./StepSchedule";
 import StepCustomerDetails from "./StepCustomerDetails";
 import { ChevronLeft, ChevronRight, Home, Grid3x3, Euro, Calendar, User, Check } from "lucide-react";
-import type { CalculatorData } from "@/types";
+import type { CalculatorData, StepScheduleHandle } from "@/types";
 import { motion, AnimatePresence } from "motion/react";
 
 

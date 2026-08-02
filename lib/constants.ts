@@ -10,6 +10,10 @@ export const COMPANY = {
   vatNumber: process.env.NEXT_PUBLIC_VAT_NUMBER,
 };
 
+// ==========================================
+// POSTAL CODES & VALIDATION
+// ==========================================
+
 // Toegestane postcodes (Gent + blauwe zone uit servicegebied kaart)
 export const ALLOWED_POSTAL_CODES = [
   "9000", // Gent centrum
@@ -60,6 +64,10 @@ export const CONTACT = {
   },
 };
 
+// ==========================================
+// SOCIAL MEDIA
+// ==========================================
+
 export const SOCIAL_MEDIA = {
   facebook:
     "https://www.facebook.com/profile.php?id=61584108477064&locale=nl_BE",
@@ -67,23 +75,30 @@ export const SOCIAL_MEDIA = {
   tiktok: "https://www.tiktok.com/@panora.ramenwas",
 };
 
-export const PROPERTY_TYPES = [
-  { value: "apartment", label: "Appartement" },
-  { value: "townhouse", label: "Rijhuis" },
-  { value: "semiDetached", label: "Halfopen woning" },
-  { value: "detached", label: "Vrijstaande woning" },
-  { value: "commercial", label: "Kantoor/Handelszaak" },
+// ==========================================
+// PROPERTY TYPES
+// ==========================================
+
+// Property types met icons (gebruikt in calculator)
+export const propertyTypes = [
+  { value: "appartement", label: "Appartement", icon: Building2 },
+  { value: "rijhuis", label: "Rijhuis", icon: Home },
+  { value: "halfopen", label: "Halfopen woning", icon: Home },
+  { value: "vrijstaand", label: "Vrijstaande woning", icon: Home },
+  { value: "kantoor", label: "Kantoor/Handelszaak", icon: Store },
 ] as const;
 
-export type PropertyType = (typeof PROPERTY_TYPES)[number]["value"];
+export type PropertyType = (typeof propertyTypes)[number]["value"];
 
 // Helper function to get property type label from value
 export function getPropertyTypeLabel(value: string): string {
-  const propertyType = PROPERTY_TYPES.find((type) => type.value === value);
+  const propertyType = propertyTypes.find((type) => type.value === value);
   return propertyType ? propertyType.label : value;
 }
 
-// Service Types
+// ==========================================
+// SERVICE TYPES
+// ==========================================
 export const SERVICE_TYPES = {
   exterior: {
     name: "Buiten Glasreiniging",
@@ -106,6 +121,10 @@ export const SERVICE_TYPES = {
   },
 } as const;
 
+// ==========================================
+// SUBSCRIPTION & APP CONFIG
+// ==========================================
+
 // Subscription Frequencies
 export const SUBSCRIPTION_FREQUENCIES = [
   { value: "monthly", label: "1x per maand", discount: 10 },
@@ -121,6 +140,10 @@ export const APP_CONFIG = {
   timezone: "Europe/Brussels",
   dateFormat: "dd/MM/yyyy",
 };
+
+// ==========================================
+// UI TEXT & COPY
+// ==========================================
 
 export const UI_TEXT = {
   cta: {
@@ -179,7 +202,9 @@ export const HOW_IT_WORKS = [
     description: "Je ontvangt foto's van het resultaat en de factuur",
   },
 ] as const;
-
+// ==========================================
+// NAVIGATION & FOOTER LINKS
+// ==========================================
 // Navigation Links
 export const NAV_LINKS = [
   { href: "/#calculator", label: "Bereken Prijs" },
@@ -219,6 +244,10 @@ export const FOOTER_LINKS = {
   ],
 } as const;
 
+// ==========================================
+// EMAIL & TIME SLOTS
+// ==========================================
+
 // Email Configuration
 export const EMAIL_CONFIG = {
   from: process.env.EMAIL_FROM,
@@ -236,7 +265,11 @@ export const TIME_SLOTS = [
   "18:00 - 19:00",
 ];
 
-// ?Days to exclude?
+// ==========================================
+// CALENDAR CONFIGURATION
+// ==========================================
+
+// Days to exclude
 export const EXCLUDED_DATES: Date[] = [
   // Add specific dates here, e.g.:
   // new Date(2025, 11, 25), // Christmas
@@ -256,6 +289,10 @@ export const CALENDAR_CONFIG = {
   slotsPerDay: parseInt(process.env.MAX_SLOTS_PER_DAY || "6"), // Max 6 appointments per day (was 4)
 };
 
+// ==========================================
+// PRICING
+// ==========================================
+
 // Pricing Constants
 export const PRICING = {
   exteriorWindow: 2.5, // €2,50 per exterior window
@@ -264,6 +301,10 @@ export const PRICING = {
   firstTimeExtra: 20, // +€20 for first time in long
   cleanFramesExtra: 25, // +€25 for cleaning frames
 };
+
+// ==========================================
+// UTILITY FUNCTIONS
+// ==========================================
 
 // Helper function to validate postal code
 export function isPostalCodeAllowed(postalCode: string): boolean {
@@ -308,12 +349,5 @@ export const getDateStr = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
+// Default window count for calculator
 export const DEFAULT_WINDOWS = 8;
-
-export const propertyTypes = [
-  { value: "appartement", label: "Appartement", icon: Building2 },
-  { value: "rijhuis", label: "Rijhuis", icon: Home },
-  { value: "halfopen", label: "Halfopen woning", icon: Home },
-  { value: "vrijstaand", label: "Vrijstaande woning", icon: Home },
-  { value: "kantoor", label: "Kantoor/Handelszaak", icon: Store },
-] as const;

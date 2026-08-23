@@ -102,6 +102,8 @@ export const metadata = {
 };
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
+  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+
   return (
     <html lang="nl" className={`${inter.variable} ${montserrat.variable} ${poppins.variable}`}>
       <head>
@@ -109,8 +111,8 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         <ConsentInit />
       </head>
       <body className={inter.className}>
-        {/* Google Tag Manager - All tracking handled via GTM */}
-        <GoogleTagManager gtmId="GTM-M7G6SHD8" />
+        {/* Google Tag Manager - Only load on production to prevent test data pollution */}
+        {isProduction && <GoogleTagManager gtmId="GTM-M7G6SHD8" />}
 
         <Navbar />
         {children}

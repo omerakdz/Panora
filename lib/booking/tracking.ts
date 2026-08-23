@@ -8,7 +8,8 @@ export const trackBookingSuccess = (data: CalculatorData) => {
   const eventData = {
     event: "booking_request",
     funnel_name: "calculator",
-    service_type: data.propertyType,
+    service_type: data.windowService,
+    property_type: data.propertyType,
     total_windows: data.totalWindows,
     price_value: data.calculatedPrice,
   };

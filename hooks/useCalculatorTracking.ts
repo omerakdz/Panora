@@ -1,29 +1,11 @@
-import { useEffect, useState } from "react";
 import { CalculatorData } from "@/types";
 
 export const useCalculatorTracking = (
   currentStep: number,
   data: CalculatorData,
 ) => {
-  const [calculatorStarted, setCalculatorStarted] = useState(false);
-
-  // Track calculator_start event - eerste echte interactie
-  useEffect(() => {
-    if (!calculatorStarted && currentStep === 1) {
-      if (typeof window !== "undefined") {
-        window.dataLayer = window.dataLayer || [];
-        const eventData = {
-          event: "calculator_start",
-          funnel_name: "calculator",
-        };
-        window.dataLayer.push(eventData);
-        if (process.env.NODE_ENV === "development") {
-          console.log("📊 GTM Event pushed:", eventData);
-        }
-        setCalculatorStarted(true);
-      }
-    }
-  }, [calculatorStarted, currentStep]);
+  // NOTE: calculator_start event is now tracked in StepPropertyType on first property selection
+  // This ensures it only fires on actual user interaction, not on page load
 
   // Track window_count_submit event
   const trackWindowCountSubmit = () => {
@@ -50,7 +32,8 @@ export const useCalculatorTracking = (
       const eventData = {
         event: "price_confirm",
         funnel_name: "calculator",
-        service_type: data.propertyType,
+        service_type: data.windowService,
+        property_type: data.propertyType,
         total_windows: data.totalWindows,
         exterior_windows: data.exteriorWindows,
         interior_exterior_windows: data.interiorExteriorWindows,

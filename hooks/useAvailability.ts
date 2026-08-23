@@ -10,7 +10,6 @@ export function useAvailability(
 ) {
   const [loading, setLoading] = useState(false);
   const [loadingTimeSlots, setLoadingTimeSlots] = useState(false);
-  const [loadingMonth, setLoadingMonth] = useState(false);
   const [availabilityData, setAvailabilityData] =
     useState<AvailabilityResponse | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -28,12 +27,11 @@ export function useAvailability(
   );
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
-  // dateStr -> SlotData[]. Ontbrekende key = nog niet opgehaald (dus disabled tot bekend).
+  // dateStr -> SlotData[]. Als een datum niet in deze map voorkomt, is die niet beschikbaar.
   const [slotsByDate, setSlotsByDateState] = useState<
     Record<string, SlotData[]>
   >({});
   const slotsByDateRef = useRef<Record<string, SlotData[]>>({});
-  const fetchedMonthsRef = useRef<Set<string>>(new Set());
 
   const setSlotsByDate = (
     updater:
@@ -93,6 +91,10 @@ export function useAvailability(
           stad: data.customerCity,
           duur_min: calculateDuration(),
           kanaal: "website",
+          slot_limit: 6,
+          horizon_days: 30,
+          spread_days: 31,
+          spread_total: 90,
           ...(addressConfirmed && { adres_bevestigd: true }),
         };
 
@@ -138,7 +140,6 @@ export function useAvailability(
 
           setRecommendedDates(recDates);
           setSlotsByDate(initialSlotsByDate);
-          fetchedMonthsRef.current = new Set();
 
           if (result.code === "ADDRESS_CONFIRMATION_REQUIRED") {
             setNeedsAddressConfirmation(true);
@@ -148,11 +149,43 @@ export function useAvailability(
               result.boodschap ||
                 "Adres niet gevonden. Controleer je gegevens.",
             );
+
+            // Track address_check_failed event
+            if (typeof window !== "undefined") {
+              window.dataLayer = window.dataLayer || [];
+              const eventData = {
+                event: "address_check_failed",
+                funnel_name: "calculator",
+                postal_code: data.customerPostalCode,
+                municipality: data.customerCity,
+                reason: "not_found",
+              };
+              window.dataLayer.push(eventData);
+              if (process.env.NODE_ENV === "development") {
+                console.log("📊 GTM Event pushed:", eventData);
+              }
+            }
           } else if (
             result.code === "RANDGEBIED" ||
             result.code === "BUITEN_WERKGEBIED"
           ) {
             setError(result.boodschap || "");
+
+            // Track address_check_failed event
+            if (typeof window !== "undefined") {
+              window.dataLayer = window.dataLayer || [];
+              const eventData = {
+                event: "address_check_failed",
+                funnel_name: "calculator",
+                postal_code: data.customerPostalCode,
+                municipality: data.customerCity,
+                reason: "outside_area",
+              };
+              window.dataLayer.push(eventData);
+              if (process.env.NODE_ENV === "development") {
+                console.log("📊 GTM Event pushed:", eventData);
+              }
+            }
           } else if (result.code?.startsWith("INVALID_")) {
             setError(
               result.boodschap || "Ongeldige invoer. Controleer je gegevens.",
@@ -161,13 +194,88 @@ export function useAvailability(
             setError(
               result.boodschap || "Geen online boekbare momenten gevonden.",
             );
+
+            // Track no_slots_available event
+            if (typeof window !== "undefined") {
+              window.dataLayer = window.dataLayer || [];
+              const eventData = {
+                event: "no_slots_available",
+                funnel_name: "calculator",
+                postal_code: data.customerPostalCode,
+              };
+              window.dataLayer.push(eventData);
+              if (process.env.NODE_ENV === "development") {
+                console.log("📊 GTM Event pushed:", eventData);
+              }
+            }
+          } else {
+            // Success case: slots are available
+            // Track availability_shown event
+            if (typeof window !== "undefined") {
+              window.dataLayer = window.dataLayer || [];
+
+              // Calculate days until first slot
+              const firstSlotDate =
+                allSlots.length > 0 ? new Date(allSlots[0].start) : null;
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              const daysUntilFirst = firstSlotDate
+                ? Math.ceil(
+                    (firstSlotDate.getTime() - today.getTime()) /
+                      (1000 * 60 * 60 * 24),
+                  )
+                : 0;
+
+              const eventData = {
+                event: "availability_shown",
+                funnel_name: "calculator",
+                slots_count: allSlots.length,
+                days_until_first: daysUntilFirst,
+              };
+              window.dataLayer.push(eventData);
+              if (process.env.NODE_ENV === "development") {
+                console.log("📊 GTM Event pushed:", eventData);
+              }
+            }
           }
         } else {
           setError("Kon beschikbaarheid niet ophalen. Probeer het opnieuw.");
+
+          // Track address_check_failed event for API error
+          if (typeof window !== "undefined") {
+            window.dataLayer = window.dataLayer || [];
+            const eventData = {
+              event: "address_check_failed",
+              funnel_name: "calculator",
+              postal_code: data.customerPostalCode,
+              municipality: data.customerCity,
+              reason: "api_error",
+            };
+            window.dataLayer.push(eventData);
+            if (process.env.NODE_ENV === "development") {
+              console.log("📊 GTM Event pushed:", eventData);
+            }
+          }
         }
       } catch (err) {
         console.error("Error fetching availability:", err);
         setError("Onze agenda laadt even niet — probeer opnieuw.");
+
+        // Track address_check_failed event for network/API error
+        if (typeof window !== "undefined") {
+          window.dataLayer = window.dataLayer || [];
+          const eventData = {
+            event: "address_check_failed",
+            funnel_name: "calculator",
+            postal_code: data.customerPostalCode,
+            municipality: data.customerCity,
+            reason: "api_error",
+          };
+          window.dataLayer.push(eventData);
+          if (process.env.NODE_ENV === "development") {
+            console.log("📊 GTM Event pushed:", eventData);
+          }
+        }
       } finally {
         setLoading(false);
       }
@@ -197,118 +305,9 @@ export function useAvailability(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const fetchSingleDateSlots = useCallback(
-    async (date: Date): Promise<SlotData[]> => {
-      const dateStr = getDateStr(date);
-      try {
-        const timestamp = new Date().getTime();
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-        const response = await fetch(
-          `/api/availability?date=${dateStr}&t=${timestamp}`,
-          {
-            cache: "no-store",
-            signal: controller.signal,
-          },
-        );
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          console.error("Failed to fetch availability for", dateStr);
-          return [];
-        }
-
-        const result = await response.json();
-
-        const googleSlots: SlotData[] = (result.slots || []).map(
-          (timeStr: string) => {
-            const [hours, minutes] = timeStr.split(":");
-            const startDate = new Date(date);
-            startDate.setHours(parseInt(hours), parseInt(minutes), 0);
-            const endDate = new Date(startDate);
-            endDate.setMinutes(endDate.getMinutes() + 60);
-
-            return {
-              start: startDate.toISOString(),
-              end: endDate.toISOString(),
-              datum: dateStr,
-              titel: timeStr,
-              tijd: timeStr,
-              badge: "",
-              uitleg: "",
-              recommended: false,
-            };
-          },
-        );
-
-        return googleSlots;
-      } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") {
-          console.error("⏱️ Timeout bij ophalen beschikbaarheid voor", dateStr);
-        } else {
-          console.error(
-            "❌ Fout bij ophalen beschikbaarheid voor",
-            dateStr,
-            err,
-          );
-        }
-        return [];
-      }
-    },
-    [],
-  );
-
-  const fetchMonthAvailability = useCallback(
-    async (monthDate: Date) => {
-      const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, "0")}`;
-      if (fetchedMonthsRef.current.has(monthKey)) return;
-      fetchedMonthsRef.current.add(monthKey);
-      setLoadingMonth(true);
-
-      const year = monthDate.getFullYear();
-      const month = monthDate.getMonth();
-      const lastDay = new Date(year, month + 1, 0).getDate();
-
-      const datesToFetch: Date[] = [];
-      for (let day = 1; day <= lastDay; day++) {
-        const d = new Date(year, month, day);
-        if (!isDateAvailable(d)) continue;
-        const ds = getDateStr(d);
-        if (slotsByDateRef.current[ds] !== undefined) continue;
-        datesToFetch.push(d);
-      }
-
-      if (datesToFetch.length === 0) return;
-
-      const results = await Promise.allSettled(
-        datesToFetch.map(async (d) => ({
-          dateStr: getDateStr(d),
-          slots: await fetchSingleDateSlots(d),
-        })),
-      );
-
-      setSlotsByDate((prev) => {
-        const next = { ...prev };
-        results.forEach((res) => {
-          if (res.status === "fulfilled") {
-            next[res.value.dateStr] = res.value.slots;
-          }
-        });
-        return next;
-      });
-      setLoadingMonth(false);
-    },
-    [fetchSingleDateSlots],
-  );
-
-  // Zodra we adresdata hebben (nieuw of ververst) of de gebruiker navigeert naar
-  // een andere kalendermaand: haal de volledige maand vooraf op.
-  useEffect(() => {
-    if (!availabilityData) return;
-    fetchMonthAvailability(currentMonth);
-  }, [availabilityData, currentMonth, fetchMonthAvailability]);
+  // NOTE: fetchSingleDateSlots en fetchMonthAvailability zijn verwijderd.
+  // De planningsmotor API geeft nu met spread_days en spread_total parameters
+  // alle beschikbare momenten voor de hele maand in één call terug.
 
   const handleDateSelect = (date: Date | undefined) => {
     console.log("📅 Date selected:", date);
@@ -322,32 +321,18 @@ export function useAvailability(
     }
 
     const dateStr = getDateStr(date);
-    const knownSlots = slotsByDateRef.current[dateStr];
+    const slots = slotsByDateRef.current[dateStr] || [];
 
-    const applySlots = (slots: SlotData[]) => {
-      setAvailableSlots(slots);
-      const hasRecommended =
-        recommendedDates.has(dateStr) ||
-        slots.some(
-          (s) =>
-            s.recommended ||
-            s.badge === "Aanbevolen" ||
-            s.badge === "Past goed in de route",
-        );
-      setIsRecommendedDay(hasRecommended);
-      setLoadingTimeSlots(false);
-    };
-
-    if (knownSlots !== undefined) {
-      applySlots(knownSlots);
-    } else {
-      // Veiligheidsnet: zou niet mogen voorkomen omdat onbekende dagen disabled zijn.
-      setLoadingTimeSlots(true);
-      fetchSingleDateSlots(date).then((slots) => {
-        setSlotsByDate((prev) => ({ ...prev, [dateStr]: slots }));
-        applySlots(slots);
-      });
-    }
+    setAvailableSlots(slots);
+    const hasRecommended =
+      recommendedDates.has(dateStr) ||
+      slots.some(
+        (s) =>
+          s.recommended ||
+          s.badge === "Aanbevolen" ||
+          s.badge === "Past goed in de route",
+      );
+    setIsRecommendedDay(hasRecommended);
   };
 
   const handleTimeSelect = (slot: SlotData) => {
@@ -366,6 +351,16 @@ export function useAvailability(
 
     if (typeof window !== "undefined" && selectedDate) {
       window.dataLayer = window.dataLayer || [];
+
+      // Calculate days_ahead (days between today and selected date)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selected = new Date(selectedDate);
+      selected.setHours(0, 0, 0, 0);
+      const daysAhead = Math.ceil(
+        (selected.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
       const eventData = {
         event: "appointment_select",
         funnel_name: "calculator",
@@ -373,6 +368,7 @@ export function useAvailability(
         appointment_day_of_week: selectedDate.toLocaleDateString("en-US", {
           weekday: "long",
         }),
+        days_ahead: daysAhead,
       };
       window.dataLayer.push(eventData);
       if (process.env.NODE_ENV === "development") {
@@ -419,12 +415,28 @@ export function useAvailability(
     }
 
     setFieldErrors({});
+
+    // Track address_check event
+    if (typeof window !== "undefined") {
+      window.dataLayer = window.dataLayer || [];
+      const eventData = {
+        event: "address_check",
+        funnel_name: "calculator",
+        postal_code: data.customerPostalCode,
+        municipality: data.customerCity,
+      };
+      window.dataLayer.push(eventData);
+      if (process.env.NODE_ENV === "development") {
+        console.log("📊 GTM Event pushed:", eventData);
+      }
+    }
+
     setShowAddressForm(false);
     setAddressSubmitted(true);
     fetchAvailability(false);
   };
 
-  // Custom modifiers for calendar styling — rechtstreeks gekoppeld aan slotsByDate
+  // Custom modifiers for calendar styling
   const modifiers = {
     recommended: (date: Date) => recommendedDates.has(getDateStr(date)),
     available: (date: Date) => {
@@ -432,14 +444,16 @@ export function useAvailability(
       const ds = getDateStr(date);
       if (recommendedDates.has(ds)) return false;
       const slots = slotsByDate[ds];
-      return !!slots && slots.length > 0;
+      // Alleen beschikbaar als de datum in het antwoord zit en slots heeft
+      return Array.isArray(slots) && slots.length > 0;
     },
     fullyBooked: (date: Date) => {
       if (!isDateAvailable(date)) return false;
       const ds = getDateStr(date);
       if (recommendedDates.has(ds)) return false;
       const slots = slotsByDate[ds];
-      return !!slots && slots.length === 0;
+      // Volgeboekt als de datum WEL in het antwoord zit maar met 0 slots
+      return Array.isArray(slots) && slots.length === 0;
     },
   };
 
@@ -456,9 +470,9 @@ export function useAvailability(
     if (!isDateAvailable(date)) return true;
     const ds = getDateStr(date);
     const slots = slotsByDate[ds];
-    // Onbekende dagen (nog niet opgehaald) mogen niet als grijs/disabled tonen.
-    // Pas disabled wanneer we zeker weten dat er 0 slots zijn.
-    if (slots === undefined) return false;
+    // Een datum is alleen klikbaar als die in het antwoord zit met slots
+    // Datums die niet in slotsByDate voorkomen zijn niet beschikbaar volgens de planningsmotor
+    if (!slots) return true;
     return slots.length === 0;
   };
 
@@ -466,7 +480,6 @@ export function useAvailability(
     // states
     loading,
     loadingTimeSlots,
-    loadingMonth,
     availabilityData,
     selectedDate,
     availableSlots,

@@ -44,13 +44,11 @@ export const usePriceCalculation = ({
           const eventData = {
             event: "price_view",
             funnel_name: "calculator",
-            service_type: data.propertyType,
+            service_type: data.windowService,
+            property_type: data.propertyType,
             total_windows: data.totalWindows,
             exterior_windows: data.exteriorWindows,
             interior_exterior_windows: data.interiorExteriorWindows,
-            has_hard_to_reach: data.hardToReach,
-            has_first_time_long: data.firstTimeInLong,
-            has_clean_frames: data.cleanFrames,
             price_value: result.price,
           };
 
@@ -58,6 +56,25 @@ export const usePriceCalculation = ({
 
           if (process.env.NODE_ENV === "development") {
             console.log("📊 GTM Event pushed:", eventData);
+          }
+        }
+
+        // Track below_minimum event if price is below €25
+        if (result.price < 25 && typeof window !== "undefined") {
+          window.dataLayer = window.dataLayer || [];
+
+          const belowMinimumEvent = {
+            event: "below_minimum",
+            funnel_name: "calculator",
+            postal_code: data.customerPostalCode || "",
+            calculated_value: result.price,
+            total_windows: data.totalWindows,
+          };
+
+          window.dataLayer.push(belowMinimumEvent);
+
+          if (process.env.NODE_ENV === "development") {
+            console.log("📊 GTM Event pushed:", belowMinimumEvent);
           }
         }
       } catch (error) {

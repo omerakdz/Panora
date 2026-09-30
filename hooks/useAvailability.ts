@@ -380,7 +380,6 @@ export function useAvailability(
   const handleRefresh = () => {
     if (addressSubmitted) {
       console.log("🔄 Manual refresh requested");
-      fetchedMonthsRef.current = new Set();
       fetchAvailability(false);
     }
   };

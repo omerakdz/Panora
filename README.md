@@ -120,4 +120,8 @@ public/              Afbeeldingen en andere statische bestanden
 
 ## Licentie
 
-Er is nog geen licentie aan deze repository toegevoegd. Zonder expliciete licentie blijven de standaard auteursrechten van toepassing.
+© 2026 Ömer Akdeniz\. Alle rechten voorbehouden\.
+
+Dit project is eigendom van de auteursrechthebbende\. De broncode en andere originele materialen in deze repository mogen niet zonder voorafgaande schriftelijke toestemming worden gekopieerd, gewijzigd, verspreid, gepubliceerd of commercieel gebruikt\.
+
+Zie het [`LICENSE`](./LICENSE)\-bestand voor de volledige licentievoorwaarden\.

@@ -15,47 +15,22 @@ import { google } from "googleapis";
  *
  * Gebruik: GET /api/calendar-health
  */
-export async function GET(request: Request) {
-  const healthCheck = {
-    configured: false,
-    credentials: {
-      clientId: false,
-      clientSecret: false,
-      refreshToken: false,
-    },
-    calendars: [] as Array<{
-      id: string;
-      accessible: boolean;
-      error?: string;
-      name?: string;
-      eventCount?: number;
-    }>,
-    overallStatus: "error" as "ok" | "error" | "partial",
-    message: "",
-    timestamp: new Date().toISOString(),
-  };
-
+export async function GET() {
   try {
-    // 1. Check credentials
-    healthCheck.credentials.clientId = !!process.env.GOOGLE_CLIENT_ID;
-    healthCheck.credentials.clientSecret = !!process.env.GOOGLE_CLIENT_SECRET;
-    healthCheck.credentials.refreshToken = !!process.env.GOOGLE_REFRESH_TOKEN;
-    healthCheck.configured = isGoogleCalendarConfigured();
-
-    if (!healthCheck.configured) {
-      healthCheck.message =
-        "Google Calendar is niet geconfigureerd. Voeg GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET en GOOGLE_REFRESH_TOKEN toe aan .env";
-      return NextResponse.json(healthCheck, { status: 503 });
+    if (!isGoogleCalendarConfigured()) {
+      return NextResponse.json(
+        { status: "unavailable" },
+        { status: 503, headers: { "Cache-Control": "no-store" } },
+      );
     }
 
-    // 2. Test API connection
     const auth = getGoogleCalendarAuth();
     const calendar = google.calendar({ version: "v3", auth });
 
-    // 3. Check configured calendars
     const calendarIds = process.env.GOOGLE_CALENDAR_IDS
       ? process.env.GOOGLE_CALENDAR_IDS.split(",").map((id) => id.trim())
       : [process.env.GOOGLE_CALENDAR_ID || "primary"];
+    let allAccessible = true;
 
     const today = new Date();
     const tomorrow = new Date(today);
@@ -63,59 +38,35 @@ export async function GET(request: Request) {
 
     for (const calendarId of calendarIds) {
       try {
-        // Test toegang tot calendar
-        const calendarInfo = await calendar.calendars.get({
-          calendarId: calendarId,
-        });
+        await calendar.calendars.get({ calendarId });
 
-        // Test events ophalen (laatste 7 dagen)
         const sevenDaysAgo = new Date(today);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-        const events = await calendar.events.list({
-          calendarId: calendarId,
+        await calendar.events.list({
+          calendarId,
           timeMin: sevenDaysAgo.toISOString(),
           timeMax: tomorrow.toISOString(),
           maxResults: 100,
           singleEvents: true,
         });
-
-        healthCheck.calendars.push({
-          id: calendarId,
-          accessible: true,
-          name: calendarInfo.data.summary || calendarId,
-          eventCount: events.data.items?.length || 0,
-        });
-      } catch (error) {
-        healthCheck.calendars.push({
-          id: calendarId,
-          accessible: false,
-          error: error instanceof Error ? error.message : String(error),
-        });
+      } catch {
+        allAccessible = false;
       }
     }
 
-    // 4. Determine overall status
-    const allAccessible = healthCheck.calendars.every((cal) => cal.accessible);
-    const someAccessible = healthCheck.calendars.some((cal) => cal.accessible);
-
-    if (allAccessible) {
-      healthCheck.overallStatus = "ok";
-      healthCheck.message = `Google Calendar is correct geconfigureerd en ${healthCheck.calendars.length} calendar(s) zijn toegankelijk.`;
-    } else if (someAccessible) {
-      healthCheck.overallStatus = "partial";
-      healthCheck.message = `Google Calendar is geconfigureerd, maar sommige calendars zijn niet toegankelijk.`;
-    } else {
-      healthCheck.overallStatus = "error";
-      healthCheck.message = `Google Calendar is geconfigureerd, maar geen enkele calendar is toegankelijk. Check de GOOGLE_CALENDAR_IDS en API permissions.`;
-    }
-
-    const statusCode = healthCheck.overallStatus === "ok" ? 200 : 503;
-    return NextResponse.json(healthCheck, { status: statusCode });
-  } catch (error) {
-    healthCheck.overallStatus = "error";
-    healthCheck.message = `Fout bij het testen van Google Calendar: ${error instanceof Error ? error.message : String(error)}`;
-
-    return NextResponse.json(healthCheck, { status: 500 });
+    const status = allAccessible ? "ok" : "unavailable";
+    return NextResponse.json(
+      { status },
+      {
+        status: allAccessible ? 200 : 503,
+        headers: { "Cache-Control": "no-store" },
+      },
+    );
+  } catch {
+    return NextResponse.json(
+      { status: "unavailable" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
   }
 }

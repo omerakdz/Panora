@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   });
 
   if (!rateLimitResult) {
-    console.warn("⚠️ Rate limit exceeded for IP:", ip);
+    console.warn("⚠️ Rate limit exceeded for contact form");
     return createRateLimitResponse(Date.now() + 10 * 60 * 1000);
   }
 
@@ -36,8 +36,6 @@ export async function POST(request: Request) {
     const email = sanitizeEmail(rawData.email || "");
     const phone = sanitizePhone(rawData.phone || "");
     const message = sanitizeText(rawData.message || "");
-
-    console.log("📧 Contact form submission:", { name, email, phone });
 
     // Validation
     if (!name || !email || !phone || !message) {

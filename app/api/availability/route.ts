@@ -46,20 +46,13 @@ export async function GET(request: Request) {
 
     // 2. Haal ALLE events uit Google Calendar
     let bookedSlotsFromCalendar: string[] = [];
-    let calendarError: string | null = null;
-    let calendarConfigured = false;
 
     if (isGoogleCalendarConfigured()) {
-      calendarConfigured = true;
       try {
         bookedSlotsFromCalendar =
           await getGoogleCalendarBookingsForDate(dateParam);
-      } catch (error) {
-        calendarError = error instanceof Error ? error.message : String(error);
-        console.error(
-          "❌ CRITICAL: Google Calendar synchronization failed:",
-          error,
-        );
+      } catch {
+        console.error("❌ Google Calendar synchronization failed");
       }
     }
 
@@ -77,14 +70,7 @@ export async function GET(request: Request) {
         available: availableSlots.length > 0,
         slots: availableSlots,
         bookedSlots: allBookedSlots,
-        bookedFromDB: bookedSlotsFromDB.length,
-        bookedFromCalendar: bookedSlotsFromCalendar.length,
         totalSlots: 6,
-        googleCalendar: {
-          configured: calendarConfigured,
-          working: calendarConfigured && calendarError === null,
-          error: calendarError,
-        },
       },
       {
         status: 200,
@@ -144,10 +130,9 @@ export async function POST(request: Request) {
           try {
             bookedSlotsFromCalendar =
               await getGoogleCalendarBookingsForDate(dateStr);
-          } catch (error) {
+          } catch {
             console.warn(
-              `⚠️ Could not fetch Google Calendar events for ${dateStr}:`,
-              error,
+              `⚠️ Could not fetch Google Calendar events for ${dateStr}`,
             );
           }
         }

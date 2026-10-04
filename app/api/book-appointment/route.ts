@@ -15,6 +15,7 @@ import {
   isValidEmail,
   isValidPhone,
 } from "@/lib/sanitize";
+import { sendBookingEmails } from "@/lib/booking-emails";
 import { calculatePrice } from "@/lib/pricing";
 import { getDateStr } from "@/lib/constants";
 
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
   });
 
   if (!rateLimitResult) {
-    console.warn("⚠️ Rate limit exceeded for booking from IP:", ip);
+    console.warn("⚠️ Rate limit exceeded for booking");
     return createRateLimitResponse(Date.now() + 60 * 60 * 1000);
   }
 
@@ -289,35 +290,19 @@ export async function POST(request: Request) {
     };
 
     // Try to add to Google Calendar if configured
-    let googleCalendarEventId: string | undefined;
     if (isGoogleCalendarConfigured()) {
       try {
-        googleCalendarEventId = await addToGoogleCalendar(booking);
+        await addToGoogleCalendar(booking);
       } catch (error) {
         console.warn("⚠️ Failed to add to Google Calendar:", error);
       }
     }
 
-    // Send emails
     try {
-      const baseUrl = request.headers.get("origin") || "http://localhost:3000";
-      const emailUrl = `${baseUrl}/api/send-email`;
-
-      const emailResponse = await fetch(emailUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...data,
-          selectedDate: bookingDate,
-        }),
+      await sendBookingEmails({
+        ...data,
+        selectedDate: new Date(bookingDate),
       });
-
-      if (!emailResponse.ok) {
-        const errorText = await emailResponse.text();
-        console.error("⚠️ Email API error:", emailResponse.status);
-      }
     } catch (error) {
       console.error("⚠️ Failed to send emails (booking still saved):", error);
     }
@@ -327,27 +312,14 @@ export async function POST(request: Request) {
         success: true,
         message: "Booking confirmed",
         bookingId: bookingId,
-        googleCalendarEventId,
       },
       { status: 200 },
     );
   } catch (error) {
     console.error("❌ CRITICAL ERROR in book-appointment:", error);
-    console.error("Error type:", error?.constructor?.name);
-    console.error(
-      "Error message:",
-      error instanceof Error ? error.message : error,
-    );
-    console.error(
-      "Error stack:",
-      error instanceof Error ? error.stack : "No stack",
-    );
 
     return NextResponse.json(
-      {
-        error: "Failed to process booking",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to process booking" },
       { status: 500 },
     );
   }
